@@ -1,0 +1,34 @@
+# Keep ModemManager away from the bench instruments.
+#
+# Fedora runs ModemManager by default, and it treats any USB CDC-ACM device as a
+# possible modem: udev tags both of ours with ID_MM_CANDIDATE=1. MM then opens the
+# port and fires AT commands at it to probe. On a Pico-class CDC stack this wedges
+# the port -- it stays enumerated but goes deaf in both directions.
+#
+# Observed 2026-07-26: the MicroPython REPL worked immediately after flashing, then
+# became permanently unresponsive after the device re-enumerated and was probed.
+# The same hazard applies to the logic analyzer, where a probe landing mid-capture
+# could corrupt or stall a boot capture we cannot easily retake.
+#
+#   2e8a:0005  Raspberry Pi Pico running MicroPython (signal generator)
+#   1209:3020  Dr. Gusman LogicAnalyzer
+#
+# 2e8a is matched by vendor alone so it also covers BOOTSEL mode (2e8a:0003) and
+# any other RP2040 firmware we flash later.
+#
+# Install:
+#   sudo cp docs/99-bench-instruments.rules /etc/udev/rules.d/
+#   sudo udevadm control --reload-rules
+#   sudo systemctl restart ModemManager
+#   (then unplug and replug both devices)
+#
+# Verify (should print nothing, i.e. no candidates left):
+#   udevadm info -q property -n /dev/ttyACM0 | grep ID_MM_CANDIDATE
+#   udevadm info -q property -n /dev/ttyACM1 | grep ID_MM_CANDIDATE
+
+ACTION!="add|change|move", GOTO="bench_instruments_end"
+
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="2e8a", ENV{ID_MM_DEVICE_IGNORE}="1"
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="1209", ATTRS{idProduct}=="3020", ENV{ID_MM_DEVICE_IGNORE}="1"
+
+LABEL="bench_instruments_end"

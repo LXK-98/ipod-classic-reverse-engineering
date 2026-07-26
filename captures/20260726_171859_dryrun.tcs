@@ -1,0 +1,24 @@
+{
+  "Frequency": 100000000,
+  "PreTriggerSamples": 1024,
+  "PostTriggerSamples": 120000,
+  "LoopCount": 0,
+  "MeasureBursts": false,
+  "CaptureChannels": [
+    {
+      "ChannelNumber": 0,
+      "ChannelName": "SIG_50",
+      "Hidden": false
+    },
+    {
+      "ChannelNumber": 1,
+      "ChannelName": "SIG_25",
+      "Hidden": false
+    }
+  ],
+  "TriggerType": 0,
+  "TriggerChannel": 0,
+  "TriggerInverted": false,
+  "TriggerBitCount": 1,
+  "TriggerPattern": 0
+}

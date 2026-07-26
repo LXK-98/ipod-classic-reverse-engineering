@@ -1,0 +1,43 @@
+{
+  "capture_id": "20260726_171859_dryrun",
+  "timestamp": "2026-07-26T17:19:01",
+  "preset": "dryrun",
+  "preset_description": "Pipeline validation against a Pico PWM of known freq and duty.",
+  "probe_map": "v0-dryrun",
+  "note": "100 MS/s path validation at 1 MHz PWM",
+  "port": "/dev/serial/by-id/usb-Dr._Gusman_LogicAnalyzer_5033592792565F9F-if00",
+  "session": {
+    "Frequency": 100000000,
+    "PreTriggerSamples": 1024,
+    "PostTriggerSamples": 120000,
+    "LoopCount": 0,
+    "MeasureBursts": false,
+    "CaptureChannels": [
+      {
+        "ChannelNumber": 0,
+        "ChannelName": "SIG_50",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 1,
+        "ChannelName": "SIG_25",
+        "Hidden": false
+      }
+    ],
+    "TriggerType": 0,
+    "TriggerChannel": 0,
+    "TriggerInverted": false,
+    "TriggerBitCount": 1,
+    "TriggerPattern": 0
+  },
+  "command": [
+    "/home/alex/Documents/Code/ipod-classic-reverse-engineering/vendor/TerminalCapture",
+    "capture",
+    "/dev/serial/by-id/usb-Dr._Gusman_LogicAnalyzer_5033592792565F9F-if00",
+    "/home/alex/Documents/Code/ipod-classic-reverse-engineering/captures/20260726_171859_dryrun.tcs",
+    "/home/alex/Documents/Code/ipod-classic-reverse-engineering/captures/20260726_171859_dryrun.csv"
+  ],
+  "returncode": 0,
+  "csv": "20260726_171859_dryrun.csv",
+  "csv_bytes": 484110
+}

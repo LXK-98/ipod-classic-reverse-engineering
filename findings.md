@@ -130,6 +130,137 @@ the `init-burst` preset fits: 20 channels, 64 pre + 512 × 50 bursts = 25664 ≤
 
 ---
 
+### 2026-07-26 — Analyzer hardware, header pinout, and the VREF path
+
+**Action:** Identified the analyzer board header silkscreen from the upstream KiCad
+render, and read the TXU0104 datasheet (SCES937B) for real threshold numbers.
+
+**Result — header silkscreen** (analyzer board; wiki states the shifter board header is
+identical, *except* the `5v` pin becomes external VREF when the reference jumper is
+removed):
+
+```
+top row:     CH1  CH2  CH3  CH4  CH5  CH6  CH7  CH8  CH9 CH10 CH11 CH12  GND  EXT  EXT
+bottom row: CH24 CH23 CH22 CH21 CH20 CH19 CH18 CH17 CH16 CH15 CH14 CH13  GND  3v3   5v
+```
+
+**(F) Silkscreen `CHn` = software `ChannelNumber n-1`.** Silkscreen is 1-based, `.tcs`
+is 0-based. Every channel index in this repo's tooling is the 0-based software number.
+
+**(F) TXU0104 is unidirectional, A→B, A = input.** "Ax pins are referenced to VCCA
+logic level ... Bx pins are referenced to VCCB." On the shifter board the probed signal
+enters the A side referenced to the jumper-selected VREF; the B side drives the Pico.
+
+**(F) TXU0104 Schmitt thresholds, referenced to the input-side supply VCCI:**
+
+| VCCI | 1.1 V | 1.65 V | 2.3 V | 3 V | 4.5 V | 5.5 V |
+|---|---|---|---|---|---|---|
+| VT+ max | 0.88 | 1.13 | 1.56 | 1.92 | 2.74 | 3.33 |
+| VT− min | 0.17 | 0.35 | 0.56 | 0.89 | 1.51 | 1.88 |
+
+A port accepts 1.1–5.5 V input regardless of VCCA.
+
+**Interpretation:**
+1. The 3.3 V dry-run signal is valid into the default 5 V-referenced input: VT+ max at
+   5 V nominal is ~3.0 V by interpolation, below the 3.3 V logic high. **No jumper
+   change needed for phase 0.**
+2. **Revises the brief's phase 1 decision gate.** The brief says to stop if
+   VDDIO < ~2.3 V and plan level shifting. With these boards that is unnecessary: at
+   VCCI = 1.65 V the thresholds are 1.13 / 0.35 V, so a 1.8 V panel translates cleanly
+   *provided the 5 V reference jumper is removed and the panel's own VDDIO is fed to the
+   `5v` pin as external VREF*. The gate becomes a configuration step, not a blocker.
+   Still must not probe before VDDIO is measured (safety rule 2 unchanged).
+3. Backlight rails remain absolutely out of bounds regardless of VREF (safety rule 1) —
+   the A port is rated to 5.5 V max and a boost-driven LED anode can exceed that.
+
+**Next step:** Wire the Pico reference signal to CH1/CH2 and run the dry-run capture.
+
+---
+
+### 2026-07-26 — ModemManager wedges both instruments (root cause)
+
+**Action:** First dry-run capture armed but never triggered (timed out). Investigated.
+
+**Result:** **(F) Fedora's ModemManager probes both bench instruments.** udev tagged
+both with `ID_MM_CANDIDATE=1`:
+
+```
+/dev/ttyACM0  1209:3020  Dr. Gusman LogicAnalyzer
+/dev/ttyACM1  2e8a:0005  MicroPython Board
+```
+
+ModemManager opens such ports and fires AT commands at them to probe for a modem.
+On a Pico-class CDC stack this wedges the port: the device stays enumerated and the
+USB descriptor still reads correctly, but the data path goes deaf in both directions.
+Symptom sequence matched exactly — the REPL worked immediately after flashing, then
+became permanently unresponsive after the device re-enumerated and was probed. A USB
+unplug/replug did not recover it.
+
+**Fix:** `docs/99-bench-instruments.rules` sets `ID_MM_DEVICE_IGNORE=1` for vendor
+`2e8a` (any RP2040 firmware, incl. BOOTSEL `2e8a:0003`) and for `1209:3020`.
+Installed to `/etc/udev/rules.d/`, rules reloaded, ModemManager restarted. Verified
+`ID_MM_DEVICE_IGNORE=1` now present on both ports. REPL recovered immediately.
+
+Note `ID_MM_CANDIDATE=1` legitimately *remains* set — it is applied by MM's own
+`77-mm-*` rules, which sort before ours. The property that matters is
+`ID_MM_DEVICE_IGNORE`. Checking the wrong one gives a false alarm.
+
+**Interpretation — this was worth catching before touching the iPod.** The hazard was
+never Pico-specific: the **logic analyzer carries the same flag**, so an AT-command
+probe landing mid-capture could have stalled or corrupted a boot capture. Had this
+first appeared as garbled data on an unknown 33-pin flex, the obvious suspects would
+have been bad probe contact or undersampling, and we would have chased the iPod for
+a host-side fault. Anyone reproducing this work on a systemd distro needs this rule.
+
+**Second bug, ours:** `picogen.py` originally created `PWM` objects in a REPL scope
+and kept only result tuples alive. MicroPython finalises a garbage-collected `PWM` by
+deinitialising the pin, so the signal died as soon as the block returned — leaving the
+analyzer armed on an edge that never came. Fixed by deploying a `main.py` that holds
+module-level references, which also makes the signal survive resets and replugs.
+
+---
+
+### 2026-07-26 — Phase 0 acceptance: PASSED
+
+**Action:** Captured the known Pico signal and checked it against ground truth with
+`tools/classify.py --expect`.
+
+**Result — 1 MS/s, 10 kHz reference:**
+
+| channel | freq | err | duty | err |
+|---|---|---|---|---|
+| SIG_50 | 10000.00 Hz | 0.000 % | 50.00 % | 0.00 pp |
+| SIG_25 | 10000.00 Hz | 0.000 % | 25.00 % | 0.00 pp |
+
+**Result — 100 MS/s, 1 MHz reference** (validates the top-speed path Phase 5 needs):
+both channels 1000000.00 Hz, 0.000 % error; 121024 rows, exactly as predicted.
+Median pulse widths 510/490 ns and 250/750 ns against nominal 504/496 and 252/748.
+
+**(F) CSV format confirmed empirically**, matching what was derived from source:
+header row of channel names, one row per sample, `0`/`1` per channel, **no timestamp
+column**. Row count equals `Post*(Loop+1)+Pre` exactly.
+
+**(F) The pre-trigger buffer is zero-filled if the trigger fires before it fills.**
+In the 10 kHz capture, samples 0–510 were all zero with the first edge exactly at
+sample 511 (= the 512-sample pre-trigger boundary). A free-running 10 kHz signal must
+show ~5 periods in a 511 µs window, so those samples were never sampled from the wire.
+**Consequence for phases 2–5: pre-trigger data is not trustworthy unless the device
+was demonstrably armed before the event.** `classify.py` detects this
+(`pretrigger_unfilled`) and measures duty over whole cycles instead.
+
+**(F) Boundary runs must be excluded from pulse-width stats.** The first and last runs
+in a capture are truncated by the window; including them reported a 40 ns minimum high
+time on a 1 MHz 50 % signal. `classify.py` now drops both and reports median alongside
+min, since ~3 samples of jitter exist at 100 MS/s.
+
+**Acceptance criterion from the brief — "a scripted capture produces a CSV whose
+contents match the known signal" — is met.** Phase 0 complete.
+
+**Next step:** Phase 1. Install the interposer (power off) and fix the pin-numbering
+convention from a photo before any measurement is recorded.
+
+---
+
 ## Phase 1 — DMM triage
 
 *(not started — blocked on interposer installation and pin-1 convention)*

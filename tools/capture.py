@@ -44,13 +44,15 @@ def max_post_samples(n_channels: int) -> int:
 
 PRESETS: dict[str, dict] = {
     # Phase 0 pipeline validation against a known signal.
+    # Pico GP15 = 10 kHz 50% duty, GP14 = 10 kHz 25% duty (same PWM slice).
+    # At 1 MS/s that is 100 samples per period; 4608 samples covers ~46 periods.
     "dryrun": {
-        "description": "Pipeline validation on a known periodic signal.",
+        "description": "Pipeline validation against a Pico PWM of known freq and duty.",
         "frequency": 1_000_000,
         "pre": 512,
         "post": 4096,
         "loops": 0,
-        "channels": ["SIG"],
+        "channels": ["SIG_50", "SIG_25"],
         "trigger": {"type": "edge", "channel": 0, "inverted": False},
     },
     # Phase 2: wide, slow survey of unknown pins across a boot.
@@ -88,6 +90,16 @@ PRESETS: dict[str, dict] = {
 
 
 def find_ports() -> list[str]:
+    """Locate logic analyzers only.
+
+    Match on the /dev/serial/by-id name so a Pico or any other CDC device on the
+    bus is never mistaken for an analyzer, and so a given physical unit keeps a
+    stable identity across re-enumeration. Falls back to raw tty globbing only if
+    by-id is unavailable.
+    """
+    byid = glob.glob("/dev/serial/by-id/*LogicAnalyzer*")
+    if byid:
+        return sorted(byid)
     return sorted(glob.glob("/dev/ttyACM*") + glob.glob("/dev/ttyUSB*"))
 
 
