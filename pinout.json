@@ -1,0 +1,328 @@
+{
+  "schema_version": 1,
+  "version": "v0",
+  "updated": "2026-07-26",
+  "device": {
+    "model": "Apple iPod Classic 2009 'thin' 160GB, A1238",
+    "logic_board": "820-2437-A",
+    "revision": "freemyipod 'Classic Rev B' (2009)",
+    "soc": "Samsung S5L8702",
+    "rockbox_target": "ipod6g",
+    "panel": "2.5in 320x240, 8080-series parallel MPU, 18-bit data bus"
+  },
+  "numbering_convention": "UNSET - must be fixed from an interposer photo before any measurement is recorded. header pin N == flex pin N.",
+  "panel_type": {
+    "value": null,
+    "confidence": "none",
+    "candidates": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "note": "selected board-side by (PDAT6 & 0x30) >> 4"
+  },
+  "vddio": {
+    "value": null,
+    "confidence": "none"
+  },
+  "pins": {
+    "1": {
+      "function": "unknown",
+      "voltage": null,
+      "la_device": null,
+      "la_channel": null,
+      "confidence": "none",
+      "evidence": [],
+      "notes": ""
+    },
+    "2": {
+      "function": "unknown",
+      "voltage": null,
+      "la_device": null,
+      "la_channel": null,
+      "confidence": "none",
+      "evidence": [],
+      "notes": ""
+    },
+    "3": {
+      "function": "unknown",
+      "voltage": null,
+      "la_device": null,
+      "la_channel": null,
+      "confidence": "none",
+      "evidence": [],
+      "notes": ""
+    },
+    "4": {
+      "function": "unknown",
+      "voltage": null,
+      "la_device": null,
+      "la_channel": null,
+      "confidence": "none",
+      "evidence": [],
+      "notes": ""
+    },
+    "5": {
+      "function": "unknown",
+      "voltage": null,
+      "la_device": null,
+      "la_channel": null,
+      "confidence": "none",
+      "evidence": [],
+      "notes": ""
+    },
+    "6": {
+      "function": "unknown",
+      "voltage": null,
+      "la_device": null,
+      "la_channel": null,
+      "confidence": "none",
+      "evidence": [],
+      "notes": ""
+    },
+    "7": {
+      "function": "unknown",
+      "voltage": null,
+      "la_device": null,
+      "la_channel": null,
+      "confidence": "none",
+      "evidence": [],
+      "notes": ""
+    },
+    "8": {
+      "function": "unknown",
+      "voltage": null,
+      "la_device": null,
+      "la_channel": null,
+      "confidence": "none",
+      "evidence": [],
+      "notes": ""
+    },
+    "9": {
+      "function": "unknown",
+      "voltage": null,
+      "la_device": null,
+      "la_channel": null,
+      "confidence": "none",
+      "evidence": [],
+      "notes": ""
+    },
+    "10": {
+      "function": "unknown",
+      "voltage": null,
+      "la_device": null,
+      "la_channel": null,
+      "confidence": "none",
+      "evidence": [],
+      "notes": ""
+    },
+    "11": {
+      "function": "unknown",
+      "voltage": null,
+      "la_device": null,
+      "la_channel": null,
+      "confidence": "none",
+      "evidence": [],
+      "notes": ""
+    },
+    "12": {
+      "function": "unknown",
+      "voltage": null,
+      "la_device": null,
+      "la_channel": null,
+      "confidence": "none",
+      "evidence": [],
+      "notes": ""
+    },
+    "13": {
+      "function": "unknown",
+      "voltage": null,
+      "la_device": null,
+      "la_channel": null,
+      "confidence": "none",
+      "evidence": [],
+      "notes": ""
+    },
+    "14": {
+      "function": "unknown",
+      "voltage": null,
+      "la_device": null,
+      "la_channel": null,
+      "confidence": "none",
+      "evidence": [],
+      "notes": ""
+    },
+    "15": {
+      "function": "unknown",
+      "voltage": null,
+      "la_device": null,
+      "la_channel": null,
+      "confidence": "none",
+      "evidence": [],
+      "notes": ""
+    },
+    "16": {
+      "function": "unknown",
+      "voltage": null,
+      "la_device": null,
+      "la_channel": null,
+      "confidence": "none",
+      "evidence": [],
+      "notes": ""
+    },
+    "17": {
+      "function": "unknown",
+      "voltage": null,
+      "la_device": null,
+      "la_channel": null,
+      "confidence": "none",
+      "evidence": [],
+      "notes": ""
+    },
+    "18": {
+      "function": "unknown",
+      "voltage": null,
+      "la_device": null,
+      "la_channel": null,
+      "confidence": "none",
+      "evidence": [],
+      "notes": ""
+    },
+    "19": {
+      "function": "unknown",
+      "voltage": null,
+      "la_device": null,
+      "la_channel": null,
+      "confidence": "none",
+      "evidence": [],
+      "notes": ""
+    },
+    "20": {
+      "function": "unknown",
+      "voltage": null,
+      "la_device": null,
+      "la_channel": null,
+      "confidence": "none",
+      "evidence": [],
+      "notes": ""
+    },
+    "21": {
+      "function": "unknown",
+      "voltage": null,
+      "la_device": null,
+      "la_channel": null,
+      "confidence": "none",
+      "evidence": [],
+      "notes": ""
+    },
+    "22": {
+      "function": "unknown",
+      "voltage": null,
+      "la_device": null,
+      "la_channel": null,
+      "confidence": "none",
+      "evidence": [],
+      "notes": ""
+    },
+    "23": {
+      "function": "unknown",
+      "voltage": null,
+      "la_device": null,
+      "la_channel": null,
+      "confidence": "none",
+      "evidence": [],
+      "notes": ""
+    },
+    "24": {
+      "function": "unknown",
+      "voltage": null,
+      "la_device": null,
+      "la_channel": null,
+      "confidence": "none",
+      "evidence": [],
+      "notes": ""
+    },
+    "25": {
+      "function": "unknown",
+      "voltage": null,
+      "la_device": null,
+      "la_channel": null,
+      "confidence": "none",
+      "evidence": [],
+      "notes": ""
+    },
+    "26": {
+      "function": "unknown",
+      "voltage": null,
+      "la_device": null,
+      "la_channel": null,
+      "confidence": "none",
+      "evidence": [],
+      "notes": ""
+    },
+    "27": {
+      "function": "unknown",
+      "voltage": null,
+      "la_device": null,
+      "la_channel": null,
+      "confidence": "none",
+      "evidence": [],
+      "notes": ""
+    },
+    "28": {
+      "function": "unknown",
+      "voltage": null,
+      "la_device": null,
+      "la_channel": null,
+      "confidence": "none",
+      "evidence": [],
+      "notes": ""
+    },
+    "29": {
+      "function": "unknown",
+      "voltage": null,
+      "la_device": null,
+      "la_channel": null,
+      "confidence": "none",
+      "evidence": [],
+      "notes": ""
+    },
+    "30": {
+      "function": "unknown",
+      "voltage": null,
+      "la_device": null,
+      "la_channel": null,
+      "confidence": "none",
+      "evidence": [],
+      "notes": ""
+    },
+    "31": {
+      "function": "unknown",
+      "voltage": null,
+      "la_device": null,
+      "la_channel": null,
+      "confidence": "none",
+      "evidence": [],
+      "notes": ""
+    },
+    "32": {
+      "function": "unknown",
+      "voltage": null,
+      "la_device": null,
+      "la_channel": null,
+      "confidence": "none",
+      "evidence": [],
+      "notes": ""
+    },
+    "33": {
+      "function": "unknown",
+      "voltage": null,
+      "la_device": null,
+      "la_channel": null,
+      "confidence": "none",
+      "evidence": [],
+      "notes": ""
+    }
+  }
+}

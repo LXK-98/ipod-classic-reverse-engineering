@@ -1,0 +1,6089 @@
+{
+  "source": "refs/lcd-6g.c",
+  "notes": [
+    "Only the BOOTLOADER build calls lcd_run_seq(seq_init) (lcd_init_device()).",
+    "HAVE_LCD_SLEEP is #ifndef BOOTLOADER, so bootloader and firmware expansions of lcd_init_seq_23 differ: the firmware one is prefixed with 6x NOP+DELAY (release from deep standby), the bootloader one is not.",
+    "Types 2/3 seq_awake IS lcd_init_seq_23, so a firmware sleep/wake cycle replays a full init. Types 0/1 wake is only 0x11 + 0x29.",
+    "S5L_LCD_WITH_READID is not defined for ipod6g, so Rockbox never issues a read transaction; /RD is expected idle for an entire Rockbox boot."
+  ],
+  "configs": {
+    "bootloader": {
+      "available_arrays": [
+        "lcd_deepstandby_seq_23",
+        "lcd_init_seq_0",
+        "lcd_init_seq_1",
+        "lcd_init_seq_23",
+        "lcd_sleep_seq_01"
+      ],
+      "types": {
+        "0": {
+          "cmdset_bits": 8,
+          "sequences": {
+            "init": {
+              "array": "lcd_init_seq_0",
+              "transactions": [
+                {
+                  "kind": "cmd",
+                  "value": 17,
+                  "width": 8
+                },
+                {
+                  "kind": "sleep",
+                  "ms": 30
+                },
+                {
+                  "kind": "cmd",
+                  "value": 53,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 0,
+                  "width": 8
+                },
+                {
+                  "kind": "cmd",
+                  "value": 58,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 6,
+                  "width": 8
+                },
+                {
+                  "kind": "cmd",
+                  "value": 54,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 0,
+                  "width": 8
+                },
+                {
+                  "kind": "cmd",
+                  "value": 19,
+                  "width": 8
+                },
+                {
+                  "kind": "cmd",
+                  "value": 41,
+                  "width": 8
+                }
+              ],
+              "n_cmd": 6,
+              "n_data": 3,
+              "n_bus_writes": 9,
+              "total_sleep_ms": 30
+            },
+            "sleep": {
+              "array": "lcd_sleep_seq_01",
+              "transactions": [
+                {
+                  "kind": "cmd",
+                  "value": 40,
+                  "width": 8
+                },
+                {
+                  "kind": "sleep",
+                  "ms": 50
+                },
+                {
+                  "kind": "cmd",
+                  "value": 16,
+                  "width": 8
+                },
+                {
+                  "kind": "sleep",
+                  "ms": 50
+                }
+              ],
+              "n_cmd": 2,
+              "n_data": 0,
+              "n_bus_writes": 2,
+              "total_sleep_ms": 100
+            }
+          }
+        },
+        "1": {
+          "cmdset_bits": 8,
+          "sequences": {
+            "init": {
+              "array": "lcd_init_seq_1",
+              "transactions": [
+                {
+                  "kind": "cmd",
+                  "value": 176,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 58,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 58,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 128,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 128,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 10,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 10,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 10,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 10,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 10,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 10,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 10,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 10,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 60,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 48,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 15,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 0,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 1,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 84,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 6,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 102,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 102,
+                  "width": 8
+                },
+                {
+                  "kind": "cmd",
+                  "value": 184,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 216,
+                  "width": 8
+                },
+                {
+                  "kind": "cmd",
+                  "value": 177,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 20,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 89,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 0,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 21,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 87,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 39,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 4,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 133,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 20,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 89,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 0,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 21,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 87,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 39,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 4,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 133,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 20,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 9,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 21,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 87,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 39,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 4,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 5,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 20,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 9,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 21,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 87,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 39,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 4,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 5,
+                  "width": 8
+                },
+                {
+                  "kind": "cmd",
+                  "value": 210,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 1,
+                  "width": 8
+                },
+                {
+                  "kind": "cmd",
+                  "value": 224,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 0,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 0,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 0,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 5,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 11,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 18,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 22,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 31,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 37,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 34,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 36,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 41,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 28,
+                  "width": 8
+                },
+                {
+                  "kind": "cmd",
+                  "value": 225,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 8,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 1,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 1,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 6,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 11,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 17,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 21,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 31,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 39,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 38,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 41,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 47,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 30,
+                  "width": 8
+                },
+                {
+                  "kind": "cmd",
+                  "value": 226,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 7,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 1,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 1,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 5,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 9,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 15,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 19,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 30,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 38,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 37,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 40,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 46,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 30,
+                  "width": 8
+                },
+                {
+                  "kind": "cmd",
+                  "value": 227,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 0,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 0,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 0,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 5,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 11,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 18,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 22,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 31,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 37,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 34,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 36,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 41,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 28,
+                  "width": 8
+                },
+                {
+                  "kind": "cmd",
+                  "value": 228,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 8,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 1,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 1,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 6,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 11,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 17,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 21,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 31,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 39,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 38,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 41,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 47,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 30,
+                  "width": 8
+                },
+                {
+                  "kind": "cmd",
+                  "value": 229,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 7,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 1,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 1,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 5,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 9,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 15,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 19,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 30,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 38,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 37,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 40,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 46,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 30,
+                  "width": 8
+                },
+                {
+                  "kind": "cmd",
+                  "value": 58,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 6,
+                  "width": 8
+                },
+                {
+                  "kind": "cmd",
+                  "value": 194,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 0,
+                  "width": 8
+                },
+                {
+                  "kind": "cmd",
+                  "value": 53,
+                  "width": 8
+                },
+                {
+                  "kind": "data",
+                  "value": 0,
+                  "width": 8
+                },
+                {
+                  "kind": "cmd",
+                  "value": 17,
+                  "width": 8
+                },
+                {
+                  "kind": "sleep",
+                  "ms": 60
+                },
+                {
+                  "kind": "cmd",
+                  "value": 19,
+                  "width": 8
+                },
+                {
+                  "kind": "cmd",
+                  "value": 41,
+                  "width": 8
+                }
+              ],
+              "n_cmd": 16,
+              "n_data": 134,
+              "n_bus_writes": 150,
+              "total_sleep_ms": 60
+            },
+            "sleep": {
+              "array": "lcd_sleep_seq_01",
+              "transactions": [
+                {
+                  "kind": "cmd",
+                  "value": 40,
+                  "width": 8
+                },
+                {
+                  "kind": "sleep",
+                  "ms": 50
+                },
+                {
+                  "kind": "cmd",
+                  "value": 16,
+                  "width": 8
+                },
+                {
+                  "kind": "sleep",
+                  "ms": 50
+                }
+              ],
+              "n_cmd": 2,
+              "n_data": 0,
+              "n_bus_writes": 2,
+              "total_sleep_ms": 100
+            }
+          }
+        },
+        "2": {
+          "cmdset_bits": 16,
+          "sequences": {
+            "init": {
+              "array": "lcd_init_seq_23",
+              "transactions": [
+                {
+                  "kind": "cmd",
+                  "value": 8,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 2056,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 16,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 19,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 17,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 768,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 18,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 257,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 19,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 2563,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 20,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 2574,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 21,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 2585,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 22,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 9218,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 24,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 144,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 33,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 768,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 775,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 769,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 3,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 770,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1026,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 771,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 771,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 772,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 768,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 773,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1031,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 774,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 7172,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 775,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 775,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 776,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 3,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 777,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1026,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 778,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 771,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 779,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 768,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 780,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1031,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 781,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 7172,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 784,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1799,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 785,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1031,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 786,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 774,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 787,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 771,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 788,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 768,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 789,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1031,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 790,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 7169,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 791,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1799,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 792,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1031,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 793,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 774,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 794,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 771,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 795,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 768,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 796,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1031,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 797,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 7169,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 800,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 518,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 801,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 258,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 802,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1028,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 803,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 771,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 804,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 768,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 805,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1031,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 806,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 7199,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 807,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 518,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 808,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 258,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 809,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1028,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 810,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 771,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 811,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 768,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 812,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1031,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 813,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 7199,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 1024,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 29,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 1025,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 517,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 96,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 7,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 49,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 113,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 272,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 256,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 6064,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 257,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 544,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 258,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 189,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 259,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 5376,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 260,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 259,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 261,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 261,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 7,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 33,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 1,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 272,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 3,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 560,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 2,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1280,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 7,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 49,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 48,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 7,
+                  "width": 16
+                },
+                {
+                  "kind": "sleep",
+                  "ms": 30
+                },
+                {
+                  "kind": "cmd",
+                  "value": 48,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1023,
+                  "width": 16
+                },
+                {
+                  "kind": "sleep",
+                  "ms": 60
+                },
+                {
+                  "kind": "cmd",
+                  "value": 7,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 114,
+                  "width": 16
+                },
+                {
+                  "kind": "sleep",
+                  "ms": 150
+                },
+                {
+                  "kind": "cmd",
+                  "value": 7,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 371,
+                  "width": 16
+                }
+              ],
+              "n_cmd": 73,
+              "n_data": 73,
+              "n_bus_writes": 146,
+              "total_sleep_ms": 240
+            },
+            "sleep": {
+              "array": "lcd_deepstandby_seq_23",
+              "transactions": [
+                {
+                  "kind": "cmd",
+                  "value": 7,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 370,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 48,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1023,
+                  "width": 16
+                },
+                {
+                  "kind": "sleep",
+                  "ms": 90
+                },
+                {
+                  "kind": "cmd",
+                  "value": 7,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 288,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 48,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 0,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 256,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1920,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 7,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 0,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 257,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 608,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 258,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 169,
+                  "width": 16
+                },
+                {
+                  "kind": "sleep",
+                  "ms": 30
+                },
+                {
+                  "kind": "cmd",
+                  "value": 256,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1792,
+                  "width": 16
+                }
+              ],
+              "n_cmd": 9,
+              "n_data": 9,
+              "n_bus_writes": 18,
+              "total_sleep_ms": 120
+            },
+            "awake": {
+              "array": "lcd_init_seq_23",
+              "transactions": [
+                {
+                  "kind": "cmd",
+                  "value": 8,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 2056,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 16,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 19,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 17,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 768,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 18,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 257,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 19,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 2563,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 20,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 2574,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 21,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 2585,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 22,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 9218,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 24,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 144,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 33,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 768,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 775,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 769,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 3,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 770,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1026,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 771,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 771,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 772,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 768,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 773,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1031,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 774,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 7172,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 775,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 775,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 776,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 3,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 777,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1026,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 778,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 771,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 779,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 768,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 780,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1031,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 781,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 7172,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 784,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1799,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 785,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1031,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 786,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 774,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 787,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 771,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 788,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 768,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 789,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1031,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 790,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 7169,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 791,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1799,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 792,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1031,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 793,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 774,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 794,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 771,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 795,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 768,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 796,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1031,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 797,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 7169,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 800,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 518,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 801,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 258,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 802,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1028,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 803,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 771,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 804,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 768,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 805,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1031,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 806,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 7199,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 807,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 518,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 808,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 258,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 809,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1028,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 810,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 771,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 811,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 768,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 812,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1031,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 813,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 7199,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 1024,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 29,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 1025,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 517,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 96,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 7,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 49,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 113,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 272,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 256,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 6064,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 257,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 544,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 258,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 189,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 259,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 5376,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 260,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 259,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 261,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 261,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 7,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 33,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 1,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 272,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 3,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 560,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 2,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1280,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 7,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 49,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 48,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 7,
+                  "width": 16
+                },
+                {
+                  "kind": "sleep",
+                  "ms": 30
+                },
+                {
+                  "kind": "cmd",
+                  "value": 48,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1023,
+                  "width": 16
+                },
+                {
+                  "kind": "sleep",
+                  "ms": 60
+                },
+                {
+                  "kind": "cmd",
+                  "value": 7,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 114,
+                  "width": 16
+                },
+                {
+                  "kind": "sleep",
+                  "ms": 150
+                },
+                {
+                  "kind": "cmd",
+                  "value": 7,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 371,
+                  "width": 16
+                }
+              ],
+              "n_cmd": 73,
+              "n_data": 73,
+              "n_bus_writes": 146,
+              "total_sleep_ms": 240
+            }
+          }
+        },
+        "3": {
+          "cmdset_bits": 16,
+          "sequences": {
+            "init": {
+              "array": "lcd_init_seq_23",
+              "transactions": [
+                {
+                  "kind": "cmd",
+                  "value": 8,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 2056,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 16,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 19,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 17,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 768,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 18,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 257,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 19,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 2563,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 20,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 2574,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 21,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 2585,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 22,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 9218,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 24,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 144,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 33,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 768,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 775,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 769,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 3,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 770,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1026,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 771,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 771,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 772,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 768,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 773,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1031,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 774,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 7172,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 775,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 775,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 776,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 3,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 777,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1026,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 778,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 771,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 779,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 768,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 780,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1031,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 781,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 7172,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 784,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1799,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 785,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1031,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 786,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 774,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 787,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 771,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 788,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 768,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 789,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1031,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 790,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 7169,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 791,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1799,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 792,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1031,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 793,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 774,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 794,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 771,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 795,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 768,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 796,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1031,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 797,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 7169,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 800,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 518,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 801,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 258,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 802,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1028,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 803,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 771,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 804,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 768,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 805,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1031,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 806,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 7199,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 807,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 518,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 808,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 258,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 809,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1028,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 810,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 771,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 811,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 768,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 812,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1031,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 813,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 7199,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 1024,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 29,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 1025,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 517,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 96,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 7,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 49,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 113,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 272,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 256,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 6064,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 257,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 544,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 258,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 189,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 259,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 5376,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 260,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 259,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 261,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 261,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 7,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 33,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 1,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 272,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 3,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 560,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 2,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1280,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 7,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 49,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 48,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 7,
+                  "width": 16
+                },
+                {
+                  "kind": "sleep",
+                  "ms": 30
+                },
+                {
+                  "kind": "cmd",
+                  "value": 48,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1023,
+                  "width": 16
+                },
+                {
+                  "kind": "sleep",
+                  "ms": 60
+                },
+                {
+                  "kind": "cmd",
+                  "value": 7,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 114,
+                  "width": 16
+                },
+                {
+                  "kind": "sleep",
+                  "ms": 150
+                },
+                {
+                  "kind": "cmd",
+                  "value": 7,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 371,
+                  "width": 16
+                }
+              ],
+              "n_cmd": 73,
+              "n_data": 73,
+              "n_bus_writes": 146,
+              "total_sleep_ms": 240
+            },
+            "sleep": {
+              "array": "lcd_deepstandby_seq_23",
+              "transactions": [
+                {
+                  "kind": "cmd",
+                  "value": 7,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 370,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 48,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1023,
+                  "width": 16
+                },
+                {
+                  "kind": "sleep",
+                  "ms": 90
+                },
+                {
+                  "kind": "cmd",
+                  "value": 7,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 288,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 48,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 0,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 256,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1920,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 7,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 0,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 257,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 608,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 258,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 169,
+                  "width": 16
+                },
+                {
+                  "kind": "sleep",
+                  "ms": 30
+                },
+                {
+                  "kind": "cmd",
+                  "value": 256,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1792,
+                  "width": 16
+                }
+              ],
+              "n_cmd": 9,
+              "n_data": 9,
+              "n_bus_writes": 18,
+              "total_sleep_ms": 120
+            },
+            "awake": {
+              "array": "lcd_init_seq_23",
+              "transactions": [
+                {
+                  "kind": "cmd",
+                  "value": 8,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 2056,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 16,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 19,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 17,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 768,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 18,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 257,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 19,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 2563,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 20,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 2574,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 21,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 2585,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 22,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 9218,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 24,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 144,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 33,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 768,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 775,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 769,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 3,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 770,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1026,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 771,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 771,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 772,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 768,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 773,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1031,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 774,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 7172,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 775,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 775,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 776,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 3,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 777,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1026,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 778,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 771,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 779,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 768,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 780,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1031,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 781,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 7172,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 784,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1799,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 785,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1031,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 786,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 774,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 787,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 771,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 788,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 768,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 789,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1031,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 790,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 7169,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 791,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1799,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 792,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1031,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 793,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 774,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 794,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 771,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 795,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 768,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 796,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1031,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 797,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 7169,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 800,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 518,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 801,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 258,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 802,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1028,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 803,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 771,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 804,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 768,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 805,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1031,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 806,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 7199,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 807,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 518,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 808,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 258,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 809,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1028,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 810,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 771,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 811,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 768,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 812,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1031,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 813,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 7199,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 1024,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 29,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 1025,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 517,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 96,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 7,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 49,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 113,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 272,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 256,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 6064,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 257,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 544,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 258,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 189,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 259,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 5376,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 260,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 259,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 261,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 261,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 7,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 33,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 1,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 272,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 3,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 560,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 2,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1280,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 7,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 49,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 48,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 7,
+                  "width": 16
+                },
+                {
+                  "kind": "sleep",
+                  "ms": 30
+                },
+                {
+                  "kind": "cmd",
+                  "value": 48,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1023,
+                  "width": 16
+                },
+                {
+                  "kind": "sleep",
+                  "ms": 60
+                },
+                {
+                  "kind": "cmd",
+                  "value": 7,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 114,
+                  "width": 16
+                },
+                {
+                  "kind": "sleep",
+                  "ms": 150
+                },
+                {
+                  "kind": "cmd",
+                  "value": 7,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 371,
+                  "width": 16
+                }
+              ],
+              "n_cmd": 73,
+              "n_data": 73,
+              "n_bus_writes": 146,
+              "total_sleep_ms": 240
+            }
+          }
+        }
+      }
+    },
+    "firmware": {
+      "available_arrays": [
+        "lcd_awake_seq_01",
+        "lcd_deepstandby_seq_23",
+        "lcd_init_seq_23",
+        "lcd_sleep_seq_01"
+      ],
+      "types": {
+        "0": {
+          "cmdset_bits": 8,
+          "sequences": {
+            "sleep": {
+              "array": "lcd_sleep_seq_01",
+              "transactions": [
+                {
+                  "kind": "cmd",
+                  "value": 40,
+                  "width": 8
+                },
+                {
+                  "kind": "sleep",
+                  "ms": 50
+                },
+                {
+                  "kind": "cmd",
+                  "value": 16,
+                  "width": 8
+                },
+                {
+                  "kind": "sleep",
+                  "ms": 50
+                }
+              ],
+              "n_cmd": 2,
+              "n_data": 0,
+              "n_bus_writes": 2,
+              "total_sleep_ms": 100
+            },
+            "awake": {
+              "array": "lcd_awake_seq_01",
+              "transactions": [
+                {
+                  "kind": "cmd",
+                  "value": 17,
+                  "width": 8
+                },
+                {
+                  "kind": "sleep",
+                  "ms": 60
+                },
+                {
+                  "kind": "cmd",
+                  "value": 41,
+                  "width": 8
+                }
+              ],
+              "n_cmd": 2,
+              "n_data": 0,
+              "n_bus_writes": 2,
+              "total_sleep_ms": 60
+            }
+          }
+        },
+        "1": {
+          "cmdset_bits": 8,
+          "sequences": {
+            "sleep": {
+              "array": "lcd_sleep_seq_01",
+              "transactions": [
+                {
+                  "kind": "cmd",
+                  "value": 40,
+                  "width": 8
+                },
+                {
+                  "kind": "sleep",
+                  "ms": 50
+                },
+                {
+                  "kind": "cmd",
+                  "value": 16,
+                  "width": 8
+                },
+                {
+                  "kind": "sleep",
+                  "ms": 50
+                }
+              ],
+              "n_cmd": 2,
+              "n_data": 0,
+              "n_bus_writes": 2,
+              "total_sleep_ms": 100
+            },
+            "awake": {
+              "array": "lcd_awake_seq_01",
+              "transactions": [
+                {
+                  "kind": "cmd",
+                  "value": 17,
+                  "width": 8
+                },
+                {
+                  "kind": "sleep",
+                  "ms": 60
+                },
+                {
+                  "kind": "cmd",
+                  "value": 41,
+                  "width": 8
+                }
+              ],
+              "n_cmd": 2,
+              "n_data": 0,
+              "n_bus_writes": 2,
+              "total_sleep_ms": 60
+            }
+          }
+        },
+        "2": {
+          "cmdset_bits": 16,
+          "sequences": {
+            "sleep": {
+              "array": "lcd_deepstandby_seq_23",
+              "transactions": [
+                {
+                  "kind": "cmd",
+                  "value": 7,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 370,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 48,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1023,
+                  "width": 16
+                },
+                {
+                  "kind": "sleep",
+                  "ms": 90
+                },
+                {
+                  "kind": "cmd",
+                  "value": 7,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 288,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 48,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 0,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 256,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1920,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 7,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 0,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 257,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 608,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 258,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 169,
+                  "width": 16
+                },
+                {
+                  "kind": "sleep",
+                  "ms": 30
+                },
+                {
+                  "kind": "cmd",
+                  "value": 256,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1792,
+                  "width": 16
+                }
+              ],
+              "n_cmd": 9,
+              "n_data": 9,
+              "n_bus_writes": 18,
+              "total_sleep_ms": 120
+            },
+            "awake": {
+              "array": "lcd_init_seq_23",
+              "transactions": [
+                {
+                  "kind": "cmd",
+                  "value": 0,
+                  "width": 16
+                },
+                {
+                  "kind": "sleep",
+                  "ms": 1.28
+                },
+                {
+                  "kind": "cmd",
+                  "value": 0,
+                  "width": 16
+                },
+                {
+                  "kind": "sleep",
+                  "ms": 1.28
+                },
+                {
+                  "kind": "cmd",
+                  "value": 0,
+                  "width": 16
+                },
+                {
+                  "kind": "sleep",
+                  "ms": 1.28
+                },
+                {
+                  "kind": "cmd",
+                  "value": 0,
+                  "width": 16
+                },
+                {
+                  "kind": "sleep",
+                  "ms": 1.28
+                },
+                {
+                  "kind": "cmd",
+                  "value": 0,
+                  "width": 16
+                },
+                {
+                  "kind": "sleep",
+                  "ms": 1.28
+                },
+                {
+                  "kind": "cmd",
+                  "value": 0,
+                  "width": 16
+                },
+                {
+                  "kind": "sleep",
+                  "ms": 1.28
+                },
+                {
+                  "kind": "cmd",
+                  "value": 8,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 2056,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 16,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 19,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 17,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 768,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 18,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 257,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 19,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 2563,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 20,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 2574,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 21,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 2585,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 22,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 9218,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 24,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 144,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 33,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 768,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 775,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 769,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 3,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 770,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1026,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 771,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 771,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 772,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 768,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 773,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1031,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 774,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 7172,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 775,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 775,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 776,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 3,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 777,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1026,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 778,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 771,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 779,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 768,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 780,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1031,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 781,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 7172,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 784,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1799,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 785,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1031,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 786,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 774,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 787,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 771,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 788,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 768,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 789,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1031,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 790,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 7169,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 791,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1799,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 792,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1031,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 793,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 774,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 794,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 771,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 795,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 768,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 796,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1031,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 797,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 7169,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 800,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 518,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 801,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 258,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 802,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1028,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 803,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 771,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 804,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 768,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 805,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1031,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 806,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 7199,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 807,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 518,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 808,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 258,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 809,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1028,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 810,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 771,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 811,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 768,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 812,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1031,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 813,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 7199,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 1024,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 29,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 1025,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 517,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 96,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 7,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 49,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 113,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 272,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 256,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 6064,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 257,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 544,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 258,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 189,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 259,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 5376,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 260,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 259,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 261,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 261,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 7,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 33,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 1,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 272,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 3,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 560,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 2,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1280,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 7,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 49,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 48,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 7,
+                  "width": 16
+                },
+                {
+                  "kind": "sleep",
+                  "ms": 30
+                },
+                {
+                  "kind": "cmd",
+                  "value": 48,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1023,
+                  "width": 16
+                },
+                {
+                  "kind": "sleep",
+                  "ms": 60
+                },
+                {
+                  "kind": "cmd",
+                  "value": 7,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 114,
+                  "width": 16
+                },
+                {
+                  "kind": "sleep",
+                  "ms": 150
+                },
+                {
+                  "kind": "cmd",
+                  "value": 7,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 371,
+                  "width": 16
+                }
+              ],
+              "n_cmd": 79,
+              "n_data": 73,
+              "n_bus_writes": 152,
+              "total_sleep_ms": 247.68
+            }
+          }
+        },
+        "3": {
+          "cmdset_bits": 16,
+          "sequences": {
+            "sleep": {
+              "array": "lcd_deepstandby_seq_23",
+              "transactions": [
+                {
+                  "kind": "cmd",
+                  "value": 7,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 370,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 48,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1023,
+                  "width": 16
+                },
+                {
+                  "kind": "sleep",
+                  "ms": 90
+                },
+                {
+                  "kind": "cmd",
+                  "value": 7,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 288,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 48,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 0,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 256,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1920,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 7,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 0,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 257,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 608,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 258,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 169,
+                  "width": 16
+                },
+                {
+                  "kind": "sleep",
+                  "ms": 30
+                },
+                {
+                  "kind": "cmd",
+                  "value": 256,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1792,
+                  "width": 16
+                }
+              ],
+              "n_cmd": 9,
+              "n_data": 9,
+              "n_bus_writes": 18,
+              "total_sleep_ms": 120
+            },
+            "awake": {
+              "array": "lcd_init_seq_23",
+              "transactions": [
+                {
+                  "kind": "cmd",
+                  "value": 0,
+                  "width": 16
+                },
+                {
+                  "kind": "sleep",
+                  "ms": 1.28
+                },
+                {
+                  "kind": "cmd",
+                  "value": 0,
+                  "width": 16
+                },
+                {
+                  "kind": "sleep",
+                  "ms": 1.28
+                },
+                {
+                  "kind": "cmd",
+                  "value": 0,
+                  "width": 16
+                },
+                {
+                  "kind": "sleep",
+                  "ms": 1.28
+                },
+                {
+                  "kind": "cmd",
+                  "value": 0,
+                  "width": 16
+                },
+                {
+                  "kind": "sleep",
+                  "ms": 1.28
+                },
+                {
+                  "kind": "cmd",
+                  "value": 0,
+                  "width": 16
+                },
+                {
+                  "kind": "sleep",
+                  "ms": 1.28
+                },
+                {
+                  "kind": "cmd",
+                  "value": 0,
+                  "width": 16
+                },
+                {
+                  "kind": "sleep",
+                  "ms": 1.28
+                },
+                {
+                  "kind": "cmd",
+                  "value": 8,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 2056,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 16,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 19,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 17,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 768,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 18,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 257,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 19,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 2563,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 20,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 2574,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 21,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 2585,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 22,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 9218,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 24,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 144,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 33,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 768,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 775,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 769,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 3,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 770,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1026,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 771,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 771,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 772,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 768,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 773,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1031,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 774,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 7172,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 775,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 775,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 776,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 3,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 777,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1026,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 778,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 771,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 779,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 768,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 780,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1031,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 781,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 7172,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 784,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1799,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 785,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1031,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 786,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 774,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 787,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 771,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 788,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 768,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 789,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1031,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 790,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 7169,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 791,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1799,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 792,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1031,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 793,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 774,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 794,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 771,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 795,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 768,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 796,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1031,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 797,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 7169,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 800,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 518,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 801,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 258,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 802,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1028,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 803,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 771,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 804,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 768,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 805,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1031,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 806,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 7199,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 807,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 518,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 808,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 258,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 809,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1028,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 810,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 771,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 811,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 768,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 812,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1031,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 813,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 7199,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 1024,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 29,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 1025,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 517,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 96,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 7,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 49,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 113,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 272,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 256,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 6064,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 257,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 544,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 258,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 189,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 259,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 5376,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 260,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 259,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 261,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 261,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 7,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 33,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 1,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 272,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 3,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 560,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 2,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1280,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 7,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 49,
+                  "width": 16
+                },
+                {
+                  "kind": "cmd",
+                  "value": 48,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 7,
+                  "width": 16
+                },
+                {
+                  "kind": "sleep",
+                  "ms": 30
+                },
+                {
+                  "kind": "cmd",
+                  "value": 48,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 1023,
+                  "width": 16
+                },
+                {
+                  "kind": "sleep",
+                  "ms": 60
+                },
+                {
+                  "kind": "cmd",
+                  "value": 7,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 114,
+                  "width": 16
+                },
+                {
+                  "kind": "sleep",
+                  "ms": 150
+                },
+                {
+                  "kind": "cmd",
+                  "value": 7,
+                  "width": 16
+                },
+                {
+                  "kind": "data",
+                  "value": 371,
+                  "width": 16
+                }
+              ],
+              "n_cmd": 79,
+              "n_data": 73,
+              "n_bus_writes": 152,
+              "total_sleep_ms": 247.68
+            }
+          }
+        }
+      }
+    }
+  }
+}
