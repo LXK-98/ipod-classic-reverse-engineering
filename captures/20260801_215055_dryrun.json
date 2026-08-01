@@ -1,0 +1,153 @@
+{
+  "capture_id": "20260801_215055_dryrun",
+  "timestamp": "2026-08-01T21:51:04",
+  "preset": "dryrun",
+  "preset_description": "Pipeline validation against a Pico PWM of known freq and duty.",
+  "probe_map": "v1-interposer-convention",
+  "note": "Phase 5 GREEN fill retry (screen currently blue). Expect 0x07E0: bit10=1 AND bit15=0 - the only stimulus that separates pins 9 and 14.",
+  "port": "/dev/serial/by-id/usb-Dr._Gusman_LogicAnalyzer_5033592712586E1F-if00",
+  "session": {
+    "Frequency": 100000000,
+    "PreTriggerSamples": 64,
+    "PostTriggerSamples": 508,
+    "LoopCount": 63,
+    "MeasureBursts": true,
+    "CaptureChannels": [
+      {
+        "ChannelNumber": 0,
+        "ChannelName": "P01",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 1,
+        "ChannelName": "P02",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 2,
+        "ChannelName": "P07",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 3,
+        "ChannelName": "P09",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 4,
+        "ChannelName": "P10",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 5,
+        "ChannelName": "P11",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 6,
+        "ChannelName": "P12",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 7,
+        "ChannelName": "P13",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 8,
+        "ChannelName": "P14",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 9,
+        "ChannelName": "P15",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 10,
+        "ChannelName": "P16",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 11,
+        "ChannelName": "P18",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 12,
+        "ChannelName": "P19",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 13,
+        "ChannelName": "P20",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 14,
+        "ChannelName": "P21",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 15,
+        "ChannelName": "P22",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 16,
+        "ChannelName": "P23",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 17,
+        "ChannelName": "P24",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 18,
+        "ChannelName": "P25",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 19,
+        "ChannelName": "P27",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 20,
+        "ChannelName": "P28",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 21,
+        "ChannelName": "P29",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 22,
+        "ChannelName": "P30",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 23,
+        "ChannelName": "P32",
+        "Hidden": false
+      }
+    ],
+    "TriggerType": 0,
+    "TriggerChannel": 19,
+    "TriggerInverted": true,
+    "TriggerBitCount": 1,
+    "TriggerPattern": 0
+  },
+  "command": [
+    "/home/alex/Documents/Code/ipod-classic-reverse-engineering/vendor/TerminalCapture",
+    "capture",
+    "/dev/serial/by-id/usb-Dr._Gusman_LogicAnalyzer_5033592712586E1F-if00",
+    "/home/alex/Documents/Code/ipod-classic-reverse-engineering/captures/20260801_215055_dryrun.tcs",
+    "/home/alex/Documents/Code/ipod-classic-reverse-engineering/captures/20260801_215055_dryrun.csv"
+  ],
+  "returncode": 0,
+  "csv": "20260801_215055_dryrun.csv",
+  "csv_bytes": 1563744
+}

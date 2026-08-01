@@ -973,3 +973,53 @@ and still has CH13-16 dead; the same reflow should fix it.
 **Method note:** the "dead group of exactly 4 contiguous channels" signature is worth
 remembering — it points at a whole translator, and because OE gates all four outputs, a
 single joint explains it. Supplies reading correct does *not* exonerate the device.
+
+### 2026-08-01 — Colour fills: bits 6 confirmed, **bit 10 anomaly is real**
+
+**Action:** Used Rockbox's `lamp` plugin (solid-colour flashlight) for known fills. Its
+palette is hard-coded in `apps/plugins/lamp.c`, so expected bus words are exact.
+
+**Result — the window-setup commands decode byte-perfectly on every fill:**
+`0x210/0x0000, 0x211/0x013F, 0x212/0x0000, 0x213/0x00EF, 0x200/0x0000, 0x201/0x0000,
+0x202` — a full-screen 320x240 window, exactly as `displaylcd_setup()` should emit.
+
+**(F) bit 6 = pin 19 CONFIRMED.** `0x00EF` (= 239 = vertical end for a 240-row panel) has
+bit 6 set and decoded exactly. Re-running with `--no-predicted` yields `0x00AF`, the wrong
+value — so including pin 19 as bit 6 is precisely what makes the known parameter correct.
+
+**(F) Pixel fills:**
+
+| fill | expected | observed | delta |
+|---|---|---|---|
+| blue | `0x001F` | `0x001F` | **exact** |
+| red | `0xF800` | `0xFC00` | bit 10 only |
+| green | `0x07E0` | `0x03E0` | bit 10 only |
+
+**(F) The bit-10 error is real, not a mis-set colour.** No lamp palette entry produces
+`0xFC00` or `0x03E0`. Both errors are a single bit, the same bit, in opposite directions
+(red: reads 1, should be 0; green: reads 0, should be 1).
+
+**(F) Pin 14 takes pin 9's value.** In every capture P09 == P14 byte-for-byte. Red has
+bit15=1/bit10=0 and both read 1; green has bit15=0/bit10=1 and both read 0. Note that
+**red and green are the ONLY two colours in the lamp palette where bit 15 and bit 10
+differ** — white/yellow/orange/violet have both set, blue/indigo/black both clear. The
+two discriminating cases both fail the same way.
+
+**CONTRADICTION that remains unexplained.** A simple short between pins 9 and 14, with
+bit 15 winning contention, fits both fills — but it cannot fit the init capture, where
+bit 15 is constant 0 while bit 10 varies, and P09/P14 tracked **bit 10** exactly across 68
+writes. A short cannot win contention in frame mode and lose it in command mode.
+
+One structural difference between the two modes is documented in `lcd-s5l8702.c` and may
+be relevant: command mode uses `LCD_MODE_P18` while frame mode uses `LCD_MODE_P16` with
+`APB[15:0] -> D[17:10, 8:1]`, i.e. **two physical lanes (D9, D0) are unused during pixel
+writes**. Whether the APB-bit-to-physical-lane mapping differs between the modes is
+explicitly marked "TBC" in the Rockbox source. Simple relabelling models were tried
+against the blue fill and do not fit, so this is not yet an explanation - only a lead.
+
+**Status of the lane map:** bits 0-9 and 11-13 are confirmed against three independent
+stimuli (init sequence, window-setup commands, colour fills). Bit 6 confirmed. **Bits 10,
+14 and 15 are NOT settled** and must not be treated as final.
+
+**Outstanding test, never yet performed:** DMM continuity between header pins 9 and 14
+with the iPod powered off.
