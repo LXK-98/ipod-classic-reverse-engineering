@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "version": "v3",
+  "version": "v4.1",
   "updated": "2026-08-01",
   "device": {
     "model": "Apple iPod Classic 2009 'thin' 160GB, A1238",
@@ -146,7 +146,7 @@
       "r_to_gnd_ohms": 0.6
     },
     "7": {
-      "function": "bus-or-TE? fast",
+      "function": "TE (tearing effect)",
       "voltage": 1.8,
       "header_pin": 7,
       "net": "/8",
@@ -154,12 +154,12 @@
       "header_row": 4,
       "la_device": null,
       "la_channel": null,
-      "confidence": "low",
+      "confidence": "high",
       "evidence": [
         "2026-08-01_ground-sweep.tsv",
         "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "Bursts at ~15 ms cadence, distinct from the 1 s group. TE (~60-70 Hz) or a data lane with different activity.",
+      "notes": "60 us pulse every 14.72 ms = 67.9 Hz, the panel refresh rate. Panel output.",
       "r_to_gnd_ohms": 13500000.0
     },
     "8": {
@@ -180,7 +180,7 @@
       "r_to_gnd_ohms": 0.6
     },
     "9": {
-      "function": "D-bus APB bit 15 (predicted)",
+      "function": "D-bus RED field (dup. of pin 14)",
       "voltage": 1.8,
       "header_pin": 9,
       "net": "/10",
@@ -188,17 +188,17 @@
       "header_row": 5,
       "la_device": null,
       "la_channel": null,
-      "confidence": "medium",
+      "confidence": "high",
       "evidence": [
         "2026-08-01_ground-sweep.tsv",
         "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "Predicted by the descending pin->bit run that fits all 10 confirmed lanes (skipping GND pins 17 and 8). NOT yet observed: probe reads constant 0. | Frame mode: RED channel (driven high only by the red fill).",
+      "notes": "Red channel. Byte-identical to pin 14 in every capture, and NOT shorted (6.66 MOhm) - this is the replicated lane of the 5->6 bit expansion.",
       "r_to_gnd_ohms": 3800000.0,
       "rgb_field": "RED"
     },
     "10": {
-      "function": "D-bus APB bit 14 (predicted)",
+      "function": "D-bus RED field",
       "voltage": 1.8,
       "header_pin": 10,
       "net": "/11",
@@ -206,12 +206,12 @@
       "header_row": 5,
       "la_device": null,
       "la_channel": null,
-      "confidence": "medium",
+      "confidence": "high",
       "evidence": [
         "2026-08-01_ground-sweep.tsv",
         "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "Predicted by the descending pin->bit run that fits all 10 confirmed lanes (skipping GND pins 17 and 8). NOT yet observed: probe reads constant 0. | Frame mode: RED channel (driven high only by the red fill).",
+      "notes": "Red channel: high only on red and white fills.",
       "r_to_gnd_ohms": 3700000.0,
       "rgb_field": "RED"
     },
@@ -359,7 +359,7 @@
       "rgb_field": "GREEN"
     },
     "19": {
-      "function": "D-bus APB bit 6 (predicted)",
+      "function": "D-bus GREEN field (APB bit 6)",
       "voltage": 1.8,
       "header_pin": 19,
       "net": "/20",
@@ -367,12 +367,12 @@
       "header_row": 10,
       "la_device": null,
       "la_channel": null,
-      "confidence": "medium",
+      "confidence": "high",
       "evidence": [
         "2026-08-01_ground-sweep.tsv",
         "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "Predicted by the descending pin->bit run that fits all 10 confirmed lanes (skipping GND pins 17 and 8). NOT yet observed: probe reads constant 0. | Frame mode: GREEN channel (driven high only by the green fill).",
+      "notes": "CONFIRMED: 0x00EF (vertical end = 239) decodes correctly only with this pin as bit 6; excluding it yields 0x00AF. Green channel in frame mode.",
       "r_to_gnd_ohms": 3700000.0,
       "rgb_field": "GREEN"
     },
@@ -485,7 +485,7 @@
       "rgb_field": "BLUE"
     },
     "26": {
-      "function": "PWR ~1.8V",
+      "function": "VDDIO 1.8V rail",
       "voltage": 1.8,
       "header_pin": 26,
       "net": "/27",
@@ -493,12 +493,12 @@
       "header_row": 13,
       "la_device": null,
       "la_channel": null,
-      "confidence": "medium",
+      "confidence": "high",
       "evidence": [
         "2026-08-01_ground-sweep.tsv",
         "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "Steady rail. VDDIO candidate.",
+      "notes": "Stable 1.8 V; used all session as the shifter VREF with no instability.",
       "r_to_gnd_ohms": 3700000.0
     },
     "27": {
@@ -536,7 +536,7 @@
       "r_to_gnd_ohms": 3800000.0
     },
     "29": {
-      "function": "control? active-low",
+      "function": "/CS (chip select, active low)",
       "voltage": 1.8,
       "header_pin": 29,
       "net": "/30",
@@ -544,16 +544,16 @@
       "header_row": 15,
       "la_device": null,
       "la_channel": null,
-      "confidence": "low",
+      "confidence": "high",
       "evidence": [
         "2026-08-01_ground-sweep.tsv",
         "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "Idles HIGH ~1.8 V, pulses LOW during update bursts. Active-low control candidate (/CS, /WR, /RD, /RESET).",
+      "notes": "Idles high; asserted low in long envelopes framing write bursts (85.7% duty over 164 ms).",
       "r_to_gnd_ohms": 3700000.0
     },
     "30": {
-      "function": "PWR ~1.8V",
+      "function": "/RD or /RESET (active low, idle high)",
       "voltage": 1.8,
       "header_pin": 30,
       "net": "/31",
@@ -566,7 +566,7 @@
         "2026-08-01_ground-sweep.tsv",
         "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "Steady rail. VDDIO candidate.",
+      "notes": "Constant high over 164 ms. Assigned by elimination: all other functions are placed, and these are the only two pins left for /RD and /RESET. Which is which is undetermined - Rockbox never reads (S5L_LCD_WITH_READID undefined) and /RESET only moves at power-on, so neither toggles in normal operation.",
       "r_to_gnd_ohms": 500000.0
     },
     "31": {
@@ -587,7 +587,7 @@
       "r_to_gnd_ohms": 1.2
     },
     "32": {
-      "function": "PWR ~1.8V",
+      "function": "/RD or /RESET (active low, idle high)",
       "voltage": 1.8,
       "header_pin": 32,
       "net": "/33",
@@ -600,11 +600,11 @@
         "2026-08-01_ground-sweep.tsv",
         "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "Steady rail. VDDIO candidate.",
+      "notes": "Constant high over 164 ms. Assigned by elimination: all other functions are placed, and these are the only two pins left for /RD and /RESET. Which is which is undetermined - Rockbox never reads (S5L_LCD_WITH_READID undefined) and /RESET only moves at power-on, so neither toggles in normal operation.",
       "r_to_gnd_ohms": 70000.0
     },
     "33": {
-      "function": "PWR ~3.0V",
+      "function": "PWR 3.0V rail",
       "voltage": 3.0,
       "header_pin": 33,
       "net": "/34",
@@ -612,12 +612,12 @@
       "header_row": 17,
       "la_device": null,
       "la_channel": null,
-      "confidence": "medium",
+      "confidence": "high",
       "evidence": [
         "2026-08-01_ground-sweep.tsv",
         "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "Steady rail, distinct from the ~1.8 V group.",
+      "notes": "3.0 V - too high for the 1.8 V logic domain, so a genuine supply.",
       "r_to_gnd_ohms": 266000.0
     },
     "34": {
@@ -733,13 +733,10 @@
       "11": 13,
       "21": 4,
       "22": 3,
-      "20": 5
+      "20": 5,
+      "19": 6
     },
-    "predicted": {
-      "19": 6,
-      "10": 14,
-      "9": 15
-    },
+    "predicted": {},
     "model": "flex pin -> APB bit descends monotonically, skipping GND pins 17 and 8",
     "evidence": "captures/20260801_193606_dryrun.csv burst 7, 69 writes vs firmware seq_awake"
   },

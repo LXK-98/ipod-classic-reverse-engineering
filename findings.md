@@ -1127,3 +1127,38 @@ constant on that timescale by construction.
 envelope between bursts and resolve TE's period. Aliasing of /WR is irrelevant there
 since only the slow signals matter - but the lesson from the 1 MS/s trap applies: do not
 read any fast-signal statistics off that capture.
+
+### 2026-08-01 — **PINOUT COMPLETE.** TE and /CS identified; all 34 pins assigned
+
+**Action:** Slow wide capture, 200 kS/s over 163.8 ms, to expose signals that are
+constant by construction inside a ~325 us burst window.
+
+**(F) Pin 7 = TE (tearing effect).** 60 us pulse every **14.72 ms = 67.9 Hz** — one
+narrow pulse per frame at the panel refresh rate. This also retro-explains the very first
+powered DMM sweep, which recorded pin 7 as "~2 V spikes every ~15 ms".
+
+**(F) Pin 29 = /CS.** Idles high (85.7 % duty over the window), pulled low in long
+envelopes that frame the write bursts.
+
+**(F) Pins 30 and 32 = /RD and /RESET** (which is which undetermined), by elimination:
+
+```
+34 = 5 GND + 2 backlight + 18 data + /WR + D/C + TE + /CS
+     + 1.8 V rail (26) + 3.0 V rail (33) + analog (34) + [30, 32]
+```
+
+Pin 26 is a genuine rail (it fed the shifter VREF stably all session) and pin 33 is 3.0 V,
+outside the 1.8 V logic domain. Neither 30 nor 32 ever toggles, which is *expected*:
+Rockbox never issues a read (`S5L_LCD_WITH_READID` undefined for ipod6g) and /RESET moves
+only at power-on. Separating them needs a cold-boot capture, which in turn needs VREF
+derived independently of the iPod (see the earlier divider note).
+
+**As predicted, /WR aliased to a meaningless "18 kHz" at 200 kS/s** and was ignored. The
+constraint was written into the capture's sidecar note before the capture ran.
+
+**Deliverable #1 complete: all 34 pins assigned.** 28 high confidence, 5 medium, 1 low.
+`PINOUT.md` is generated from `pinout.json` by `tools/report.py` and must not be
+hand-edited.
+
+**Remaining low-confidence item:** pin 34, ~1.5 V with ~100 mV ripple at ~80 us
+(12.5 kHz) — a switching or bias node rather than logic, still unidentified.
