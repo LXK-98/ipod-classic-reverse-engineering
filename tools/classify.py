@@ -28,26 +28,16 @@ from pathlib import Path
 
 import numpy as np
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import capio
+
 REPO = Path(__file__).resolve().parent.parent
 
 
 def load(csv_path: Path):
     """Return (names, samples[n_samples, n_channels] uint8, sample_rate)."""
-    with csv_path.open() as f:
-        names = f.readline().strip().split(",")
-    data = np.loadtxt(csv_path, delimiter=",", skiprows=1, dtype=np.uint8, ndmin=2)
-    if data.shape[1] != len(names):
-        raise SystemExit(f"header has {len(names)} names but rows have {data.shape[1]} columns")
-
-    rate = None
-    sidecar = csv_path.with_suffix(".json")
-    if sidecar.exists():
-        rate = json.loads(sidecar.read_text())["session"]["Frequency"]
-    else:
-        tcs = csv_path.with_suffix(".tcs")
-        if tcs.exists():
-            rate = json.loads(tcs.read_text())["Frequency"]
-    return names, data, rate
+    names, data = capio.load(csv_path)
+    return names, data, capio.sample_rate(csv_path)
 
 
 def runs(col: np.ndarray) -> tuple[np.ndarray, np.ndarray]:

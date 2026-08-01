@@ -1,8 +1,17 @@
 # Lab notebook
 
-Running log. Newest entries at the bottom of each phase. Every entry: date, action,
-result, interpretation, next step. **F** = verified fact, **H** = hypothesis,
-**E** = collaborator estimate (not measured).
+Full chronological log of the investigation, **including the wrong turns** — several
+findings only make sense alongside the hypotheses they replaced.
+
+For the distilled results see [FINDINGS.md](FINDINGS.md), [PROTOCOL.md](PROTOCOL.md) and
+[../PINOUT.md](../PINOUT.md). For what is still unresolved see
+[OPEN-QUESTIONS.md](OPEN-QUESTIONS.md).
+
+**Notation:** **F** = verified fact · **H** = hypothesis · **E** = estimate, not measured.
+
+> Note: entries dated 2026-07-26 were written during setup; bench work is dated
+> 2026-08-01. Some early conclusions are corrected by later entries — corrections are
+> marked in place rather than edited out.
 
 ---
 

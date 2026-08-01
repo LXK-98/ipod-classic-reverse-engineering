@@ -22,6 +22,9 @@ from pathlib import Path
 
 import numpy as np
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import capio
+
 REPO = Path(__file__).resolve().parent.parent
 
 
@@ -53,16 +56,13 @@ def main() -> int:
                     help="dump raw per-lane bit patterns instead of assembled words")
     args = ap.parse_args()
 
-    if not args.csv.exists():
-        raise SystemExit(f"capture not found: {args.csv}")
-    names = args.csv.open().readline().strip().split(",")
-    data = np.loadtxt(args.csv, delimiter=",", skiprows=1, dtype=np.uint8, ndmin=2)
+    names, data = capio.load(args.csv)
     if args.wr not in names:
         raise SystemExit(f"/WR channel {args.wr!r} not in capture ({names})")
 
     wr = names.index(args.wr)
     rise = np.flatnonzero(np.diff(data[:, wr].astype(np.int8)) == 1) + 1
-    print(f"capture      : {args.csv.name}")
+    print(f"capture      : {capio.resolve(args.csv).name}")
     print(f"samples      : {len(data)}   channels: {len(names)}")
     print(f"/WR writes   : {len(rise)}")
     if len(rise) == 0:

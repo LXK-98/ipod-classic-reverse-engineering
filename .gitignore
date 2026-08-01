@@ -1,8 +1,20 @@
+# gusmanb LogicAnalyzer binaries - download from that project's Releases
 vendor/
+
+# Python
 __pycache__/
 *.pyc
 .venv/
-display-analyzer-board/.history/
-display-analyzer-board/fp-info-cache
-display-analyzer-board/display-analyzer-board-backups/
-display-analyzer-board/production/
+
+# KiCad working files, caches and auto-backups
+hardware/interposer/.history/
+hardware/interposer/fp-info-cache
+hardware/interposer/display-analyzer-board-backups/
+hardware/interposer/production/
+*-backups/
+*.kicad_prl
+*.lck
+fp-info-cache
+
+# generated locally
+frame.png

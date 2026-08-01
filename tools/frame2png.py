@@ -25,6 +25,9 @@ from pathlib import Path
 
 import numpy as np
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import capio
+
 REPO = Path(__file__).resolve().parent.parent
 
 R_HORIZ_START, R_HORIZ_END = 0x210, 0x211
@@ -59,10 +62,7 @@ def main() -> int:
     ap.add_argument("--scale", type=int, default=1, help="nearest-neighbour upscale")
     args = ap.parse_args()
 
-    if not args.csv.exists():
-        raise SystemExit(f"capture not found: {args.csv}")
-    names = args.csv.open().readline().strip().split(",")
-    data = np.loadtxt(args.csv, delimiter=",", skiprows=1, dtype=np.uint8, ndmin=2)
+    names, data = capio.load(args.csv)
     for ch in (args.wr, args.dc):
         if ch not in names:
             raise SystemExit(f"channel {ch!r} missing from capture")
