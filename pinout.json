@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "version": "v2-draft",
+  "version": "v2",
   "updated": "2026-08-01",
   "device": {
     "model": "Apple iPod Classic 2009 'thin' 160GB, A1238",
@@ -365,7 +365,7 @@
       "r_to_gnd_ohms": 3700000.0
     },
     "20": {
-      "function": "D-bus APB bit 5 (predicted)",
+      "function": "D-bus APB bit 5",
       "voltage": 1.8,
       "header_pin": 20,
       "net": "/21",
@@ -373,12 +373,12 @@
       "header_row": 10,
       "la_device": null,
       "la_channel": null,
-      "confidence": "medium",
+      "confidence": "high",
       "evidence": [
         "2026-08-01_ground-sweep.tsv",
         "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "Predicted by the descending pin->bit run that fits all 10 confirmed lanes (skipping GND pins 17 and 8). NOT yet observed: probe reads constant 0.",
+      "notes": "CONFIRMED on LA-B: exact 68-write match to bit5.",
       "r_to_gnd_ohms": 3700000.0
     },
     "21": {
@@ -399,7 +399,7 @@
       "r_to_gnd_ohms": 600000.0
     },
     "22": {
-      "function": "D-bus APB bit 3 (predicted)",
+      "function": "D-bus APB bit 3",
       "voltage": 1.8,
       "header_pin": 22,
       "net": "/23",
@@ -407,12 +407,12 @@
       "header_row": 11,
       "la_device": null,
       "la_channel": null,
-      "confidence": "medium",
+      "confidence": "high",
       "evidence": [
         "2026-08-01_ground-sweep.tsv",
         "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "Predicted by the descending pin->bit run that fits all 10 confirmed lanes (skipping GND pins 17 and 8). NOT yet observed: probe reads constant 0.",
+      "notes": "CONFIRMED on LA-B: exact 68-write match to bit3.",
       "r_to_gnd_ohms": 500000.0
     },
     "23": {
@@ -713,11 +713,11 @@
       "13": 11,
       "12": 12,
       "11": 13,
-      "21": 4
+      "21": 4,
+      "22": 3,
+      "20": 5
     },
     "predicted": {
-      "22": 3,
-      "20": 5,
       "19": 6,
       "10": 14,
       "9": 15
@@ -738,5 +738,28 @@
     },
     "floating_channel_reads_zero": "NC15 unconnected read 0/68 ones - floating != copying",
     "P09_equals_P14": "still unexplained; not a floating-input artifact. Needs DMM continuity 9<->14."
+  },
+  "analyzers": {
+    "LA-A": {
+      "serial": "5033592792565F9F",
+      "dead_group": [
+        "CH13",
+        "CH14",
+        "CH15",
+        "CH16"
+      ],
+      "good": "CH1-12, CH17-24"
+    },
+    "LA-B": {
+      "serial": "5033592712586E1F",
+      "dead_group": [
+        "CH21",
+        "CH22",
+        "CH23",
+        "CH24"
+      ],
+      "good": "CH1-20"
+    },
+    "note": "Each board has exactly one dead 4-bit TXU0104 group, in different positions. Never chain them: multidevice allows pattern triggers only, and burst mode requires an Edge trigger."
   }
 }

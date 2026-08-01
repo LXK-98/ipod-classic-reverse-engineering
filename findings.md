@@ -891,3 +891,40 @@ header pins are shorted. DMM continuity between pins 9 and 14 remains the test.
 **Method note worth keeping:** borrowing an already-confirmed channel to test a suspect
 pin is cheap and non-destructive, and it cleanly separates "signal missing at the pin"
 from "channel not reading". No rework was needed to localise a hardware fault.
+
+### 2026-08-01 — LA-B: bits 3 and 5 confirmed; **both analyzers have a dead TXU0104**
+
+**Action:** Swapped to LA-B (serial `5033592712586E1F`), full 24-channel wiring restored,
+VREF switch on `EXT`, re-ran the wake-init capture.
+
+**Result 1 — (F) bits 3 and 5 confirmed.** P22 = bit 3 and P20 = bit 5 matched exactly.
+Together with pin 21 = bit 4 this closes the set: **every bit the init sequence is capable
+of exercising (0,1,2,3,4,5,7,8,9,10,11,12,13) is now confirmed**, and the dead-CH13-16
+diagnosis for LA-A is fully vindicated.
+
+**Result 2 — (F) LA-B has its own dead group: CH21-CH24.** P28 (D/C) now reads constant
+0, as do P29, P30 and P32. Decisive detail: P30 and P32 read constant **1** on LA-A and
+constant **0** here — a dead channel, not a changed signal.
+
+| board | serial | dead group | good channels |
+|---|---|---|---|
+| LA-A | `5033592792565F9F` | CH13-16 | CH1-12, CH17-24 |
+| LA-B | `5033592712586E1F` | CH21-24 | **CH1-20** |
+
+Each board has exactly one bad 4-bit translator, in different positions. Neither loss is
+blocking: 20 good channels on either board covers 18 data + /WR + D/C.
+
+No information was lost by D/C dropping out — it was already confirmed on LA-A, and the
+sequence alignment comes from the burst structure (6 single-write bursts = the NOP
+prefix), not from D/C.
+
+**(F) P09 ≡ P14 PERSISTS on a different analyzer with independently re-run wiring.** Two
+separate wirings on two boards producing byte-identical 68-write histories makes a
+one-off probe misplacement unlikely, though not impossible if the same counting error was
+repeated. Still unexplained, still not blocking. The DMM continuity check between header
+pins 9 and 14 remains the decisive test.
+
+**Remaining for the lane map:** bits **6, 14, 15** (predicted pins 19, 10, 9). These are
+constant zero throughout `lcd_init_seq_23` and can never be resolved by init capture —
+exactly as predicted from the Rockbox source before any hardware was connected. Solid
+colour fills are the only route.
