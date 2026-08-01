@@ -928,3 +928,48 @@ pins 9 and 14 remains the decisive test.
 constant zero throughout `lcd_init_seq_23` and can never be resolved by init capture —
 exactly as predicted from the Rockbox source before any hardware was connected. Solid
 colour fills are the only route.
+
+### 2026-08-01 — Analyzer repaired: OE cold joint, no chip replacement needed
+
+**Action:** Traced the dead 4-channel groups to a specific pin rather than replacing parts.
+
+**Diagnostic chain:**
+1. Supplies measured good — 3.3 V across every decoupling cap on both boards — which
+   ruled out the initial "unsoldered VCC" theory. (The apparent polarity flip between
+   each cap pair is layout mirroring: one decouples VCCA, the other VCCB.)
+2. **A single pin can disable all four channels at once: `OE`.** TXU0104 is active-high
+   output-enable; floating or grounded OE puts all four outputs in high-Z, which reads as
+   a clean constant 0. That is exactly the observed signature.
+3. Netlist showed each TXU0104 touches only 11 distinct nets, so **OE is tied to a supply
+   rail** (`POWER_3v3`) — a cold joint there leaves it floating.
+4. Datasheet pinout (PW/TSSOP-14): **OE = pin 8, adjacent to GND = pin 7**, both at the
+   same end of the package — the corner a drag-solder pass most easily skimps.
+5. PCB geometry: all six devices rotated -90 deg, so **pin 8 is the top-left corner pin**
+   (header side, upper), and it shares net `POWER_3v3` with pin 14 at bottom-left —
+   giving a trivial continuity test between two pins on the same edge.
+
+**(F) Reflowing fixed it.** Post-reflow capture of ordinary screen activity:
+P28 (D/C) 160 edges, P29 173 edges — both alive. P30 and P32 now read **constant 1**,
+matching what LA-A reported for those same pins when its CH21-24 group was healthy. A
+dead channel floats to 0; constant 1 is their genuine idle state. **LA-B now has all 24
+channels working.**
+
+**(F) Chip-to-channel map for LogicAnalyzer V2** (from
+`Electronics/LogicAnalyzer/LogicAnalyzerV2/designs/jitx-design/kicad`), physical order
+**top to bottom** — note it is NOT sequential, so identifying a chip by eye would mislead:
+
+| position | ref | channels | flanking caps |
+|---|---|---|---|
+| 1 | U1 | CH1-4 | C1, C7 |
+| 2 | **U4** | **CH21-24** | C4, C10 |
+| 3 | U6 | CH5-8 | C6, C12 |
+| 4 | U5 | CH17-20 | C5, C11 |
+| 5 | U3 | CH9-12 | C3, C9 |
+| 6 | **U2** | **CH13-16** | C2, C8 |
+
+LA-A's fault is U2 (bottom), LA-B's was U4 (2nd from top). Board A remains unrepaired
+and still has CH13-16 dead; the same reflow should fix it.
+
+**Method note:** the "dead group of exactly 4 contiguous channels" signature is worth
+remembering — it points at a whole translator, and because OE gates all four outputs, a
+single joint explains it. Supplies reading correct does *not* exonerate the device.
