@@ -2,3 +2,7 @@ vendor/
 __pycache__/
 *.pyc
 .venv/
+display-analyzer-board/.history/
+display-analyzer-board/fp-info-cache
+display-analyzer-board/display-analyzer-board-backups/
+display-analyzer-board/production/
