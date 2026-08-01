@@ -1074,3 +1074,56 @@ but only 2 ones across the 69-write init).
 **Note on the command-mode map:** the pin->APB-bit assignments confirmed from the init
 sequence remain valid **for 16-bit register/command writes**. They are simply not the
 right model for pixel writes.
+
+### 2026-08-01 — White fill closes the 18-lane inventory
+
+**Action:** White (`0xFFFF`) fill via the lamp plugin.
+
+**Result — (F) all 18 data lanes driven high, 6/6/6:**
+
+```
+RED   : 9 10 11 12 13 14   -> 6/6 high
+GREEN : 1 15 16 18 19 20   -> 6/6 high
+BLUE  : 2 21 22 23 24 25   -> 6/6 high
+```
+
+P02 included, which resolves the pin flagged as doubtful (blue-field in the fills but
+almost inert during the init). **The RGB666 lane inventory is now confirmed in both
+states** - every lane observed high on white and low on black/other fills.
+
+**(F) The four non-data pins did not follow the pixel data**: `P07=0, P29=0, P30=1,
+P32=1`, identical across every fill. They are not part of the data bus.
+
+**Pin accounting - 32 of 34 assigned:**
+
+| function | pins | n |
+|---|---|---|
+| GND | 3, 6, 8, 17, 31 | 5 |
+| Backlight | 4 (BL+), 5 (BL-) | 2 |
+| Data bus (RGB666) | 1, 2, 9-16, 18-25 | 18 |
+| /WR | 27 | 1 |
+| D/C | 28 | 1 |
+| rails / control (ambiguous) | 26, 30, 32, 33 | 4 |
+| analog | 34 | 1 |
+| **unassigned** | **7, 29** | **2** |
+
+**(H) The "rails" classification for pins 30 and 32 is probably wrong.** Four control
+signals remain to place (/CS, /RD, /RESET, TE) but only two unassigned pins. An
+**idle-high control line reads a steady 1.8 V on a DMM and is indistinguishable from a
+supply rail** - which is exactly how pins 30 and 32 were classified. Pins 26 (VDDIO,
+currently feeding VREF) and 33 (3.0 V) remain genuine rail candidates.
+
+**(H) Pin 7 = TE.** The original powered DMM sweep recorded pin 7 as "~2 V spikes every
+~15 ms" = ~66 Hz, which is a panel refresh rate, not bus traffic. TE is the only expected
+signal at that frequency. Pin 29, constant low throughout every write burst, fits **/CS**
+held asserted for the duration of a transfer.
+
+**Why these are invisible in the current captures:** every capture so far is a ~325 us
+window taken *inside* a write burst. /CS stays asserted for the whole burst, /RESET and
+/RD never move during normal operation, and TE at 66 Hz has a 15 ms period - all four are
+constant on that timescale by construction.
+
+**Next step:** a slow, wide capture (~100-200 kS/s over 150-300 ms) to see the /CS
+envelope between bursts and resolve TE's period. Aliasing of /WR is irrelevant there
+since only the slow signals matter - but the lesson from the 1 MS/s trap applies: do not
+read any fast-signal statistics off that capture.
