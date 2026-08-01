@@ -497,3 +497,52 @@ signals being measured.
 
 **Next step:** full 34-pin resistance sweep to ground; then reconnect the battery for the
 powered sweep that identifies the backlight.
+
+---
+
+### 2026-08-01 — Ground sweep: clear structural clustering
+
+**Action:** Resistance from every header pin to signal ground (HDD case), battery
+disconnected, both flexes connected.
+
+**Method note:** a first pass used the meter's **continuity/beeper** mode, which reports
+"OL" above roughly 50 Ω and therefore hid every distinction above that. The
+resistance-range pass superseded it and is the data of record. Lesson for later sweeps:
+never take beeper output where structure is expected.
+
+**Result — pins group sharply:**
+
+| group | pins | n | reading |
+|---|---|---|---|
+| GND | 3, 6, 8, 17, 31 | 5 | 0.6–1.5 Ω |
+| **BL− candidate** | **5** | 1 | **25.6 Ω** |
+| mid-Z | 32, 33, 34 | 3 | 70 k, 266 k, 1 M |
+| sub-megohm cluster | 21, 22, 23, 24, 25, 30 | 6 | 0.5–0.6 M |
+| high-Z baseline | 1, 2, 9–16, 18, 19, 20, 26–29 | 17 | 3.7–3.8 M |
+| high outliers | 4, 7 | 2 | 5.4 M, 13.5 M |
+
+**Interpretation (all (H) until the powered sweep):**
+
+1. **(F) GND = pins 3, 6, 8, 17, 31.** Five grounds distributed along the connector,
+   consistent with return-current management on a fast parallel bus.
+2. **(H) The 17-pin 3.7–3.8 MΩ group is the data bus.** Identical leakage implies
+   identical silicon on the far end. 18 lanes are expected, so one more is likely hiding
+   among the outliers (pins 4 or 7) or in the mid-Z group.
+3. **(H) The 6-pin 0.5–0.6 MΩ cluster is the control set** — WR, RD, CS, D/C, RESET, TE
+   is exactly six signals. The count match is striking but is not proof.
+4. **(H) Pin 5 = backlight cathode (BL−).** 25.6 Ω is far too low for a logic pull-down
+   and sits exactly where an LED driver's current-sense resistor would (0.6 V feedback
+   at ~20 mA ⇒ 30 Ω).
+5. Budget closes exactly: 18 data + 6 control + 5 GND + BL± + ~3 power = 34.
+
+**CAVEAT recorded in the data file:** megohm-range values are leakage through
+semiconductor structures on an unpowered board, with large parasitic capacitance. The
+clustering is meaningful; the absolute values are not, and may drift with measurement
+order. They must not be quoted as specifications.
+
+**Still unresolved:** a 0.6–1.5 Ω pin could be true system ground *or* a pin the panel
+ties low (an ID strap would look identical). Separable by re-measuring with the display
+flex disconnected — deferred, since the powered sweep is the higher-value next step.
+
+**Next step:** powered voltage sweep — identifies the backlight anode (safety rule 1)
+and VDDIO (the phase 2 gate).

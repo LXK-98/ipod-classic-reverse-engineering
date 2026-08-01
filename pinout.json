@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "version": "v0.2",
+  "version": "v1",
   "updated": "2026-08-01",
   "device": {
     "model": "Apple iPod Classic 2009 'thin' 160GB, A1238",
@@ -37,7 +37,7 @@
   },
   "pins": {
     "1": {
-      "function": "unknown",
+      "function": "high-Z-baseline",
       "voltage": null,
       "header_pin": 1,
       "net": "/2",
@@ -46,11 +46,14 @@
       "la_device": null,
       "la_channel": null,
       "confidence": "none",
-      "evidence": [],
-      "notes": ""
+      "evidence": [
+        "2026-08-01_ground-sweep.tsv"
+      ],
+      "notes": "",
+      "r_to_gnd_ohms": 3700000.0
     },
     "2": {
-      "function": "unknown",
+      "function": "high-Z-baseline",
       "voltage": null,
       "header_pin": 2,
       "net": "/3",
@@ -59,11 +62,14 @@
       "la_device": null,
       "la_channel": null,
       "confidence": "none",
-      "evidence": [],
-      "notes": ""
+      "evidence": [
+        "2026-08-01_ground-sweep.tsv"
+      ],
+      "notes": "",
+      "r_to_gnd_ohms": 3800000.0
     },
     "3": {
-      "function": "unknown",
+      "function": "GND-or-panel-tied-low",
       "voltage": null,
       "header_pin": 3,
       "net": "/4",
@@ -71,12 +77,15 @@
       "header_row": 2,
       "la_device": null,
       "la_channel": null,
-      "confidence": "none",
-      "evidence": [],
-      "notes": ""
+      "confidence": "medium",
+      "evidence": [
+        "2026-08-01_ground-sweep.tsv"
+      ],
+      "notes": "",
+      "r_to_gnd_ohms": 1.5
     },
     "4": {
-      "function": "unknown",
+      "function": "high-Z-baseline",
       "voltage": null,
       "header_pin": 4,
       "net": "/5",
@@ -85,11 +94,14 @@
       "la_device": null,
       "la_channel": null,
       "confidence": "none",
-      "evidence": [],
-      "notes": ""
+      "evidence": [
+        "2026-08-01_ground-sweep.tsv"
+      ],
+      "notes": "",
+      "r_to_gnd_ohms": 5400000.0
     },
     "5": {
-      "function": "unknown",
+      "function": "low-Z-to-GND",
       "voltage": null,
       "header_pin": 5,
       "net": "/6",
@@ -97,12 +109,15 @@
       "header_row": 3,
       "la_device": null,
       "la_channel": null,
-      "confidence": "none",
-      "evidence": [],
-      "notes": ""
+      "confidence": "low",
+      "evidence": [
+        "2026-08-01_ground-sweep.tsv"
+      ],
+      "notes": "",
+      "r_to_gnd_ohms": 25.6
     },
     "6": {
-      "function": "unknown",
+      "function": "GND-or-panel-tied-low",
       "voltage": null,
       "header_pin": 6,
       "net": "/7",
@@ -110,12 +125,15 @@
       "header_row": 3,
       "la_device": null,
       "la_channel": null,
-      "confidence": "none",
-      "evidence": [],
-      "notes": ""
+      "confidence": "medium",
+      "evidence": [
+        "2026-08-01_ground-sweep.tsv"
+      ],
+      "notes": "",
+      "r_to_gnd_ohms": 0.6
     },
     "7": {
-      "function": "unknown",
+      "function": "high-Z-baseline",
       "voltage": null,
       "header_pin": 7,
       "net": "/8",
@@ -124,11 +142,14 @@
       "la_device": null,
       "la_channel": null,
       "confidence": "none",
-      "evidence": [],
-      "notes": ""
+      "evidence": [
+        "2026-08-01_ground-sweep.tsv"
+      ],
+      "notes": "",
+      "r_to_gnd_ohms": 13500000.0
     },
     "8": {
-      "function": "unknown",
+      "function": "GND-or-panel-tied-low",
       "voltage": null,
       "header_pin": 8,
       "net": "/9",
@@ -136,12 +157,15 @@
       "header_row": 4,
       "la_device": null,
       "la_channel": null,
-      "confidence": "none",
-      "evidence": [],
-      "notes": ""
+      "confidence": "medium",
+      "evidence": [
+        "2026-08-01_ground-sweep.tsv"
+      ],
+      "notes": "",
+      "r_to_gnd_ohms": 0.6
     },
     "9": {
-      "function": "unknown",
+      "function": "high-Z-baseline",
       "voltage": null,
       "header_pin": 9,
       "net": "/10",
@@ -150,11 +174,14 @@
       "la_device": null,
       "la_channel": null,
       "confidence": "none",
-      "evidence": [],
-      "notes": ""
+      "evidence": [
+        "2026-08-01_ground-sweep.tsv"
+      ],
+      "notes": "",
+      "r_to_gnd_ohms": 3800000.0
     },
     "10": {
-      "function": "unknown",
+      "function": "high-Z-baseline",
       "voltage": null,
       "header_pin": 10,
       "net": "/11",
@@ -163,11 +190,14 @@
       "la_device": null,
       "la_channel": null,
       "confidence": "none",
-      "evidence": [],
-      "notes": ""
+      "evidence": [
+        "2026-08-01_ground-sweep.tsv"
+      ],
+      "notes": "",
+      "r_to_gnd_ohms": 3700000.0
     },
     "11": {
-      "function": "unknown",
+      "function": "high-Z-baseline",
       "voltage": null,
       "header_pin": 11,
       "net": "/12",
@@ -176,11 +206,14 @@
       "la_device": null,
       "la_channel": null,
       "confidence": "none",
-      "evidence": [],
-      "notes": ""
+      "evidence": [
+        "2026-08-01_ground-sweep.tsv"
+      ],
+      "notes": "",
+      "r_to_gnd_ohms": 3700000.0
     },
     "12": {
-      "function": "unknown",
+      "function": "high-Z-baseline",
       "voltage": null,
       "header_pin": 12,
       "net": "/13",
@@ -189,11 +222,14 @@
       "la_device": null,
       "la_channel": null,
       "confidence": "none",
-      "evidence": [],
-      "notes": ""
+      "evidence": [
+        "2026-08-01_ground-sweep.tsv"
+      ],
+      "notes": "",
+      "r_to_gnd_ohms": 3700000.0
     },
     "13": {
-      "function": "unknown",
+      "function": "high-Z-baseline",
       "voltage": null,
       "header_pin": 13,
       "net": "/14",
@@ -202,11 +238,14 @@
       "la_device": null,
       "la_channel": null,
       "confidence": "none",
-      "evidence": [],
-      "notes": ""
+      "evidence": [
+        "2026-08-01_ground-sweep.tsv"
+      ],
+      "notes": "",
+      "r_to_gnd_ohms": 3700000.0
     },
     "14": {
-      "function": "unknown",
+      "function": "high-Z-baseline",
       "voltage": null,
       "header_pin": 14,
       "net": "/15",
@@ -215,11 +254,14 @@
       "la_device": null,
       "la_channel": null,
       "confidence": "none",
-      "evidence": [],
-      "notes": ""
+      "evidence": [
+        "2026-08-01_ground-sweep.tsv"
+      ],
+      "notes": "",
+      "r_to_gnd_ohms": 3700000.0
     },
     "15": {
-      "function": "unknown",
+      "function": "high-Z-baseline",
       "voltage": null,
       "header_pin": 15,
       "net": "/16",
@@ -228,11 +270,14 @@
       "la_device": null,
       "la_channel": null,
       "confidence": "none",
-      "evidence": [],
-      "notes": ""
+      "evidence": [
+        "2026-08-01_ground-sweep.tsv"
+      ],
+      "notes": "",
+      "r_to_gnd_ohms": 3700000.0
     },
     "16": {
-      "function": "unknown",
+      "function": "high-Z-baseline",
       "voltage": null,
       "header_pin": 16,
       "net": "/17",
@@ -241,11 +286,14 @@
       "la_device": null,
       "la_channel": null,
       "confidence": "none",
-      "evidence": [],
-      "notes": ""
+      "evidence": [
+        "2026-08-01_ground-sweep.tsv"
+      ],
+      "notes": "",
+      "r_to_gnd_ohms": 3700000.0
     },
     "17": {
-      "function": "unknown",
+      "function": "GND-or-panel-tied-low",
       "voltage": null,
       "header_pin": 17,
       "net": "/18",
@@ -253,12 +301,15 @@
       "header_row": 9,
       "la_device": null,
       "la_channel": null,
-      "confidence": "none",
-      "evidence": [],
-      "notes": ""
+      "confidence": "medium",
+      "evidence": [
+        "2026-08-01_ground-sweep.tsv"
+      ],
+      "notes": "",
+      "r_to_gnd_ohms": 1.5
     },
     "18": {
-      "function": "unknown",
+      "function": "high-Z-baseline",
       "voltage": null,
       "header_pin": 18,
       "net": "/19",
@@ -267,11 +318,14 @@
       "la_device": null,
       "la_channel": null,
       "confidence": "none",
-      "evidence": [],
-      "notes": ""
+      "evidence": [
+        "2026-08-01_ground-sweep.tsv"
+      ],
+      "notes": "",
+      "r_to_gnd_ohms": 3700000.0
     },
     "19": {
-      "function": "unknown",
+      "function": "high-Z-baseline",
       "voltage": null,
       "header_pin": 19,
       "net": "/20",
@@ -280,11 +334,14 @@
       "la_device": null,
       "la_channel": null,
       "confidence": "none",
-      "evidence": [],
-      "notes": ""
+      "evidence": [
+        "2026-08-01_ground-sweep.tsv"
+      ],
+      "notes": "",
+      "r_to_gnd_ohms": 3700000.0
     },
     "20": {
-      "function": "unknown",
+      "function": "high-Z-baseline",
       "voltage": null,
       "header_pin": 20,
       "net": "/21",
@@ -293,11 +350,14 @@
       "la_device": null,
       "la_channel": null,
       "confidence": "none",
-      "evidence": [],
-      "notes": ""
+      "evidence": [
+        "2026-08-01_ground-sweep.tsv"
+      ],
+      "notes": "",
+      "r_to_gnd_ohms": 3700000.0
     },
     "21": {
-      "function": "unknown",
+      "function": "sub-megohm",
       "voltage": null,
       "header_pin": 21,
       "net": "/22",
@@ -306,11 +366,14 @@
       "la_device": null,
       "la_channel": null,
       "confidence": "none",
-      "evidence": [],
-      "notes": ""
+      "evidence": [
+        "2026-08-01_ground-sweep.tsv"
+      ],
+      "notes": "",
+      "r_to_gnd_ohms": 600000.0
     },
     "22": {
-      "function": "unknown",
+      "function": "sub-megohm",
       "voltage": null,
       "header_pin": 22,
       "net": "/23",
@@ -319,11 +382,14 @@
       "la_device": null,
       "la_channel": null,
       "confidence": "none",
-      "evidence": [],
-      "notes": ""
+      "evidence": [
+        "2026-08-01_ground-sweep.tsv"
+      ],
+      "notes": "",
+      "r_to_gnd_ohms": 500000.0
     },
     "23": {
-      "function": "unknown",
+      "function": "sub-megohm",
       "voltage": null,
       "header_pin": 23,
       "net": "/24",
@@ -332,11 +398,14 @@
       "la_device": null,
       "la_channel": null,
       "confidence": "none",
-      "evidence": [],
-      "notes": ""
+      "evidence": [
+        "2026-08-01_ground-sweep.tsv"
+      ],
+      "notes": "",
+      "r_to_gnd_ohms": 600000.0
     },
     "24": {
-      "function": "unknown",
+      "function": "sub-megohm",
       "voltage": null,
       "header_pin": 24,
       "net": "/25",
@@ -345,11 +414,14 @@
       "la_device": null,
       "la_channel": null,
       "confidence": "none",
-      "evidence": [],
-      "notes": ""
+      "evidence": [
+        "2026-08-01_ground-sweep.tsv"
+      ],
+      "notes": "",
+      "r_to_gnd_ohms": 500000.0
     },
     "25": {
-      "function": "unknown",
+      "function": "sub-megohm",
       "voltage": null,
       "header_pin": 25,
       "net": "/26",
@@ -358,11 +430,14 @@
       "la_device": null,
       "la_channel": null,
       "confidence": "none",
-      "evidence": [],
-      "notes": ""
+      "evidence": [
+        "2026-08-01_ground-sweep.tsv"
+      ],
+      "notes": "",
+      "r_to_gnd_ohms": 600000.0
     },
     "26": {
-      "function": "unknown",
+      "function": "high-Z-baseline",
       "voltage": null,
       "header_pin": 26,
       "net": "/27",
@@ -371,11 +446,14 @@
       "la_device": null,
       "la_channel": null,
       "confidence": "none",
-      "evidence": [],
-      "notes": ""
+      "evidence": [
+        "2026-08-01_ground-sweep.tsv"
+      ],
+      "notes": "",
+      "r_to_gnd_ohms": 3700000.0
     },
     "27": {
-      "function": "unknown",
+      "function": "high-Z-baseline",
       "voltage": null,
       "header_pin": 27,
       "net": "/28",
@@ -384,11 +462,14 @@
       "la_device": null,
       "la_channel": null,
       "confidence": "none",
-      "evidence": [],
-      "notes": ""
+      "evidence": [
+        "2026-08-01_ground-sweep.tsv"
+      ],
+      "notes": "",
+      "r_to_gnd_ohms": 3700000.0
     },
     "28": {
-      "function": "unknown",
+      "function": "high-Z-baseline",
       "voltage": null,
       "header_pin": 28,
       "net": "/29",
@@ -397,11 +478,14 @@
       "la_device": null,
       "la_channel": null,
       "confidence": "none",
-      "evidence": [],
-      "notes": ""
+      "evidence": [
+        "2026-08-01_ground-sweep.tsv"
+      ],
+      "notes": "",
+      "r_to_gnd_ohms": 3800000.0
     },
     "29": {
-      "function": "unknown",
+      "function": "high-Z-baseline",
       "voltage": null,
       "header_pin": 29,
       "net": "/30",
@@ -410,11 +494,14 @@
       "la_device": null,
       "la_channel": null,
       "confidence": "none",
-      "evidence": [],
-      "notes": ""
+      "evidence": [
+        "2026-08-01_ground-sweep.tsv"
+      ],
+      "notes": "",
+      "r_to_gnd_ohms": 3700000.0
     },
     "30": {
-      "function": "unknown",
+      "function": "sub-megohm",
       "voltage": null,
       "header_pin": 30,
       "net": "/31",
@@ -423,11 +510,14 @@
       "la_device": null,
       "la_channel": null,
       "confidence": "none",
-      "evidence": [],
-      "notes": ""
+      "evidence": [
+        "2026-08-01_ground-sweep.tsv"
+      ],
+      "notes": "",
+      "r_to_gnd_ohms": 500000.0
     },
     "31": {
-      "function": "unknown",
+      "function": "GND-or-panel-tied-low",
       "voltage": null,
       "header_pin": 31,
       "net": "/32",
@@ -435,12 +525,15 @@
       "header_row": 16,
       "la_device": null,
       "la_channel": null,
-      "confidence": "none",
-      "evidence": [],
-      "notes": ""
+      "confidence": "medium",
+      "evidence": [
+        "2026-08-01_ground-sweep.tsv"
+      ],
+      "notes": "",
+      "r_to_gnd_ohms": 1.2
     },
     "32": {
-      "function": "unknown",
+      "function": "mid-Z-100k-or-less",
       "voltage": null,
       "header_pin": 32,
       "net": "/33",
@@ -449,11 +542,14 @@
       "la_device": null,
       "la_channel": null,
       "confidence": "none",
-      "evidence": [],
-      "notes": ""
+      "evidence": [
+        "2026-08-01_ground-sweep.tsv"
+      ],
+      "notes": "",
+      "r_to_gnd_ohms": 70000.0
     },
     "33": {
-      "function": "unknown",
+      "function": "sub-megohm",
       "voltage": null,
       "header_pin": 33,
       "net": "/34",
@@ -462,11 +558,14 @@
       "la_device": null,
       "la_channel": null,
       "confidence": "none",
-      "evidence": [],
-      "notes": ""
+      "evidence": [
+        "2026-08-01_ground-sweep.tsv"
+      ],
+      "notes": "",
+      "r_to_gnd_ohms": 266000.0
     },
     "34": {
-      "function": "unknown",
+      "function": "sub-megohm",
       "voltage": null,
       "header_pin": 34,
       "net": "/35",
@@ -475,8 +574,11 @@
       "la_device": null,
       "la_channel": null,
       "confidence": "none",
-      "evidence": [],
-      "notes": ""
+      "evidence": [
+        "2026-08-01_ground-sweep.tsv"
+      ],
+      "notes": "",
+      "r_to_gnd_ohms": 1000000.0
     }
   },
   "flex_pin_count": 34,

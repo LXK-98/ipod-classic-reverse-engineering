@@ -1,0 +1,50 @@
+# Phase 1 ground sweep. Resistance from each interposer header pin to SIGNAL GROUND.
+# Reference: HDD metal case (established as signal ground; see findings.md).
+# Conditions: battery DISCONNECTED, display flex connected to J3, logic board flex
+#             connected to J2. Meter lead resistance not nulled.
+# Convention: pin N = header pin N = net /(N+1); pin 1 top-left, odd=left col,
+#             even=right col, zigzag by row. Confirmed by collaborator.
+#
+# NOTE: an earlier pass used the meter's CONTINUITY/beeper mode, which reported "OL"
+# for everything above ~50 ohm and so hid all the structure above that. These are the
+# true resistance-range readings and SUPERSEDE that pass.
+#
+# CAVEAT: readings in the megohm range are taken on an unpowered board through
+# semiconductor leakage paths and large parasitic capacitance. Absolute values are not
+# trustworthy and may drift as the meter charges the node; the CLUSTERING is the
+# meaningful signal, not the exact numbers.
+pin	ohms
+1	3.7M
+2	3.8M
+3	1.5
+4	5.4M
+5	25.6
+6	0.6
+7	13.5M
+8	0.6
+9	3.8M
+10	3.7M
+11	3.7M
+12	3.7M
+13	3.7M
+14	3.7M
+15	3.7M
+16	3.7M
+17	1.5
+18	3.7M
+19	3.7M
+20	3.7M
+21	0.6M
+22	0.5M
+23	0.6M
+24	0.5M
+25	0.6M
+26	3.7M
+27	3.7M
+28	3.8M
+29	3.7M
+30	0.5M
+31	1.2
+32	70K
+33	266K
+34	1M
