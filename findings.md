@@ -659,3 +659,67 @@ string is PWM-dimmed and the meter reads the duty average. A max-brightness read
 still wanted for the phase 6 driver spec.
 
 **Next step:** wire all 22 signal pins to LA-A and run the phase 2 survey.
+
+---
+
+## Phase 2/3 — first real bus decode
+
+### 2026-08-01 — Accidental capture of `displaylcd_setup()`; 3 lanes + D/C identified
+
+**Action:** Armed a contiguous 100 MS/s capture intending to catch the bootloader init on
+a reboot. The iPod was **not** reset (no confirmation received); the capture instead
+triggered on ordinary screen activity.
+
+**Result — what we caught is better than nothing: exactly 13 writes, spanning 9.8 µs,
+followed by 318 µs of silence.** 13 is the signature of `displaylcd_setup()` for a
+16-bit command-set panel:
+
+```
+0x210,x  0x211,xe  0x212,y  0x213,ye  0x200,x  0x201,y  0x202
+= 6 register+data pairs + 1 bare command = 13 writes
+```
+
+The 318 µs of silence afterwards is the `memcpy` of the 153 KB framebuffer into the DMA
+buffer before the pixel burst begins.
+
+**(F) Two lanes alternate perfectly and are exact complements: P15 = `1010101010101`,
+P28 = `0101010101010`.** Since the sequence has 7 commands and 6 data words, the
+7-count group (writes 0,2,4,…,12) must be the commands.
+
+**(F) P28 = D/C, with 0 = command, 1 = data** (the standard 8080 convention).
+
+**(F) Lane identification from the 7 command words**, whose values are known exactly
+regardless of which screen rect was being updated:
+
+| APB bit | signature over the 7 commands | pin |
+|---|---|---|
+| bit 9 | `1111111` | **P15** |
+| bit 0 | `0101010` | **P25** |
+| bit 1 | `0011001` | **P24** |
+| bit 4 | `1111000` | **NOT FOUND** |
+
+**(H) DEGENERACY WARNING — P15 could be bit 9 *or* an inverted D/C.** In this sequence
+every command is `0x2xx` (bit 9 set) and every data word is a screen coordinate < 0x200
+(bit 9 clear), so "bit 9" and "inverted D/C" have identical histories here.
+**This resolves itself in the init sequence**, where data values such as `0x0808`,
+`0x17b0` and `0x03ff` exceed 0x200 and therefore set bit 9 on *data* writes, breaking
+the tie. Do not treat P15 as settled until then.
+
+**(F) ANOMALY: the bit-4 lane is not in the probe set.** Bit 4 is 1 for `0x210`–`0x213`
+and 0 for `0x200`–`0x202`, so a lane carrying it must show `1111000` across the command
+writes. No probed pin does; every other probed pin reads 0 throughout the commands,
+which is *correct* for bits 2,3,5–8,10–15 (all zero in these seven words), so the other
+silent lanes are legitimately silent. Exactly one lane is unaccounted for.
+
+**Leading hypothesis:** one of pins **26, 30, 32** — classified as "steady ~1.8 V rails"
+from the DMM sweep — is actually a **data lane that is high most of the time**. Write
+bursts occupy only ~4.7 % of wall time (46.9 ms per 1 s), so a mostly-high data lane
+averages ≈1.7–1.8 V on a multimeter and is indistinguishable from a rail. Pin 33 reads
+3.0 V and is too high for 1.8 V logic, so it remains a genuine rail.
+
+**Complication:** pin 26 is currently feeding the shifter's `VRF` reference. If pin 26 is
+the missing lane, the threshold reference is a toggling signal. Captures look clean,
+which argues against it, but it cannot be ruled out without testing.
+
+**Next step:** two spare analyzer channels are available (22 of 24 used). Probe pins 30
+and 32 and re-capture; look for the `1111000` command signature.
