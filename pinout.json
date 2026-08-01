@@ -382,7 +382,7 @@
       "r_to_gnd_ohms": 3700000.0
     },
     "21": {
-      "function": "D-bus APB bit 4 (predicted)",
+      "function": "D-bus APB bit 4",
       "voltage": 1.8,
       "header_pin": 21,
       "net": "/22",
@@ -390,12 +390,12 @@
       "header_row": 11,
       "la_device": null,
       "la_channel": null,
-      "confidence": "medium",
+      "confidence": "high",
       "evidence": [
         "2026-08-01_ground-sweep.tsv",
         "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "Predicted by the descending pin->bit run that fits all 10 confirmed lanes (skipping GND pins 17 and 8). NOT yet observed: probe reads constant 0.",
+      "notes": "CONFIRMED by swap test onto known-good CH17: exact match to bit4 (21/68 ones).",
       "r_to_gnd_ohms": 600000.0
     },
     "22": {
@@ -712,11 +712,11 @@
       "14": 10,
       "13": 11,
       "12": 12,
-      "11": 13
+      "11": 13,
+      "21": 4
     },
     "predicted": {
       "22": 3,
-      "21": 4,
       "20": 5,
       "19": 6,
       "10": 14,
@@ -726,15 +726,17 @@
     "evidence": "captures/20260801_193606_dryrun.csv burst 7, 69 writes vs firmware seq_awake"
   },
   "wiring_faults": {
-    "P09_equals_P14": "byte-identical over 69 writes; CH4 (pin 9) is almost certainly landed on pin 14, so pin 9 is unprobed and bit 10 truly belongs to pin 14",
-    "constant_zero_but_should_toggle": [
-      20,
-      21,
-      22
-    ],
-    "unverifiable_here": [
-      19,
-      10
-    ]
+    "dead_shifter_group": {
+      "channels": [
+        "CH13",
+        "CH14",
+        "CH15",
+        "CH16"
+      ],
+      "evidence": "pin21 reads constant 0 on CH15 but matches bit4 exactly on CH17; TXU0104 is a 4-bit device and CH13-16 is exactly one group",
+      "conclusion": "one TXU0104 on the shifter board is dead or has an unsoldered VCC/GND"
+    },
+    "floating_channel_reads_zero": "NC15 unconnected read 0/68 ones - floating != copying",
+    "P09_equals_P14": "still unexplained; not a floating-input artifact. Needs DMM continuity 9<->14."
   }
 }

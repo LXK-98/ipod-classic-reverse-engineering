@@ -857,3 +857,37 @@ ground truth **exactly** — bus contention with another driver would corrupt it
 
 **Next step:** two cheap discriminating tests — a channel-swap to localise the CH13–16
 fault, and a DMM continuity check between header pins 9 and 14.
+
+### 2026-08-01 — Swap test: **dead TXU0104 confirmed**, predicted lane map validated
+
+**Action:** Moved the pin-21 probe from `CH15` to `CH17` (a channel already proven good,
+previously carrying pin 23 / bit 2 — safe to borrow since bit 2 is confirmed).
+
+**Result — unambiguous:**
+
+| observation | value |
+|---|---|
+| pin 21 on CH17 vs expected bit 4 | **exact match, 21/68 ones** |
+| `NC15` (deliberately unconnected) | **0/68 ones** |
+| regression: P24/P25/P28 | still bit 1 / bit 0 / D/C ✓ |
+
+**(F) One TXU0104 on the shifter board is dead.** Pin 21 carries a perfectly good signal;
+it simply does not reach the analyzer through `CH15`. Combined with CH13/14/16 failing
+identically, and the TXU0104 being a 4-bit part with CH13–16 forming exactly one group,
+the fault is a single translator — most likely an unsoldered VCCA/VCCB/GND pin. The
+`Ioff-float` behaviour explains the clean constant 0.
+
+**(F) pin 21 = APB bit 4, CONFIRMED.** This was a *prediction* from the monotonic
+pin→bit rule, and it verified exactly. The rule now has 11 confirmed instances and zero
+exceptions, which materially strengthens the remaining predictions (pins 22, 20, 19, 10,
+9 → bits 3, 5, 6, 14, 15).
+
+**(F) A floating channel reads constant 0, it does not mirror a neighbour.** The
+accidentally-unconnected `CH15` provided a free control: 0 ones in 68 writes. This
+**eliminates crosstalk/floating-input as the explanation for P09 ≡ P14** — CH4 is
+genuinely receiving pin 14's signal, so either the wire terminates there or the two
+header pins are shorted. DMM continuity between pins 9 and 14 remains the test.
+
+**Method note worth keeping:** borrowing an already-confirmed channel to test a suspect
+pin is cheap and non-destructive, and it cleanly separates "signal missing at the pin"
+from "channel not reading". No rework was needed to localise a hardware fault.
