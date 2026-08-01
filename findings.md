@@ -723,3 +723,40 @@ which argues against it, but it cannot be ruled out without testing.
 
 **Next step:** two spare analyzer channels are available (22 of 24 used). Probe pins 30
 and 32 and re-capture; look for the `1111000` command signature.
+
+### 2026-08-01 — Cold-boot capture fails by construction: VREF dies with the target
+
+**Action:** Armed a 24-channel capture with the iPod powered OFF, intending to catch the
+bootloader init on power-up.
+
+**Result:** all 24 channels read **flat 0 for the entire 32767-sample capture**, and the
+trigger fired immediately rather than on a real write.
+
+**(F) Root cause — a setup error, not a hardware fault.** The shifter's `VRF` reference
+is wired to header pin 26, which is *the iPod's own 1.8 V rail*. With the iPod off:
+
+1. VCCA collapses to 0 V.
+2. The TXU0104 `Ioff-float` feature (datasheet: "if either VCC input is <100 mV or
+   disconnected, all outputs are disabled and become high-impedance") forces every
+   output high-Z, so all channels read 0.
+3. That collapse looks like a falling edge on /WR and satisfies the trigger immediately.
+
+**The reference cannot be derived from the device being powered up.** Arming before a
+cold boot is incompatible with referencing VREF to the target's rail. Note the failure
+was at least *loud*: 24 identically dead channels is unmistakable, not plausible-looking
+wrong data — which is the property we wanted from the `EXT`-VREF arrangement.
+
+**(F) Fix: use the sleep/wake trigger instead of a cold boot.** Rockbox has
+`lcd_sleep_after_backlight_off` (`apps/settings_list.c:2075`, guarded by
+`HAVE_LCD_SLEEP_SETTING`, which ipod6g defines), surfaced in the UI as
+"Sleep (After Backlight Off)". With the LCD asleep and the iPod still running, the rails
+stay up and VREF stays valid; waking the display replays a **full init** because type 2
+sets `seq_awake = lcd_init_seq_23`. Target is then the *firmware* variant: **152 writes**
+including the leading 6× `CMD 0x0000` + 1.28 ms delays, which is itself an unmistakable
+capture signature.
+
+**Residual risk:** if the panel's 1.8 V rail also drops during LCD sleep, VREF collapses
+again and we get the same all-zero symptom. Cheap pre-check: measure pin 26 with the DMM
+while the display is asleep. **Fallback if it does drop:** derive VREF from the analyzer's
+own 3v3 through a divider (~12 k / 10 k gives 1.8 V; VCCA draws only microamps), making
+the reference independent of the iPod entirely.
