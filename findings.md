@@ -1238,3 +1238,45 @@ Indigo is the load-bearing case - its asymmetric patterns would have exposed a w
 **Still open:** the GREEN field's internal order. Green needs no expansion (already 6-bit),
 so no replica identifies it. The lamp's **violet** (238,130,238) has G6=32=`100000` -
 exactly one green lane high - which identifies the green MSB with no inference.
+
+### 2026-08-01 — **PIXEL PATH COMPLETE.** All three field orderings measured
+
+**Action:** Resolved the last two green lanes using colours chosen to isolate single bits.
+Rockbox's colour picker works in **RGB565 units directly** (R 0-31, G 0-63, B 0-31), so a
+target value can be dialled in without conversion.
+
+**(F) GREEN field order, MSB -> LSB: P15 P16 P01 P18 P19 P20**
+
+| position | pin | evidence |
+|---|---|---|
+| 5 (MSB) | P15 | violet, G6=32=`100000` - only P15 high |
+| 4 | P16 | custom R0 G16 B0, G6=16=`010000` - only P16 high |
+| 3 | P01 | orange, G6=41=`101001` - P15/P01/P20 high |
+| 2 | P18 | grey status bar, G6=12=`001100` - P01/P18 high |
+| 1 | P19 | by elimination |
+| 0 (LSB) | P20 | orange, same capture |
+
+**(F) Complete pixel path, verified against nine captures:**
+
+```
+RED   = P09 P10 P11 P12 P13 P14      P14 = hardware replica of P09
+GREEN = P15 P16 P01 P18 P19 P20      no replica (already 6-bit)
+BLUE  = P21 P22 P23 P24 P25 P02      P02 = hardware replica of P21
+        6bit = (5bit << 1) | (5bit >> 4)
+```
+
+red 63/63, green 63/63, blue 63/63, white OK, **indigo 18/18 & 33/33**, **violet 59/59 &
+32/32 & 59/59**, **orange 63/63 & 41/41**, G=16 16/16 - and the grey status bar decodes to
+**R = G = B = 12 = RGB888(48,48,48)**, neutral grey, matching what is physically on screen.
+The three asymmetric colours are load-bearing: a wrong ordering would light the wrong lanes.
+
+**Method note that cost several hours:** saturated fills **cannot** validate bit order
+within a colour field - every lane is high, so any permutation agrees. Only non-saturated
+values discriminate. The error surfaced solely because the collaborator compared the
+rendered image against the actual screen and said "it's grey, not green". **Reconstruction
+checked against reality caught what nine byte-exact protocol matches could not.**
+
+**Also useful:** row 0 is the status bar, which keeps its own colour independent of the
+theme background - and burst mode always starts at the first pixel of a frame, so every
+burst capture lands there. That is why background-colour changes never appeared until the
+status bar itself was recoloured.

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "version": "v5",
+  "version": "v6",
   "updated": "2026-08-01",
   "device": {
     "model": "Apple iPod Classic 2009 'thin' 160GB, A1238",
@@ -789,9 +789,9 @@
         "P14"
       ],
       "GREEN": [
-        "P01",
         "P15",
         "P16",
+        "P01",
         "P18",
         "P19",
         "P20"
@@ -818,7 +818,7 @@
       ],
       "GREEN": []
     },
-    "open_question": "GREEN within-field bit order still unverified (saturated fills cannot show it)",
+    "open_question": null,
     "bit_order": "each field listed MSB -> LSB",
     "expansion": {
       "rule": "6bit = (5bit << 1) | (5bit >> 4)  [MSB replicated into LSB]",
@@ -833,6 +833,14 @@
         "indigo",
         "grey menu top"
       ]
+    },
+    "green_order_evidence": {
+      "P15=pos5": "violet G6=32 (100000): only P15 high",
+      "P16=pos4": "custom R0 G16 B0 (010000): only P16 high",
+      "P01=pos3": "orange G6=41 (101001): P15,P01,P20 high",
+      "P20=pos0": "orange, same capture",
+      "P18=pos2": "grey status bar G6=12 (001100): P01,P18 high",
+      "P19=pos1": "by elimination"
     }
   }
 }

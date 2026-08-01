@@ -1,6 +1,6 @@
 # iPod Classic LCD flex pinout
 
-Generated from `pinout.json` v4.1 (2026-08-01) by `tools/report.py`.
+Generated from `pinout.json` v6 (2026-08-01) by `tools/report.py`.
 Do not edit by hand.
 
 ## Device
@@ -28,7 +28,7 @@ Do not edit by hand.
 | pin | function | confidence | notes |
 |----:|----------|:----------:|-------|
 | 1 | D-bus (GREEN field) | **high** | Idles LOW, bursts to ~1.8-2 V every 1s. / Frame mode: GREEN channel (driven high only by the green fill). |
-| 2 | D-bus (BLUE field) | **high** | Idles LOW, bursts to ~1.8-2 V every 1s. / Frame mode: BLUE channel (driven high only by the blue fill). |
+| 2 | D-bus (BLUE field) | **high** | Frame mode: BLUE LSB, a hardware replica of the blue MSB (pin 21). |
 | 3 | GND | **high** | 0 V powered; 0.6-1.5 ohm to signal ground unpowered. |
 | 4 | BL+ (backlight anode) | **high** | 10.7 V with backlight on. FAR above logic. NEVER connect to an analyzer input: TXU0104 A-side absolute max … |
 | 5 | BL- (backlight cathode) | **high** | 27.1 mV backlight ON, 0 mV OFF - perfectly correlated with backlight state. 25.6 ohm sense resistor to grou… |
@@ -40,7 +40,7 @@ Do not edit by hand.
 | 11 | D-bus APB bit 13 | **high** | Exact 69-write match against lcd_init_seq_23 (firmware wake). APB[13]. / Frame mode: RED channel (driven hi… |
 | 12 | D-bus APB bit 12 | **high** | Exact 69-write match against lcd_init_seq_23 (firmware wake). APB[12]. / Frame mode: RED channel (driven hi… |
 | 13 | D-bus APB bit 11 | **high** | Exact 69-write match against lcd_init_seq_23 (firmware wake). APB[11]. / Frame mode: RED channel (driven hi… |
-| 14 | D-bus APB bit 10 | **high** | Exact 69-write match against lcd_init_seq_23 (firmware wake). APB[10]. / Frame mode: RED channel (driven hi… |
+| 14 | D-bus APB bit 10 | **high** | Frame mode: RED LSB, a hardware replica of the red MSB (pin 9). This - not a short - is why P09 and P14 are… |
 | 15 | D-bus APB bit 9 | **high** | Exact 69-write match against lcd_init_seq_23 (firmware wake). APB[9]. / Frame mode: GREEN channel (driven h… |
 | 16 | D-bus APB bit 8 | **high** | Exact 69-write match against lcd_init_seq_23 (firmware wake). APB[8]. / Frame mode: GREEN channel (driven h… |
 | 17 | GND | **high** | 0 V powered; 0.6-1.5 ohm to signal ground unpowered. |
@@ -67,12 +67,10 @@ Do not edit by hand.
 **RGB666 - 18 lanes, 6 bits per colour channel**
 
 - **RED**: pins 9, 10, 11, 12, 13, 14
-- **GREEN**: pins 1, 15, 16, 18, 19, 20
-- **BLUE**: pins 2, 21, 22, 23, 24, 25
+- **GREEN**: pins 15, 16, 1, 18, 19, 20
+- **BLUE**: pins 21, 22, 23, 24, 25, 2
 
 framebuffer is RGB565; the SoC expands 5-bit R and B to 6 lanes
-
-> **Open:** blue shows no duplicate pair though a 5->6 expansion needs one; the expansion is not symmetric between red and blue. P02's role is also unclear (only 2 ones across the 69-write init).
 
 ## Bus timing (measured at 100 MS/s)
 
