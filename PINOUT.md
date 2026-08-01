@@ -1,6 +1,6 @@
 # iPod Classic LCD flex pinout
 
-Generated from `pinout.json` v6.1 (2026-08-01) by `tools/report.py`.
+Generated from `pinout.json` v6.2 (2026-08-01) by `tools/report.py`.
 Do not edit by hand.
 
 ## Device
@@ -84,12 +84,12 @@ framebuffer is RGB565; the SoC expands 5-bit R and B to 6 lanes
 
 ## Backlight
 
-- Anode **pin 4** at **10.7 V** — ⚠️ never connect to a 5 V-max analyzer input
+- Anode **pin 4** at **12.76 V** — ⚠️ never connect to a 5 V-max analyzer input
 - Cathode **pin 5** through a **25.6 Ω** sense resistor
 - Drive current: **19.5 mA** at maximum brightness
-- ~3 white LEDs in series: 10.7 V anode - 0.5 V sense = ~10.2 V across the string at ~3.4 V each
+- 4 white LEDs in series: 12.76 V anode - 0.50 V sense = 12.26 V across the string = 3.07 V per LED at 19.5 mA, a textbook white-LED forward voltage. (A 3-LED string would need 4.09 V each, which is out of range.)
 - Dimming: PWM at constant peak current (~19.5 mA); colour temperature stays constant across the range
-- **Driver spec:** constant-current boost, ~20 mA into a ~10.2 V string (>=11 V compliance), PWM dimming
+- **Driver spec:** constant-current boost, ~20 mA into a 4-LED string; output must reach 12.8 V under load, so design for >=14 V compliance with headroom. PWM the low side for dimming.
 
 ## Instrumentation notes
 

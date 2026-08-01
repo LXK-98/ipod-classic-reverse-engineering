@@ -1309,3 +1309,34 @@ a driver design actually needs.
 **Minor open item:** the 10.7 V anode figure was taken at low brightness. Forward voltage
 rises slightly with current, so at 19.5 mA the anode may sit a few hundred mV higher -
 worth a re-read at brightness 63 before finalising the boost converter's headroom.
+
+### 2026-08-01 — Backlight anode re-read at full brightness: **4 LEDs, not 3**
+
+**Action:** Re-read pin 4 at brightness 63, the open item flagged in the previous entry.
+
+**Result: 12.76 V** (against 10.7 V at brightness 7).
+
+**(F) CORRECTION - the string is 4 white LEDs, not 3.** At 19.5 mA:
+12.76 V - 0.50 V across the sense resistor = **12.26 V across the LEDs**.
+
+| string | V per LED | verdict |
+|---|---|---|
+| 3 LEDs | 4.09 V | out of range for white LEDs |
+| **4 LEDs** | **3.07 V** | textbook Vf at 20 mA |
+
+The earlier 3-LED estimate used the 10.7 V figure taken at brightness 7, where the string
+runs at ~5 % duty and the boost converter is far more lightly loaded. **Deriving a
+component count from a measurement taken at the wrong operating point produced a wrong
+answer** - the re-read was flagged as an open item for exactly this reason and was worth
+doing.
+
+**(F) The PWM switches the low side.** At ~5 % duty the anode still sits at 10.7 V rather
+than collapsing toward zero, so dimming is done by the cathode-side current sink while the
+boost rail stays up between pulses.
+
+**Corrected phase 6 driver spec:** constant-current boost, **~20 mA** into a **4-LED
+string**, output reaching **12.8 V under load** - design for **>= 14 V compliance** with
+headroom. PWM the low side for dimming.
+
+**Safety note updated:** pin 4 reaches **12.76 V**, not 10.7 V. Still far above the
+TXU0104's 5.5 V A-side maximum; the prohibition is unchanged but the margin is worse.

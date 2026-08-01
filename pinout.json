@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "version": "v6.1",
+  "version": "v6.2",
   "updated": "2026-08-01",
   "device": {
     "model": "Apple iPod Classic 2009 'thin' 160GB, A1238",
@@ -650,9 +650,14 @@
     "anode_pin": 4,
     "cathode_pin": 5,
     "sense_resistor_ohms": 25.6,
-    "anode_volts": 10.7,
+    "anode_volts": 12.76,
     "drive_current_ma": 19.5,
     "measurements": [
+      {
+        "brightness": 63,
+        "pin4_v": 12.76,
+        "note": "anode at full drive current"
+      },
       {
         "brightness": 63,
         "pin5_mv": 500,
@@ -664,13 +669,20 @@
         "pin5_mv": 27.1,
         "current_ma": 1.06,
         "duty": "~5.4% (PWM average)"
+      },
+      {
+        "brightness": 7,
+        "pin4_v": 10.7,
+        "note": "anode stays up at ~5% duty - PWM switches the LOW side (cathode sink), not the boost rail"
       }
     ],
     "dimming": "PWM at constant peak current (~19.5 mA); colour temperature stays constant across the range",
     "brightness_curve": "non-linear: 7/63 gives ~5.4% duty, not the 11.1% a linear map would give (gamma ~1.3)",
-    "led_string": "~3 white LEDs in series: 10.7 V anode - 0.5 V sense = ~10.2 V across the string at ~3.4 V each",
-    "phase6_driver_spec": "constant-current boost, ~20 mA into a ~10.2 V string (>=11 V compliance), PWM dimming",
-    "safety": "pin 4 sits at 10.7 V - NEVER connect to an analyzer input (TXU0104 A-side max 5.5 V)"
+    "led_string": "4 white LEDs in series: 12.76 V anode - 0.50 V sense = 12.26 V across the string = 3.07 V per LED at 19.5 mA, a textbook white-LED forward voltage. (A 3-LED string would need 4.09 V each, which is out of range.)",
+    "phase6_driver_spec": "constant-current boost, ~20 mA into a 4-LED string; output must reach 12.8 V under load, so design for >=14 V compliance with headroom. PWM the low side for dimming.",
+    "safety": "pin 4 reaches 12.76 V at full brightness - NEVER connect to an analyzer input (TXU0104 A-side absolute max 5.5 V)",
+    "anode_volts_at_low_brightness": 10.7,
+    "led_count": 4
   },
   "phase2_signal_pins": [
     1,
