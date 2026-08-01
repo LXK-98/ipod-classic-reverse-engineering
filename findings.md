@@ -1280,3 +1280,32 @@ checked against reality caught what nine byte-exact protocol matches could not.*
 theme background - and burst mode always starts at the first pixel of a frame, so every
 burst capture lands there. That is why background-colour changes never appeared until the
 status bar itself was recoloured.
+
+### 2026-08-01 — Backlight fully characterised
+
+**Action:** Read pin 5 (BL-) across the 25.6 Ohm sense resistor at both brightness extremes.
+
+| brightness | pin 5 | current | note |
+|---|---|---|---|
+| 63 (max) | **500 mV, flat** | **19.53 mA** | no ripple => 100% duty, so this is the true DC LED current |
+| 7 | 27.1 mV | 1.06 mA avg | ~5.4% duty; same peak current |
+
+**(F) Dimming is PWM at constant peak current (~19.5 mA).** The "flat" reading at maximum
+confirms 100% duty there, which retro-validates the earlier PWM hypothesis: the 1.06 mA
+was a duty-cycle average, not a lower drive current. Colour temperature is therefore
+constant across the brightness range.
+
+**(F) The brightness curve is non-linear.** Setting 7 of 63 gives ~5.4% duty where a
+linear map would give 11.1% - roughly a gamma of 1.3, i.e. perceptual scaling.
+
+**(F) LED string: approximately 3 white LEDs in series.** 10.7 V at the anode less the
+0.5 V developed across the 25.6 Ohm sense resistor leaves ~10.2 V across the string; white
+LEDs drop ~3.2-3.4 V each.
+
+**Phase 6 driver spec:** constant-current boost, **~20 mA** into a **~10.2 V** string
+(allow >= 11 V compliance), with PWM dimming. Deliverable #3 is now complete in the detail
+a driver design actually needs.
+
+**Minor open item:** the 10.7 V anode figure was taken at low brightness. Forward voltage
+rises slightly with current, so at 19.5 mA the anode may sit a few hundred mV higher -
+worth a re-read at brightness 63 before finalising the boost converter's headroom.
