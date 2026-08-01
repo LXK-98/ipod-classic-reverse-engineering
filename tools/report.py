@@ -84,7 +84,10 @@ def main() -> int:
           f"⚠️ never connect to a 5 V-max analyzer input")
         A(f"- Cathode **pin {b['cathode_pin']}** through a **{b['sense_resistor_ohms']} Ω** "
           f"sense resistor")
-        A(f"- {b['note']}\n")
+        A(f"- Drive current: **{b['drive_current_ma']} mA** at maximum brightness")
+        A(f"- {b['led_string']}")
+        A(f"- Dimming: {b['dimming']}")
+        A(f"- **Driver spec:** {b['phase6_driver_spec']}\n")
 
     if "analyzers" in d:
         A("## Instrumentation notes\n")
