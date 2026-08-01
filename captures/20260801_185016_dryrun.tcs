@@ -1,0 +1,19 @@
+{
+  "Frequency": 1000000,
+  "PreTriggerSamples": 1024,
+  "PostTriggerSamples": 130000,
+  "LoopCount": 0,
+  "MeasureBursts": false,
+  "CaptureChannels": [
+    {
+      "ChannelNumber": 0,
+      "ChannelName": "PIN27",
+      "Hidden": false
+    }
+  ],
+  "TriggerType": 0,
+  "TriggerChannel": 0,
+  "TriggerInverted": true,
+  "TriggerBitCount": 1,
+  "TriggerPattern": 0
+}

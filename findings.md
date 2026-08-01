@@ -606,3 +606,56 @@ Need to know how they were observed — an oscilloscope may be present, which wo
 useful for phase 5 timing work.
 
 **Next step:** move the shifter VREF to EXT at 1.8 V before any analyzer connection.
+
+---
+
+### 2026-08-01 — Shifter validated at 1.8 V; **pin 27 = /WR**; bus timing measured
+
+**Action:** VREF switch moved to `EXT`, referenced from header pin 26 (1.8 V rail) via
+the board's `VRF` pin; analyzer GND to header pin 3 (signal ground); single probe on
+header pin 27. Captured at 1 MS/s, then 100 MS/s.
+
+**Result 1 — (F) the 1.8 V probing path works.** The capture triggered and produced
+clean logic. This validates the whole `EXT`-VREF arrangement before committing to 22
+probe wires. Note the failure mode here is loud, not subtle: TXU0104 forces outputs
+high-Z if VCCA is absent, so a bad VRF wire gives a dead channel rather than plausible
+bad data.
+
+**Result 2 — a sampling-rate trap, worth recording.** At 1 MS/s pin 27 appeared to be a
+clean ~91 kHz signal: LOW runs *all* exactly 1 sample, HIGH runs *all* 10. That
+regularity was used to argue the signal was **not** aliased — **which was wrong.** At
+100 MS/s the true signal is **1.64 MHz**. The beat between 1.639 MHz and the 1 MS/s
+sample clock re-aligns roughly every 11 samples, manufacturing the false regularity.
+
+> **Lesson: run-length regularity is not evidence against aliasing.** Undersampling can
+> produce output that looks *more* periodic than the real signal. Only a capture at a
+> rate well above the suspected fundamental settles it. Applies directly to phase 2:
+> the survey preset's 10 MS/s would have mis-measured this signal.
+
+**Result 3 — (F) pin 27 = /WR, active low.** Measured at 100 MS/s:
+
+| parameter | value |
+|---|---|
+| WR low width | **70–80 ns** |
+| WR high width | **530–540 ns** |
+| WR cycle | **610 ns** |
+| write rate | **1.64 MHz** |
+
+**Result 4 — (F) one transfer per pixel, confirmed empirically.** The 1 s burst spans
+**46.92 ms**. A full frame is 320×240 = 76800 pixels; 76800 × 610 ns = **46.85 ms** — a
+0.1 % match. So each 1 s burst is one complete framebuffer update, and each pixel costs
+exactly **one** bus write, not two. This independently confirms the `LCD_MODE_P16`
+"RGB565 / 1-transfer" claim in `lcd-s5l8702.c`, which the source itself marks "TBC", and
+it retires part of deliverable #6 without any decoding.
+
+**Result 5 — instrument inventory.** Collaborator's scope is a **Voltcraft VC-1008**
+(handheld DMM with a single-channel scope). Adequate for rails, ripple and slow signals;
+the logic analyzer remains primary for bus timing, and a 1.64 MHz strobe with 70 ns
+pulses is at or beyond the VC-1008's comfortable range.
+
+**Backlight (updated):** pin 5 reads 27.1 mV backlight-on / 0 mV off across 25.6 Ω ⇒
+**1.06 mA average** at partial brightness. Far too low for a real backlight, so the
+string is PWM-dimmed and the meter reads the duty average. A max-brightness reading is
+still wanted for the phase 6 driver spec.
+
+**Next step:** wire all 22 signal pins to LA-A and run the phase 2 survey.
