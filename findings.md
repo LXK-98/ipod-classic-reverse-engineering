@@ -446,3 +446,54 @@ unreachable. Recorded as a lead only — Phase 1 will measure this unit directly
 better evidence than a sibling part's datasheet.
 
 **Next step:** Phase 1 DMM triage, backlight first per safety rule 1.
+
+---
+
+### 2026-08-01 — Ground reference established; two distinct grounds found
+
+**Action:** Needed a trustworthy ground reference before any voltage measurement.
+Battery **disconnected** for this pass (the PMU keeps standby rails alive whenever the
+battery is attached, so "powered off" is not unpowered; and a probe slip across 2.54 mm
+pins is harmless only on a dead board).
+
+**Result:**
+
+| measurement | reading |
+|---|---|
+| iPod rear shell → flex pins | no continuity |
+| headphone jack casing → flex pins | no continuity |
+| HDD case → flex pins | beeps on several pins |
+| HDD case, two points on itself | ~0 Ω |
+| dock connector shell, two points on itself | ~0 Ω |
+| **HDD case ↔ dock connector shell** | **300 Ω** |
+| **dock shell ↔ the beeping flex pins** | **300 Ω** |
+| **beeping flex pins ↔ each other** | **~0 Ω (beep)** |
+
+Contact resistance was the first hypothesis for the 300 Ω, and was **ruled out**: both
+pieces of metal measure ~0 Ω across their own surface, so the probes are making good
+contact and the 300 Ω lies in the circuit.
+
+**Interpretation — (F) this unit has two distinct grounds:**
+
+1. **Signal ground** — the HDD case together with a set of LCD flex pins, all mutually
+   ~0 Ω. This is a genuine ground net; the mutual continuity between the pins proves it
+   independently of what we call the reference.
+2. **Chassis / shield ground** — the dock connector shell, the rear shell and the
+   headphone jack casing, bonded to signal ground through **~300 Ω**.
+
+A resistive chassis-to-signal-ground bond is a standard EMI/ESD measure (normally with a
+parallel capacitor): it gives ESD a bleed path while avoiding ground loops. The rear
+shell and headphone jack read open additionally because they are anodised/coated.
+
+**(F) Consequence for safety rule 3 — analyzer grounding.** The rule says the analyzers
+and iPod must share ground. This measurement shows *which* ground: **signal ground**.
+Grounding the analyzer to the dock shell or the iPod case would insert 300 Ω into the
+ground return, degrading every capture and risking common-mode artifacts that would
+likely be misdiagnosed as bad probe contact. **In phase 2 the analyzer ground goes to a
+GND pin on the interposer header itself** — same net, shortest loop, closest to the
+signals being measured.
+
+**Reference for all subsequent measurements: the HDD case.**
+
+**Next step:** full 34-pin resistance sweep to ground; then reconnect the battery for the
+powered sweep that identifies the backlight.
