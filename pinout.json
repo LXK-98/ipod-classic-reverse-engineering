@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "version": "v2",
+  "version": "v3",
   "updated": "2026-08-01",
   "device": {
     "model": "Apple iPod Classic 2009 'thin' 160GB, A1238",
@@ -42,7 +42,7 @@
   },
   "pins": {
     "1": {
-      "function": "bus? idle-low",
+      "function": "D-bus (GREEN field)",
       "voltage": 1.8,
       "header_pin": 1,
       "net": "/2",
@@ -50,16 +50,17 @@
       "header_row": 1,
       "la_device": null,
       "la_channel": null,
-      "confidence": "low",
+      "confidence": "high",
       "evidence": [
         "2026-08-01_ground-sweep.tsv",
         "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "Idles LOW, bursts to ~1.8-2 V every 1s.",
-      "r_to_gnd_ohms": 3700000.0
+      "notes": "Idles LOW, bursts to ~1.8-2 V every 1s. | Frame mode: GREEN channel (driven high only by the green fill).",
+      "r_to_gnd_ohms": 3700000.0,
+      "rgb_field": "GREEN"
     },
     "2": {
-      "function": "bus? idle-low",
+      "function": "D-bus (BLUE field)",
       "voltage": 1.8,
       "header_pin": 2,
       "net": "/3",
@@ -67,13 +68,14 @@
       "header_row": 1,
       "la_device": null,
       "la_channel": null,
-      "confidence": "low",
+      "confidence": "high",
       "evidence": [
         "2026-08-01_ground-sweep.tsv",
         "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "Idles LOW, bursts to ~1.8-2 V every 1s.",
-      "r_to_gnd_ohms": 3800000.0
+      "notes": "Idles LOW, bursts to ~1.8-2 V every 1s. | Frame mode: BLUE channel (driven high only by the blue fill).",
+      "r_to_gnd_ohms": 3800000.0,
+      "rgb_field": "BLUE"
     },
     "3": {
       "function": "GND",
@@ -191,8 +193,9 @@
         "2026-08-01_ground-sweep.tsv",
         "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "Predicted by the descending pin->bit run that fits all 10 confirmed lanes (skipping GND pins 17 and 8). NOT yet observed: probe reads constant 0.",
-      "r_to_gnd_ohms": 3800000.0
+      "notes": "Predicted by the descending pin->bit run that fits all 10 confirmed lanes (skipping GND pins 17 and 8). NOT yet observed: probe reads constant 0. | Frame mode: RED channel (driven high only by the red fill).",
+      "r_to_gnd_ohms": 3800000.0,
+      "rgb_field": "RED"
     },
     "10": {
       "function": "D-bus APB bit 14 (predicted)",
@@ -208,8 +211,9 @@
         "2026-08-01_ground-sweep.tsv",
         "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "Predicted by the descending pin->bit run that fits all 10 confirmed lanes (skipping GND pins 17 and 8). NOT yet observed: probe reads constant 0.",
-      "r_to_gnd_ohms": 3700000.0
+      "notes": "Predicted by the descending pin->bit run that fits all 10 confirmed lanes (skipping GND pins 17 and 8). NOT yet observed: probe reads constant 0. | Frame mode: RED channel (driven high only by the red fill).",
+      "r_to_gnd_ohms": 3700000.0,
+      "rgb_field": "RED"
     },
     "11": {
       "function": "D-bus APB bit 13",
@@ -225,8 +229,9 @@
         "2026-08-01_ground-sweep.tsv",
         "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "Exact 69-write match against lcd_init_seq_23 (firmware wake). APB[13].",
-      "r_to_gnd_ohms": 3700000.0
+      "notes": "Exact 69-write match against lcd_init_seq_23 (firmware wake). APB[13]. | Frame mode: RED channel (driven high only by the red fill).",
+      "r_to_gnd_ohms": 3700000.0,
+      "rgb_field": "RED"
     },
     "12": {
       "function": "D-bus APB bit 12",
@@ -242,8 +247,9 @@
         "2026-08-01_ground-sweep.tsv",
         "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "Exact 69-write match against lcd_init_seq_23 (firmware wake). APB[12].",
-      "r_to_gnd_ohms": 3700000.0
+      "notes": "Exact 69-write match against lcd_init_seq_23 (firmware wake). APB[12]. | Frame mode: RED channel (driven high only by the red fill).",
+      "r_to_gnd_ohms": 3700000.0,
+      "rgb_field": "RED"
     },
     "13": {
       "function": "D-bus APB bit 11",
@@ -259,8 +265,9 @@
         "2026-08-01_ground-sweep.tsv",
         "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "Exact 69-write match against lcd_init_seq_23 (firmware wake). APB[11].",
-      "r_to_gnd_ohms": 3700000.0
+      "notes": "Exact 69-write match against lcd_init_seq_23 (firmware wake). APB[11]. | Frame mode: RED channel (driven high only by the red fill).",
+      "r_to_gnd_ohms": 3700000.0,
+      "rgb_field": "RED"
     },
     "14": {
       "function": "D-bus APB bit 10",
@@ -276,8 +283,9 @@
         "2026-08-01_ground-sweep.tsv",
         "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "Exact 69-write match against lcd_init_seq_23 (firmware wake). APB[10].",
-      "r_to_gnd_ohms": 3700000.0
+      "notes": "Exact 69-write match against lcd_init_seq_23 (firmware wake). APB[10]. | Frame mode: RED channel (driven high only by the red fill).",
+      "r_to_gnd_ohms": 3700000.0,
+      "rgb_field": "RED"
     },
     "15": {
       "function": "D-bus APB bit 9",
@@ -293,8 +301,9 @@
         "2026-08-01_ground-sweep.tsv",
         "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "Exact 69-write match against lcd_init_seq_23 (firmware wake). APB[9].",
-      "r_to_gnd_ohms": 3700000.0
+      "notes": "Exact 69-write match against lcd_init_seq_23 (firmware wake). APB[9]. | Frame mode: GREEN channel (driven high only by the green fill).",
+      "r_to_gnd_ohms": 3700000.0,
+      "rgb_field": "GREEN"
     },
     "16": {
       "function": "D-bus APB bit 8",
@@ -310,8 +319,9 @@
         "2026-08-01_ground-sweep.tsv",
         "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "Exact 69-write match against lcd_init_seq_23 (firmware wake). APB[8].",
-      "r_to_gnd_ohms": 3700000.0
+      "notes": "Exact 69-write match against lcd_init_seq_23 (firmware wake). APB[8]. | Frame mode: GREEN channel (driven high only by the green fill).",
+      "r_to_gnd_ohms": 3700000.0,
+      "rgb_field": "GREEN"
     },
     "17": {
       "function": "GND",
@@ -344,8 +354,9 @@
         "2026-08-01_ground-sweep.tsv",
         "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "Exact 69-write match against lcd_init_seq_23 (firmware wake). APB[7].",
-      "r_to_gnd_ohms": 3700000.0
+      "notes": "Exact 69-write match against lcd_init_seq_23 (firmware wake). APB[7]. | Frame mode: GREEN channel (driven high only by the green fill).",
+      "r_to_gnd_ohms": 3700000.0,
+      "rgb_field": "GREEN"
     },
     "19": {
       "function": "D-bus APB bit 6 (predicted)",
@@ -361,8 +372,9 @@
         "2026-08-01_ground-sweep.tsv",
         "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "Predicted by the descending pin->bit run that fits all 10 confirmed lanes (skipping GND pins 17 and 8). NOT yet observed: probe reads constant 0.",
-      "r_to_gnd_ohms": 3700000.0
+      "notes": "Predicted by the descending pin->bit run that fits all 10 confirmed lanes (skipping GND pins 17 and 8). NOT yet observed: probe reads constant 0. | Frame mode: GREEN channel (driven high only by the green fill).",
+      "r_to_gnd_ohms": 3700000.0,
+      "rgb_field": "GREEN"
     },
     "20": {
       "function": "D-bus APB bit 5",
@@ -378,8 +390,9 @@
         "2026-08-01_ground-sweep.tsv",
         "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "CONFIRMED on LA-B: exact 68-write match to bit5.",
-      "r_to_gnd_ohms": 3700000.0
+      "notes": "CONFIRMED on LA-B: exact 68-write match to bit5. | Frame mode: GREEN channel (driven high only by the green fill).",
+      "r_to_gnd_ohms": 3700000.0,
+      "rgb_field": "GREEN"
     },
     "21": {
       "function": "D-bus APB bit 4",
@@ -395,8 +408,9 @@
         "2026-08-01_ground-sweep.tsv",
         "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "CONFIRMED by swap test onto known-good CH17: exact match to bit4 (21/68 ones).",
-      "r_to_gnd_ohms": 600000.0
+      "notes": "CONFIRMED by swap test onto known-good CH17: exact match to bit4 (21/68 ones). | Frame mode: BLUE channel (driven high only by the blue fill).",
+      "r_to_gnd_ohms": 600000.0,
+      "rgb_field": "BLUE"
     },
     "22": {
       "function": "D-bus APB bit 3",
@@ -412,8 +426,9 @@
         "2026-08-01_ground-sweep.tsv",
         "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "CONFIRMED on LA-B: exact 68-write match to bit3.",
-      "r_to_gnd_ohms": 500000.0
+      "notes": "CONFIRMED on LA-B: exact 68-write match to bit3. | Frame mode: BLUE channel (driven high only by the blue fill).",
+      "r_to_gnd_ohms": 500000.0,
+      "rgb_field": "BLUE"
     },
     "23": {
       "function": "D-bus APB bit 2",
@@ -429,8 +444,9 @@
         "2026-08-01_ground-sweep.tsv",
         "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "Exact 69-write match against lcd_init_seq_23 (firmware wake). APB[2].",
-      "r_to_gnd_ohms": 600000.0
+      "notes": "Exact 69-write match against lcd_init_seq_23 (firmware wake). APB[2]. | Frame mode: BLUE channel (driven high only by the blue fill).",
+      "r_to_gnd_ohms": 600000.0,
+      "rgb_field": "BLUE"
     },
     "24": {
       "function": "D-bus APB bit 1",
@@ -446,8 +462,9 @@
         "2026-08-01_ground-sweep.tsv",
         "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "Exact 69-write match against lcd_init_seq_23 (firmware wake). APB[1].",
-      "r_to_gnd_ohms": 500000.0
+      "notes": "Exact 69-write match against lcd_init_seq_23 (firmware wake). APB[1]. | Frame mode: BLUE channel (driven high only by the blue fill).",
+      "r_to_gnd_ohms": 500000.0,
+      "rgb_field": "BLUE"
     },
     "25": {
       "function": "D-bus APB bit 0",
@@ -463,8 +480,9 @@
         "2026-08-01_ground-sweep.tsv",
         "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "Exact 69-write match against lcd_init_seq_23 (firmware wake). APB[0].",
-      "r_to_gnd_ohms": 600000.0
+      "notes": "Exact 69-write match against lcd_init_seq_23 (firmware wake). APB[0]. | Frame mode: BLUE channel (driven high only by the blue fill).",
+      "r_to_gnd_ohms": 600000.0,
+      "rgb_field": "BLUE"
     },
     "26": {
       "function": "PWR ~1.8V",
@@ -761,5 +779,45 @@
       "good": "CH1-20"
     },
     "note": "Each board has exactly one dead 4-bit TXU0104 group, in different positions. Never chain them: multidevice allows pattern triggers only, and burst mode requires an Edge trigger."
+  },
+  "pixel_format": {
+    "bus": "RGB666 - 18 lanes, 6 bits per colour channel",
+    "fields": {
+      "RED": [
+        "P09",
+        "P10",
+        "P11",
+        "P12",
+        "P13",
+        "P14"
+      ],
+      "GREEN": [
+        "P01",
+        "P15",
+        "P16",
+        "P18",
+        "P19",
+        "P20"
+      ],
+      "BLUE": [
+        "P02",
+        "P21",
+        "P22",
+        "P23",
+        "P24",
+        "P25"
+      ]
+    },
+    "evidence": "solid red/green/blue fills from Rockbox lamp plugin; each saturated channel drives exactly 6 lanes high",
+    "rockbox_side": "framebuffer is RGB565; the SoC expands 5-bit R and B to 6 lanes",
+    "duplicate_pairs": {
+      "RED": [
+        "P09",
+        "P14"
+      ],
+      "GREEN": [],
+      "BLUE": []
+    },
+    "open_question": "blue shows no duplicate pair though a 5->6 expansion needs one; the expansion is not symmetric between red and blue. P02's role is also unclear (only 2 ones across the 69-write init)."
   }
 }

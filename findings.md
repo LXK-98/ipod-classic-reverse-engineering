@@ -1023,3 +1023,54 @@ stimuli (init sequence, window-setup commands, colour fills). Bit 6 confirmed. *
 
 **Outstanding test, never yet performed:** DMM continuity between header pins 9 and 14
 with the iPod powered off.
+
+### 2026-08-01 — **The bus is RGB666, not RGB565.** Bit-10 "anomaly" was my error
+
+**Action:** Pins 9 and 14 measured **6.66 MOhm** apart (open, not shorted) and the
+collaborator confirmed CH4->pin 9 and CH9->pin 14 are wired correctly. That eliminated
+every hardware explanation, so the frame-mode mapping was solved empirically from the
+three known lamp fills instead of assumed.
+
+**(F) The data bus carries RGB666 - 18 lanes, 6 bits per colour channel.** Red, green and
+blue fills partition the lanes into three disjoint groups of **six**:
+
+| field | pins |
+|---|---|
+| RED | 9, 10, 11, 12, 13, 14 |
+| GREEN | 1, 15, 16, 18, 19, 20 |
+| BLUE | 2, 21, 22, 23, 24, 25 |
+
+Six per channel, not 5/6/5. A saturated channel drives all six of its lanes high.
+
+**CORRECTION — the "bit 10 anomaly" was my analysis error, not a fault.** I had assumed
+the bus carried raw RGB565 on 16 lanes and decoded pixels with the command-mode bit map.
+It does not: Rockbox's RGB565 framebuffer is **expanded by the SoC into RGB666** before
+reaching the flex. Decoding pixel writes with a 16-bit command-mode map is simply the
+wrong model, and it manufactured a one-bit discrepancy in exactly the two fills
+(red, green) where the fields disagree. No hardware is faulty.
+
+**(F) P09 == P14 is explained and expected.** Expanding a 5-bit RGB565 channel to 6 lanes
+requires replicating one bit onto two lanes, so two lanes of that channel are permanently
+identical. Verified against the prediction:
+
+| field | expansion needed | duplicate pair predicted | found |
+|---|---|---|---|
+| RED (5-bit in 565) | yes | 1 | **(P09, P14)** ✓ |
+| GREEN (already 6-bit) | no | 0 | **none** ✓ |
+| BLUE (5-bit in 565) | yes | 1 | **none** ✗ |
+
+Red and green match the model exactly. **Blue does not**, so the expansion is not
+symmetric between red and blue and the model is incomplete.
+
+**This bears on deliverable #6 and partially contradicts the Rockbox source.**
+`lcd-s5l8702.c` documents frame mode as `APB[15:0] -> D[17:10, 8:1]` and marks it "TBC" -
+that mapping would leave D9 and D0 undriven and give 5/6/5-shaped behaviour. What we
+measure is 6/6/6 with all lanes driven, so the real hardware does a genuine 5->6
+expansion rather than a bit-shuffle. This is the "TBC" the Rockbox authors left open.
+
+**Still open:** why blue lacks a duplicate pair, and P02's role (blue-field in the fills
+but only 2 ones across the 69-write init).
+
+**Note on the command-mode map:** the pin->APB-bit assignments confirmed from the init
+sequence remain valid **for 16-bit register/command writes**. They are simply not the
+right model for pixel writes.
