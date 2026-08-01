@@ -1,0 +1,40 @@
+# Phase 1 powered sweep. DC voltage from each header pin to signal ground (HDD case).
+# Conditions: battery CONNECTED, iPod booted into Rockbox, idle on a static menu,
+#             backlight on, both flexes connected.
+# Collaborator notes the "2 V" readings are probably nearer 1.8 V, and that the
+# "spikes" are bursts of activity lasting ~100 ms.
+pin	volts	behaviour
+1	2.0	pulse-low-idle: ~2V bursts every 1s
+2	2.0	pulse-low-idle: ~2V bursts every 1s
+3	0	steady 0 (GND)
+4	10.7	STEADY HIGH VOLTAGE - backlight anode
+5	0	steady 0
+6	0	steady 0 (GND)
+7	2.0	~2V bursts every ~15ms (faster cadence than the 1s group)
+8	0	steady 0 (GND)
+9	2.0	~2V bursts every ~15ms (faster cadence than the 1s group)
+10	2.0	pulse-low-idle: ~2V bursts every 1s
+11	2.0	pulse-low-idle: ~2V bursts every 1s
+12	2.0	pulse-low-idle: ~2V bursts every 1s
+13	2.0	pulse-low-idle: ~2V bursts every 1s
+14	2.0	pulse-low-idle: ~2V bursts every 1s
+15	2.0	pulse-low-idle: ~2V bursts every 1s
+16	2.0	pulse-low-idle: ~2V bursts every 1s
+17	0	steady 0 (GND)
+18	2.0	pulse-low-idle: ~2V bursts every 1s
+19	2.0	pulse-low-idle: ~2V bursts every 1s
+20	2.0	pulse-low-idle: ~2V bursts every 1s
+21	1.8	IDLE HIGH ~1.8V, drops to 0 every 1s
+22	2.0	pulse-low-idle: ~2V bursts every 1s
+23	2.0	pulse-low-idle: ~2V bursts every 1s
+24	2.0	pulse-low-idle: ~2V bursts every 1s
+25	2.0	pulse-low-idle: ~2V bursts every 1s
+26	2.0	steady ~2V (rail)
+27	1.8	IDLE HIGH ~1.8V, drops to 0 every 1s
+28	1.8	IDLE HIGH ~1.8V, drops to 0 every 1s
+29	1.8	IDLE HIGH ~1.8V, drops to 0 every 1s
+30	2.0	steady ~2V (rail)
+31	0	steady 0 (GND)
+32	2.0	steady ~2V (rail)
+33	3.0	steady ~3V (rail)
+34	1.5	~1.5V with ~100mV square ripple, period ~80us

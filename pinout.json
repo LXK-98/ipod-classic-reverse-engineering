@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "version": "v1",
+  "version": "v1.1",
   "updated": "2026-08-01",
   "device": {
     "model": "Apple iPod Classic 2009 'thin' 160GB, A1238",
@@ -32,552 +32,591 @@
     }
   },
   "vddio": {
-    "value": null,
-    "confidence": "none"
+    "value": 1.8,
+    "confidence": "medium",
+    "evidence": [
+      "logic swings ~1.8-2.0 V",
+      "steady 1.8 V rails on pins 26/30/32"
+    ],
+    "note": "Below the brief's 2.3 V gate. Shifter VREF must move 3v3 -> EXT."
   },
   "pins": {
     "1": {
-      "function": "high-Z-baseline",
-      "voltage": null,
+      "function": "bus? idle-low",
+      "voltage": 1.8,
       "header_pin": 1,
       "net": "/2",
       "header_column": "LEFT",
       "header_row": 1,
       "la_device": null,
       "la_channel": null,
-      "confidence": "none",
+      "confidence": "low",
       "evidence": [
-        "2026-08-01_ground-sweep.tsv"
+        "2026-08-01_ground-sweep.tsv",
+        "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "",
+      "notes": "Idles LOW, bursts to ~1.8-2 V every 1s.",
       "r_to_gnd_ohms": 3700000.0
     },
     "2": {
-      "function": "high-Z-baseline",
-      "voltage": null,
+      "function": "bus? idle-low",
+      "voltage": 1.8,
       "header_pin": 2,
       "net": "/3",
       "header_column": "RIGHT",
       "header_row": 1,
       "la_device": null,
       "la_channel": null,
-      "confidence": "none",
+      "confidence": "low",
       "evidence": [
-        "2026-08-01_ground-sweep.tsv"
+        "2026-08-01_ground-sweep.tsv",
+        "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "",
+      "notes": "Idles LOW, bursts to ~1.8-2 V every 1s.",
       "r_to_gnd_ohms": 3800000.0
     },
     "3": {
-      "function": "GND-or-panel-tied-low",
-      "voltage": null,
+      "function": "GND",
+      "voltage": 0.0,
       "header_pin": 3,
       "net": "/4",
       "header_column": "LEFT",
       "header_row": 2,
       "la_device": null,
       "la_channel": null,
-      "confidence": "medium",
+      "confidence": "high",
       "evidence": [
-        "2026-08-01_ground-sweep.tsv"
+        "2026-08-01_ground-sweep.tsv",
+        "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "",
+      "notes": "0 V powered; 0.6-1.5 ohm to signal ground unpowered.",
       "r_to_gnd_ohms": 1.5
     },
     "4": {
-      "function": "high-Z-baseline",
-      "voltage": null,
+      "function": "BL+ (backlight anode)",
+      "voltage": 10.7,
       "header_pin": 4,
       "net": "/5",
       "header_column": "RIGHT",
       "header_row": 2,
       "la_device": null,
       "la_channel": null,
-      "confidence": "none",
+      "confidence": "high",
       "evidence": [
-        "2026-08-01_ground-sweep.tsv"
+        "2026-08-01_ground-sweep.tsv",
+        "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "",
+      "notes": "10.7 V with backlight on. FAR above logic. NEVER connect to an analyzer input: TXU0104 A-side absolute max is 5.5 V.",
       "r_to_gnd_ohms": 5400000.0
     },
     "5": {
-      "function": "low-Z-to-GND",
-      "voltage": null,
+      "function": "unresolved",
+      "voltage": 0.0,
       "header_pin": 5,
       "net": "/6",
       "header_column": "LEFT",
       "header_row": 3,
       "la_device": null,
       "la_channel": null,
-      "confidence": "low",
+      "confidence": "none",
       "evidence": [
-        "2026-08-01_ground-sweep.tsv"
+        "2026-08-01_ground-sweep.tsv",
+        "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "",
+      "notes": "0 V powered but 25.6 ohm to ground unpowered - inconsistent with a plain GND and with an LED sense resistor carrying current. Needs a mV-resolution re-read.",
       "r_to_gnd_ohms": 25.6
     },
     "6": {
-      "function": "GND-or-panel-tied-low",
-      "voltage": null,
+      "function": "GND",
+      "voltage": 0.0,
       "header_pin": 6,
       "net": "/7",
       "header_column": "RIGHT",
       "header_row": 3,
       "la_device": null,
       "la_channel": null,
-      "confidence": "medium",
+      "confidence": "high",
       "evidence": [
-        "2026-08-01_ground-sweep.tsv"
+        "2026-08-01_ground-sweep.tsv",
+        "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "",
+      "notes": "0 V powered; 0.6-1.5 ohm to signal ground unpowered.",
       "r_to_gnd_ohms": 0.6
     },
     "7": {
-      "function": "high-Z-baseline",
-      "voltage": null,
+      "function": "bus-or-TE? fast",
+      "voltage": 1.8,
       "header_pin": 7,
       "net": "/8",
       "header_column": "LEFT",
       "header_row": 4,
       "la_device": null,
       "la_channel": null,
-      "confidence": "none",
+      "confidence": "low",
       "evidence": [
-        "2026-08-01_ground-sweep.tsv"
+        "2026-08-01_ground-sweep.tsv",
+        "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "",
+      "notes": "Bursts at ~15 ms cadence, distinct from the 1 s group. TE (~60-70 Hz) or a data lane with different activity.",
       "r_to_gnd_ohms": 13500000.0
     },
     "8": {
-      "function": "GND-or-panel-tied-low",
-      "voltage": null,
+      "function": "GND",
+      "voltage": 0.0,
       "header_pin": 8,
       "net": "/9",
       "header_column": "RIGHT",
       "header_row": 4,
       "la_device": null,
       "la_channel": null,
-      "confidence": "medium",
+      "confidence": "high",
       "evidence": [
-        "2026-08-01_ground-sweep.tsv"
+        "2026-08-01_ground-sweep.tsv",
+        "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "",
+      "notes": "0 V powered; 0.6-1.5 ohm to signal ground unpowered.",
       "r_to_gnd_ohms": 0.6
     },
     "9": {
-      "function": "high-Z-baseline",
-      "voltage": null,
+      "function": "bus-or-TE? fast",
+      "voltage": 1.8,
       "header_pin": 9,
       "net": "/10",
       "header_column": "LEFT",
       "header_row": 5,
       "la_device": null,
       "la_channel": null,
-      "confidence": "none",
+      "confidence": "low",
       "evidence": [
-        "2026-08-01_ground-sweep.tsv"
+        "2026-08-01_ground-sweep.tsv",
+        "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "",
+      "notes": "Bursts at ~15 ms cadence, distinct from the 1 s group. TE (~60-70 Hz) or a data lane with different activity.",
       "r_to_gnd_ohms": 3800000.0
     },
     "10": {
-      "function": "high-Z-baseline",
-      "voltage": null,
+      "function": "bus? idle-low",
+      "voltage": 1.8,
       "header_pin": 10,
       "net": "/11",
       "header_column": "RIGHT",
       "header_row": 5,
       "la_device": null,
       "la_channel": null,
-      "confidence": "none",
+      "confidence": "low",
       "evidence": [
-        "2026-08-01_ground-sweep.tsv"
+        "2026-08-01_ground-sweep.tsv",
+        "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "",
+      "notes": "Idles LOW, bursts to ~1.8-2 V every 1s.",
       "r_to_gnd_ohms": 3700000.0
     },
     "11": {
-      "function": "high-Z-baseline",
-      "voltage": null,
+      "function": "bus? idle-low",
+      "voltage": 1.8,
       "header_pin": 11,
       "net": "/12",
       "header_column": "LEFT",
       "header_row": 6,
       "la_device": null,
       "la_channel": null,
-      "confidence": "none",
+      "confidence": "low",
       "evidence": [
-        "2026-08-01_ground-sweep.tsv"
+        "2026-08-01_ground-sweep.tsv",
+        "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "",
+      "notes": "Idles LOW, bursts to ~1.8-2 V every 1s.",
       "r_to_gnd_ohms": 3700000.0
     },
     "12": {
-      "function": "high-Z-baseline",
-      "voltage": null,
+      "function": "bus? idle-low",
+      "voltage": 1.8,
       "header_pin": 12,
       "net": "/13",
       "header_column": "RIGHT",
       "header_row": 6,
       "la_device": null,
       "la_channel": null,
-      "confidence": "none",
+      "confidence": "low",
       "evidence": [
-        "2026-08-01_ground-sweep.tsv"
+        "2026-08-01_ground-sweep.tsv",
+        "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "",
+      "notes": "Idles LOW, bursts to ~1.8-2 V every 1s.",
       "r_to_gnd_ohms": 3700000.0
     },
     "13": {
-      "function": "high-Z-baseline",
-      "voltage": null,
+      "function": "bus? idle-low",
+      "voltage": 1.8,
       "header_pin": 13,
       "net": "/14",
       "header_column": "LEFT",
       "header_row": 7,
       "la_device": null,
       "la_channel": null,
-      "confidence": "none",
+      "confidence": "low",
       "evidence": [
-        "2026-08-01_ground-sweep.tsv"
+        "2026-08-01_ground-sweep.tsv",
+        "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "",
+      "notes": "Idles LOW, bursts to ~1.8-2 V every 1s.",
       "r_to_gnd_ohms": 3700000.0
     },
     "14": {
-      "function": "high-Z-baseline",
-      "voltage": null,
+      "function": "bus? idle-low",
+      "voltage": 1.8,
       "header_pin": 14,
       "net": "/15",
       "header_column": "RIGHT",
       "header_row": 7,
       "la_device": null,
       "la_channel": null,
-      "confidence": "none",
+      "confidence": "low",
       "evidence": [
-        "2026-08-01_ground-sweep.tsv"
+        "2026-08-01_ground-sweep.tsv",
+        "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "",
+      "notes": "Idles LOW, bursts to ~1.8-2 V every 1s.",
       "r_to_gnd_ohms": 3700000.0
     },
     "15": {
-      "function": "high-Z-baseline",
-      "voltage": null,
+      "function": "bus? idle-low",
+      "voltage": 1.8,
       "header_pin": 15,
       "net": "/16",
       "header_column": "LEFT",
       "header_row": 8,
       "la_device": null,
       "la_channel": null,
-      "confidence": "none",
+      "confidence": "low",
       "evidence": [
-        "2026-08-01_ground-sweep.tsv"
+        "2026-08-01_ground-sweep.tsv",
+        "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "",
+      "notes": "Idles LOW, bursts to ~1.8-2 V every 1s.",
       "r_to_gnd_ohms": 3700000.0
     },
     "16": {
-      "function": "high-Z-baseline",
-      "voltage": null,
+      "function": "bus? idle-low",
+      "voltage": 1.8,
       "header_pin": 16,
       "net": "/17",
       "header_column": "RIGHT",
       "header_row": 8,
       "la_device": null,
       "la_channel": null,
-      "confidence": "none",
+      "confidence": "low",
       "evidence": [
-        "2026-08-01_ground-sweep.tsv"
+        "2026-08-01_ground-sweep.tsv",
+        "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "",
+      "notes": "Idles LOW, bursts to ~1.8-2 V every 1s.",
       "r_to_gnd_ohms": 3700000.0
     },
     "17": {
-      "function": "GND-or-panel-tied-low",
-      "voltage": null,
+      "function": "GND",
+      "voltage": 0.0,
       "header_pin": 17,
       "net": "/18",
       "header_column": "LEFT",
       "header_row": 9,
       "la_device": null,
       "la_channel": null,
-      "confidence": "medium",
+      "confidence": "high",
       "evidence": [
-        "2026-08-01_ground-sweep.tsv"
+        "2026-08-01_ground-sweep.tsv",
+        "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "",
+      "notes": "0 V powered; 0.6-1.5 ohm to signal ground unpowered.",
       "r_to_gnd_ohms": 1.5
     },
     "18": {
-      "function": "high-Z-baseline",
-      "voltage": null,
+      "function": "bus? idle-low",
+      "voltage": 1.8,
       "header_pin": 18,
       "net": "/19",
       "header_column": "RIGHT",
       "header_row": 9,
       "la_device": null,
       "la_channel": null,
-      "confidence": "none",
+      "confidence": "low",
       "evidence": [
-        "2026-08-01_ground-sweep.tsv"
+        "2026-08-01_ground-sweep.tsv",
+        "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "",
+      "notes": "Idles LOW, bursts to ~1.8-2 V every 1s.",
       "r_to_gnd_ohms": 3700000.0
     },
     "19": {
-      "function": "high-Z-baseline",
-      "voltage": null,
+      "function": "bus? idle-low",
+      "voltage": 1.8,
       "header_pin": 19,
       "net": "/20",
       "header_column": "LEFT",
       "header_row": 10,
       "la_device": null,
       "la_channel": null,
-      "confidence": "none",
+      "confidence": "low",
       "evidence": [
-        "2026-08-01_ground-sweep.tsv"
+        "2026-08-01_ground-sweep.tsv",
+        "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "",
+      "notes": "Idles LOW, bursts to ~1.8-2 V every 1s.",
       "r_to_gnd_ohms": 3700000.0
     },
     "20": {
-      "function": "high-Z-baseline",
-      "voltage": null,
+      "function": "bus? idle-low",
+      "voltage": 1.8,
       "header_pin": 20,
       "net": "/21",
       "header_column": "RIGHT",
       "header_row": 10,
       "la_device": null,
       "la_channel": null,
-      "confidence": "none",
+      "confidence": "low",
       "evidence": [
-        "2026-08-01_ground-sweep.tsv"
+        "2026-08-01_ground-sweep.tsv",
+        "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "",
+      "notes": "Idles LOW, bursts to ~1.8-2 V every 1s.",
       "r_to_gnd_ohms": 3700000.0
     },
     "21": {
-      "function": "sub-megohm",
-      "voltage": null,
+      "function": "control? active-low",
+      "voltage": 1.8,
       "header_pin": 21,
       "net": "/22",
       "header_column": "LEFT",
       "header_row": 11,
       "la_device": null,
       "la_channel": null,
-      "confidence": "none",
+      "confidence": "low",
       "evidence": [
-        "2026-08-01_ground-sweep.tsv"
+        "2026-08-01_ground-sweep.tsv",
+        "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "",
+      "notes": "Idles HIGH ~1.8 V, pulses LOW during update bursts. Active-low control candidate (/CS, /WR, /RD, /RESET).",
       "r_to_gnd_ohms": 600000.0
     },
     "22": {
-      "function": "sub-megohm",
-      "voltage": null,
+      "function": "bus? idle-low",
+      "voltage": 1.8,
       "header_pin": 22,
       "net": "/23",
       "header_column": "RIGHT",
       "header_row": 11,
       "la_device": null,
       "la_channel": null,
-      "confidence": "none",
+      "confidence": "low",
       "evidence": [
-        "2026-08-01_ground-sweep.tsv"
+        "2026-08-01_ground-sweep.tsv",
+        "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "",
+      "notes": "Idles LOW, bursts to ~1.8-2 V every 1s.",
       "r_to_gnd_ohms": 500000.0
     },
     "23": {
-      "function": "sub-megohm",
-      "voltage": null,
+      "function": "bus? idle-low",
+      "voltage": 1.8,
       "header_pin": 23,
       "net": "/24",
       "header_column": "LEFT",
       "header_row": 12,
       "la_device": null,
       "la_channel": null,
-      "confidence": "none",
+      "confidence": "low",
       "evidence": [
-        "2026-08-01_ground-sweep.tsv"
+        "2026-08-01_ground-sweep.tsv",
+        "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "",
+      "notes": "Idles LOW, bursts to ~1.8-2 V every 1s.",
       "r_to_gnd_ohms": 600000.0
     },
     "24": {
-      "function": "sub-megohm",
-      "voltage": null,
+      "function": "bus? idle-low",
+      "voltage": 1.8,
       "header_pin": 24,
       "net": "/25",
       "header_column": "RIGHT",
       "header_row": 12,
       "la_device": null,
       "la_channel": null,
-      "confidence": "none",
+      "confidence": "low",
       "evidence": [
-        "2026-08-01_ground-sweep.tsv"
+        "2026-08-01_ground-sweep.tsv",
+        "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "",
+      "notes": "Idles LOW, bursts to ~1.8-2 V every 1s.",
       "r_to_gnd_ohms": 500000.0
     },
     "25": {
-      "function": "sub-megohm",
-      "voltage": null,
+      "function": "bus? idle-low",
+      "voltage": 1.8,
       "header_pin": 25,
       "net": "/26",
       "header_column": "LEFT",
       "header_row": 13,
       "la_device": null,
       "la_channel": null,
-      "confidence": "none",
+      "confidence": "low",
       "evidence": [
-        "2026-08-01_ground-sweep.tsv"
+        "2026-08-01_ground-sweep.tsv",
+        "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "",
+      "notes": "Idles LOW, bursts to ~1.8-2 V every 1s.",
       "r_to_gnd_ohms": 600000.0
     },
     "26": {
-      "function": "high-Z-baseline",
-      "voltage": null,
+      "function": "PWR ~1.8V",
+      "voltage": 1.8,
       "header_pin": 26,
       "net": "/27",
       "header_column": "RIGHT",
       "header_row": 13,
       "la_device": null,
       "la_channel": null,
-      "confidence": "none",
+      "confidence": "medium",
       "evidence": [
-        "2026-08-01_ground-sweep.tsv"
+        "2026-08-01_ground-sweep.tsv",
+        "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "",
+      "notes": "Steady rail. VDDIO candidate.",
       "r_to_gnd_ohms": 3700000.0
     },
     "27": {
-      "function": "high-Z-baseline",
-      "voltage": null,
+      "function": "control? active-low",
+      "voltage": 1.8,
       "header_pin": 27,
       "net": "/28",
       "header_column": "LEFT",
       "header_row": 14,
       "la_device": null,
       "la_channel": null,
-      "confidence": "none",
+      "confidence": "low",
       "evidence": [
-        "2026-08-01_ground-sweep.tsv"
+        "2026-08-01_ground-sweep.tsv",
+        "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "",
+      "notes": "Idles HIGH ~1.8 V, pulses LOW during update bursts. Active-low control candidate (/CS, /WR, /RD, /RESET).",
       "r_to_gnd_ohms": 3700000.0
     },
     "28": {
-      "function": "high-Z-baseline",
-      "voltage": null,
+      "function": "control? active-low",
+      "voltage": 1.8,
       "header_pin": 28,
       "net": "/29",
       "header_column": "RIGHT",
       "header_row": 14,
       "la_device": null,
       "la_channel": null,
-      "confidence": "none",
+      "confidence": "low",
       "evidence": [
-        "2026-08-01_ground-sweep.tsv"
+        "2026-08-01_ground-sweep.tsv",
+        "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "",
+      "notes": "Idles HIGH ~1.8 V, pulses LOW during update bursts. Active-low control candidate (/CS, /WR, /RD, /RESET).",
       "r_to_gnd_ohms": 3800000.0
     },
     "29": {
-      "function": "high-Z-baseline",
-      "voltage": null,
+      "function": "control? active-low",
+      "voltage": 1.8,
       "header_pin": 29,
       "net": "/30",
       "header_column": "LEFT",
       "header_row": 15,
       "la_device": null,
       "la_channel": null,
-      "confidence": "none",
+      "confidence": "low",
       "evidence": [
-        "2026-08-01_ground-sweep.tsv"
+        "2026-08-01_ground-sweep.tsv",
+        "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "",
+      "notes": "Idles HIGH ~1.8 V, pulses LOW during update bursts. Active-low control candidate (/CS, /WR, /RD, /RESET).",
       "r_to_gnd_ohms": 3700000.0
     },
     "30": {
-      "function": "sub-megohm",
-      "voltage": null,
+      "function": "PWR ~1.8V",
+      "voltage": 1.8,
       "header_pin": 30,
       "net": "/31",
       "header_column": "RIGHT",
       "header_row": 15,
       "la_device": null,
       "la_channel": null,
-      "confidence": "none",
+      "confidence": "medium",
       "evidence": [
-        "2026-08-01_ground-sweep.tsv"
+        "2026-08-01_ground-sweep.tsv",
+        "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "",
+      "notes": "Steady rail. VDDIO candidate.",
       "r_to_gnd_ohms": 500000.0
     },
     "31": {
-      "function": "GND-or-panel-tied-low",
-      "voltage": null,
+      "function": "GND",
+      "voltage": 0.0,
       "header_pin": 31,
       "net": "/32",
       "header_column": "LEFT",
       "header_row": 16,
       "la_device": null,
       "la_channel": null,
-      "confidence": "medium",
+      "confidence": "high",
       "evidence": [
-        "2026-08-01_ground-sweep.tsv"
+        "2026-08-01_ground-sweep.tsv",
+        "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "",
+      "notes": "0 V powered; 0.6-1.5 ohm to signal ground unpowered.",
       "r_to_gnd_ohms": 1.2
     },
     "32": {
-      "function": "mid-Z-100k-or-less",
-      "voltage": null,
+      "function": "PWR ~1.8V",
+      "voltage": 1.8,
       "header_pin": 32,
       "net": "/33",
       "header_column": "RIGHT",
       "header_row": 16,
       "la_device": null,
       "la_channel": null,
-      "confidence": "none",
+      "confidence": "medium",
       "evidence": [
-        "2026-08-01_ground-sweep.tsv"
+        "2026-08-01_ground-sweep.tsv",
+        "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "",
+      "notes": "Steady rail. VDDIO candidate.",
       "r_to_gnd_ohms": 70000.0
     },
     "33": {
-      "function": "sub-megohm",
-      "voltage": null,
+      "function": "PWR ~3.0V",
+      "voltage": 3.0,
       "header_pin": 33,
       "net": "/34",
       "header_column": "LEFT",
       "header_row": 17,
       "la_device": null,
       "la_channel": null,
-      "confidence": "none",
+      "confidence": "medium",
       "evidence": [
-        "2026-08-01_ground-sweep.tsv"
+        "2026-08-01_ground-sweep.tsv",
+        "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "",
+      "notes": "Steady rail, distinct from the ~1.8 V group.",
       "r_to_gnd_ohms": 266000.0
     },
     "34": {
-      "function": "sub-megohm",
-      "voltage": null,
+      "function": "unresolved-analog",
+      "voltage": 1.5,
       "header_pin": 34,
       "net": "/35",
       "header_column": "RIGHT",
       "header_row": 17,
       "la_device": null,
       "la_channel": null,
-      "confidence": "none",
+      "confidence": "low",
       "evidence": [
-        "2026-08-01_ground-sweep.tsv"
+        "2026-08-01_ground-sweep.tsv",
+        "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "",
+      "notes": "~1.5 V with ~100 mV ripple at ~80 us (12.5 kHz). Switching/charge-pump or bias node rather than logic.",
       "r_to_gnd_ohms": 1000000.0
     }
   },

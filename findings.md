@@ -546,3 +546,63 @@ flex disconnected — deferred, since the powered sweep is the higher-value next
 
 **Next step:** powered voltage sweep — identifies the backlight anode (safety rule 1)
 and VDDIO (the phase 2 gate).
+
+---
+
+### 2026-08-01 — Powered sweep: **backlight found**, VDDIO ≈ 1.8 V
+
+**Action:** DC voltage on all 34 pins, iPod booted into Rockbox, idle on a static menu,
+backlight on. Reference: HDD case.
+
+**Result 1 — (F) SAFETY RULE 1 SATISFIED. Pin 4 = backlight anode (BL+), 10.7 V.**
+The only pin anywhere near that voltage; everything else is ≤ ~3 V.
+**Pin 4 must never be connected to an analyzer input** — the TXU0104 A-side absolute
+maximum is 5.5 V, so 10.7 V would destroy the shifter, not merely misread.
+10.7 V is consistent with a 3-LED white string plus driver headroom.
+
+**Result 2 — (F) VDDIO ≈ 1.8 V.** Logic swings measured ~1.8–2.0 V (collaborator notes
+the "2 V" readings are probably nearer 1.8 V), and three steady ~1.8 V rails are present
+on pins 26, 30, 32. A separate steady ~3.0 V rail sits on pin 33.
+
+**This trips the brief's phase 1 decision gate** ("if VDDIO < ~2.3 V, stop and plan level
+shifting"). With these boards it is a configuration change rather than a blocker, **but
+it is mandatory, not optional**:
+
+| shifter VREF | TXU0104 VT+ max | 1.8 V logic high | verdict |
+|---|---|---|---|
+| `3v3` (current) | **1.92 V** @ VCCI=3 V | 1.8 V | **BELOW threshold — unreliable** |
+| `EXT` @ 1.8 V | **~1.23 V** (interp.) | 1.8 V | 0.57 V margin — good |
+
+So the switch **must** move from `3v3` to `EXT`, referenced to the panel's own 1.8 V.
+Had we probed on `3v3`, a 1.8 V high would have sat below the guaranteed threshold and
+produced intermittent, plausible-looking-but-wrong data.
+
+**Result 3 — pin structure is now coherent and the budget closes:**
+
+| group | pins | n |
+|---|---|---|
+| GND | 3, 6, 8, 17, 31 | 5 |
+| BL+ | 4 | 1 |
+| unresolved (BL− candidate) | 5 | 1 |
+| rails ~1.8 V | 26, 30, 32 | 3 |
+| rail ~3.0 V | 33 | 1 |
+| analog/switching ~1.5 V, 80 µs ripple | 34 | 1 |
+| **control, idle HIGH + pulse LOW** | 21, 27, 28, 29 | **4** |
+| **bus, idle LOW + burst HIGH** | 1, 2, 10–16, 18–20, 22–25 | **16** |
+| **fast cadence (~15 ms)** | 7, 9 | **2** |
+
+16 + 2 = **18**, matching the expected 18-bit data bus. The four active-low pins are
+strong candidates for /CS, /WR, /RD, /RESET (D/C would also idle in one state).
+The 1 s burst cadence matches Rockbox redrawing its status bar once per second.
+
+**(H) Pin 5 = BL−.** It is physically adjacent to pin 4 (BL+), which is how an LED
+string is normally routed, and it showed 25.6 Ω to ground unpowered — right where a
+current-sense resistor sits. But it read 0 V powered, where I·R across 25.6 Ω should be
+visible. Needs a mV-resolution re-read with the backlight on and off; that also yields
+the drive current (I = V / 25.6 Ω) for the phase 6 driver design.
+
+**Open question:** the ~15 ms and ~80 µs cadences cannot be resolved by a multimeter.
+Need to know how they were observed — an oscilloscope may be present, which would be
+useful for phase 5 timing work.
+
+**Next step:** move the shifter VREF to EXT at 1.8 V before any analyzer connection.
