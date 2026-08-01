@@ -818,3 +818,42 @@ intermittent probe. Low priority.
 
 **Next step:** reseat the probes on pins 9, 19, 20, 21, 22 (channels CH4, CH13–CH16) and
 re-capture the wake sequence to confirm bits 3, 4, 5 and 15.
+
+### 2026-08-01 — Reseat changes nothing: fault is in the probe path, not the interposer
+
+**Action:** Re-captured the wake sequence after the collaborator pressed the probe wires
+home (no wires were moved).
+
+**Result: bit-identical outcome.** Burst structure again `[1,1,1,1,1,1,68]`, the same 10
+lanes matched exactly, P09 still byte-identical to P14, and pins 20/21/22 still constant
+zero. Fully reproducible, which rules out intermittent contact.
+
+**(F) The signals ARE present at the header.** The powered DMM sweep of 2026-08-01
+recorded pins 19, 20, 21, 22 as "~2 V spikes every 1 s" — i.e. live, toggling signals.
+The interposer therefore delivers them correctly and the break lies **between the header
+and the analyzer**: probe wire, shifter channel, or analyzer input.
+
+**(H) Strong structural hypothesis: one dead TXU0104.** The TXU0104 is a **4-bit**
+translator and the shifter board carries **six** of them for 24 channels, so channels are
+almost certainly grouped CH1–4, CH5–8, CH9–12, **CH13–16**, CH17–20, CH21–24.
+The four failing channels are **CH13, CH14, CH15, CH16 — exactly one group**. A single
+device with an unsoldered VCCA, VCCB or GND pin gives precisely this signature, and the
+`Ioff-float` behaviour (outputs high-Z when a VCC is missing) explains why they read a
+clean constant 0 rather than noise.
+
+Note CH13 (pin 19, bit 6) cannot be distinguished from a working channel here, since bit
+6 is constant zero throughout the sequence — but it is in the same group and presumed
+equally affected.
+
+**Channels proven good** (exact ground-truth matches): CH6–CH12, CH17–CH21. That covers
+the CH5–8, CH9–12 and CH17–20 groups plus CH21.
+
+**(H) P09 ≡ P14 remains unexplained and does NOT fit the dead-group theory** (CH4 is in
+the CH1–4 group, and a dead channel would read constant, not mirror another channel's
+68-bit history). Two candidate explanations remain: the CH4 wire physically terminates on
+header pin 14, or header pins 9 and 14 are shorted. A short between the two *nets* is
+argued against by the data: pin 14 carries bit 10, which toggles heavily, and it matches
+ground truth **exactly** — bus contention with another driver would corrupt it.
+
+**Next step:** two cheap discriminating tests — a channel-swap to localise the CH13–16
+fault, and a DMM continuity check between header pins 9 and 14.
