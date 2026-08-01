@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "version": "v0.1",
+  "version": "v0.2",
   "updated": "2026-08-01",
   "device": {
     "model": "Apple iPod Classic 2009 'thin' 160GB, A1238",
@@ -10,7 +10,7 @@
     "rockbox_target": "ipod6g",
     "panel": "2.5in 320x240, 8080-series parallel MPU, 18-bit data bus"
   },
-  "numbering_convention": "UNSET - must be fixed from an interposer photo before any measurement is recorded. header pin N == flex pin N.",
+  "numbering_convention": "Board oriented as in the 2026-08-01 photo: silkscreen title readable top-left, 'Logic board'/J2 at LEFT, 'Display'/J3 at RIGHT, probe header vertical in middle. FLEX pin N == probe-header pin N == net /(N+1), for N = 1..34. Header pin 1 is TOP-LEFT; odd pins are the LEFT column, even pins the RIGHT column; numbering increases downward, two pins per row, 17 rows. FLEX pin 1 is the TOPMOST live conductor. The 35th (topmost) connector position is unused on both FPC connectors (J2 pad 1, J3 pad 35) and is not part of this numbering. This is an internal convention anchored to physical geometry; it is NOT claimed to match Apple's own pin-1 designation.",
   "panel_type": {
     "value": 2,
     "confidence": "high",
@@ -39,6 +39,10 @@
     "1": {
       "function": "unknown",
       "voltage": null,
+      "header_pin": 1,
+      "net": "/2",
+      "header_column": "LEFT",
+      "header_row": 1,
       "la_device": null,
       "la_channel": null,
       "confidence": "none",
@@ -48,6 +52,10 @@
     "2": {
       "function": "unknown",
       "voltage": null,
+      "header_pin": 2,
+      "net": "/3",
+      "header_column": "RIGHT",
+      "header_row": 1,
       "la_device": null,
       "la_channel": null,
       "confidence": "none",
@@ -57,6 +65,10 @@
     "3": {
       "function": "unknown",
       "voltage": null,
+      "header_pin": 3,
+      "net": "/4",
+      "header_column": "LEFT",
+      "header_row": 2,
       "la_device": null,
       "la_channel": null,
       "confidence": "none",
@@ -66,6 +78,10 @@
     "4": {
       "function": "unknown",
       "voltage": null,
+      "header_pin": 4,
+      "net": "/5",
+      "header_column": "RIGHT",
+      "header_row": 2,
       "la_device": null,
       "la_channel": null,
       "confidence": "none",
@@ -75,6 +91,10 @@
     "5": {
       "function": "unknown",
       "voltage": null,
+      "header_pin": 5,
+      "net": "/6",
+      "header_column": "LEFT",
+      "header_row": 3,
       "la_device": null,
       "la_channel": null,
       "confidence": "none",
@@ -84,6 +104,10 @@
     "6": {
       "function": "unknown",
       "voltage": null,
+      "header_pin": 6,
+      "net": "/7",
+      "header_column": "RIGHT",
+      "header_row": 3,
       "la_device": null,
       "la_channel": null,
       "confidence": "none",
@@ -93,6 +117,10 @@
     "7": {
       "function": "unknown",
       "voltage": null,
+      "header_pin": 7,
+      "net": "/8",
+      "header_column": "LEFT",
+      "header_row": 4,
       "la_device": null,
       "la_channel": null,
       "confidence": "none",
@@ -102,6 +130,10 @@
     "8": {
       "function": "unknown",
       "voltage": null,
+      "header_pin": 8,
+      "net": "/9",
+      "header_column": "RIGHT",
+      "header_row": 4,
       "la_device": null,
       "la_channel": null,
       "confidence": "none",
@@ -111,6 +143,10 @@
     "9": {
       "function": "unknown",
       "voltage": null,
+      "header_pin": 9,
+      "net": "/10",
+      "header_column": "LEFT",
+      "header_row": 5,
       "la_device": null,
       "la_channel": null,
       "confidence": "none",
@@ -120,6 +156,10 @@
     "10": {
       "function": "unknown",
       "voltage": null,
+      "header_pin": 10,
+      "net": "/11",
+      "header_column": "RIGHT",
+      "header_row": 5,
       "la_device": null,
       "la_channel": null,
       "confidence": "none",
@@ -129,6 +169,10 @@
     "11": {
       "function": "unknown",
       "voltage": null,
+      "header_pin": 11,
+      "net": "/12",
+      "header_column": "LEFT",
+      "header_row": 6,
       "la_device": null,
       "la_channel": null,
       "confidence": "none",
@@ -138,6 +182,10 @@
     "12": {
       "function": "unknown",
       "voltage": null,
+      "header_pin": 12,
+      "net": "/13",
+      "header_column": "RIGHT",
+      "header_row": 6,
       "la_device": null,
       "la_channel": null,
       "confidence": "none",
@@ -147,6 +195,10 @@
     "13": {
       "function": "unknown",
       "voltage": null,
+      "header_pin": 13,
+      "net": "/14",
+      "header_column": "LEFT",
+      "header_row": 7,
       "la_device": null,
       "la_channel": null,
       "confidence": "none",
@@ -156,6 +208,10 @@
     "14": {
       "function": "unknown",
       "voltage": null,
+      "header_pin": 14,
+      "net": "/15",
+      "header_column": "RIGHT",
+      "header_row": 7,
       "la_device": null,
       "la_channel": null,
       "confidence": "none",
@@ -165,6 +221,10 @@
     "15": {
       "function": "unknown",
       "voltage": null,
+      "header_pin": 15,
+      "net": "/16",
+      "header_column": "LEFT",
+      "header_row": 8,
       "la_device": null,
       "la_channel": null,
       "confidence": "none",
@@ -174,6 +234,10 @@
     "16": {
       "function": "unknown",
       "voltage": null,
+      "header_pin": 16,
+      "net": "/17",
+      "header_column": "RIGHT",
+      "header_row": 8,
       "la_device": null,
       "la_channel": null,
       "confidence": "none",
@@ -183,6 +247,10 @@
     "17": {
       "function": "unknown",
       "voltage": null,
+      "header_pin": 17,
+      "net": "/18",
+      "header_column": "LEFT",
+      "header_row": 9,
       "la_device": null,
       "la_channel": null,
       "confidence": "none",
@@ -192,6 +260,10 @@
     "18": {
       "function": "unknown",
       "voltage": null,
+      "header_pin": 18,
+      "net": "/19",
+      "header_column": "RIGHT",
+      "header_row": 9,
       "la_device": null,
       "la_channel": null,
       "confidence": "none",
@@ -201,6 +273,10 @@
     "19": {
       "function": "unknown",
       "voltage": null,
+      "header_pin": 19,
+      "net": "/20",
+      "header_column": "LEFT",
+      "header_row": 10,
       "la_device": null,
       "la_channel": null,
       "confidence": "none",
@@ -210,6 +286,10 @@
     "20": {
       "function": "unknown",
       "voltage": null,
+      "header_pin": 20,
+      "net": "/21",
+      "header_column": "RIGHT",
+      "header_row": 10,
       "la_device": null,
       "la_channel": null,
       "confidence": "none",
@@ -219,6 +299,10 @@
     "21": {
       "function": "unknown",
       "voltage": null,
+      "header_pin": 21,
+      "net": "/22",
+      "header_column": "LEFT",
+      "header_row": 11,
       "la_device": null,
       "la_channel": null,
       "confidence": "none",
@@ -228,6 +312,10 @@
     "22": {
       "function": "unknown",
       "voltage": null,
+      "header_pin": 22,
+      "net": "/23",
+      "header_column": "RIGHT",
+      "header_row": 11,
       "la_device": null,
       "la_channel": null,
       "confidence": "none",
@@ -237,6 +325,10 @@
     "23": {
       "function": "unknown",
       "voltage": null,
+      "header_pin": 23,
+      "net": "/24",
+      "header_column": "LEFT",
+      "header_row": 12,
       "la_device": null,
       "la_channel": null,
       "confidence": "none",
@@ -246,6 +338,10 @@
     "24": {
       "function": "unknown",
       "voltage": null,
+      "header_pin": 24,
+      "net": "/25",
+      "header_column": "RIGHT",
+      "header_row": 12,
       "la_device": null,
       "la_channel": null,
       "confidence": "none",
@@ -255,6 +351,10 @@
     "25": {
       "function": "unknown",
       "voltage": null,
+      "header_pin": 25,
+      "net": "/26",
+      "header_column": "LEFT",
+      "header_row": 13,
       "la_device": null,
       "la_channel": null,
       "confidence": "none",
@@ -264,6 +364,10 @@
     "26": {
       "function": "unknown",
       "voltage": null,
+      "header_pin": 26,
+      "net": "/27",
+      "header_column": "RIGHT",
+      "header_row": 13,
       "la_device": null,
       "la_channel": null,
       "confidence": "none",
@@ -273,6 +377,10 @@
     "27": {
       "function": "unknown",
       "voltage": null,
+      "header_pin": 27,
+      "net": "/28",
+      "header_column": "LEFT",
+      "header_row": 14,
       "la_device": null,
       "la_channel": null,
       "confidence": "none",
@@ -282,6 +390,10 @@
     "28": {
       "function": "unknown",
       "voltage": null,
+      "header_pin": 28,
+      "net": "/29",
+      "header_column": "RIGHT",
+      "header_row": 14,
       "la_device": null,
       "la_channel": null,
       "confidence": "none",
@@ -291,6 +403,10 @@
     "29": {
       "function": "unknown",
       "voltage": null,
+      "header_pin": 29,
+      "net": "/30",
+      "header_column": "LEFT",
+      "header_row": 15,
       "la_device": null,
       "la_channel": null,
       "confidence": "none",
@@ -300,6 +416,10 @@
     "30": {
       "function": "unknown",
       "voltage": null,
+      "header_pin": 30,
+      "net": "/31",
+      "header_column": "RIGHT",
+      "header_row": 15,
       "la_device": null,
       "la_channel": null,
       "confidence": "none",
@@ -309,6 +429,10 @@
     "31": {
       "function": "unknown",
       "voltage": null,
+      "header_pin": 31,
+      "net": "/32",
+      "header_column": "LEFT",
+      "header_row": 16,
       "la_device": null,
       "la_channel": null,
       "confidence": "none",
@@ -318,6 +442,10 @@
     "32": {
       "function": "unknown",
       "voltage": null,
+      "header_pin": 32,
+      "net": "/33",
+      "header_column": "RIGHT",
+      "header_row": 16,
       "la_device": null,
       "la_channel": null,
       "confidence": "none",
@@ -327,11 +455,36 @@
     "33": {
       "function": "unknown",
       "voltage": null,
+      "header_pin": 33,
+      "net": "/34",
+      "header_column": "LEFT",
+      "header_row": 17,
+      "la_device": null,
+      "la_channel": null,
+      "confidence": "none",
+      "evidence": [],
+      "notes": ""
+    },
+    "34": {
+      "function": "unknown",
+      "voltage": null,
+      "header_pin": 34,
+      "net": "/35",
+      "header_column": "RIGHT",
+      "header_row": 17,
       "la_device": null,
       "la_channel": null,
       "confidence": "none",
       "evidence": [],
       "notes": ""
     }
+  },
+  "flex_pin_count": 34,
+  "corrections": [
+    "2026-08-01: project brief states a 33-pin LCD flex. It is 34-pin, confirmed by the collaborator and consistent with the interposer's 35-position connectors having 'one more pin than the iPod'. pinout.json rebuilt for 34 pins."
+  ],
+  "panel_module_marking": {
+    "value": "LS025Q7UX05A S20 1227 003256 Z20 A1 RC",
+    "note": "Read off the panel in the 2026-08-01 photo. 'LS025' = Sharp 2.5in LCD module. No datasheet found for this exact part; a sibling LS025Q7UX01 is referenced by panel spec sites but the host was unreachable. Lead only, not relied upon."
   }
 }

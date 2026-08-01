@@ -384,3 +384,65 @@ triage starting with the backlight (safety rule 1).
 ## Phase 6 — Drive it
 
 *(not started)*
+
+---
+
+### 2026-08-01 — Interposer design read; pin convention FIXED (flex is 34-pin, not 33)
+
+**Action:** Collaborator supplied the interposer KiCad project (`display-analyzer-board/`,
+their own design, v0.1b) plus a photo of the disassembled setup. Parsed the PCB netlist
+and pad geometry directly rather than inferring from the photo.
+
+**Result — (F) board topology, from the netlist:**
+
+| ref | part | role |
+|---|---|---|
+| J2 | 35-pos 0.3 mm FPC | Logic board side |
+| J3 | 35-pos 0.3 mm FPC | Display side |
+| J1 | 2x17 header, SMD | probe header |
+| J4 | 2x17 header, TH | alternate, identical nets |
+
+```
+J1/J4 pin p <-> net /(p+1)      p = 1..34
+J2 pad q    <-> net /q          q = 2..35   (pad 1 unconnected by design)
+J3 pad r    <-> net /(36-r)     r = 1..34   (pad 35 unconnected by design)
+```
+
+J3's pad order is mirrored relative to J2 — correct and intended, since the connectors
+face opposite board edges. Both unconnected pads sit at the **top** in the photo
+orientation. The interposer is confirmed **passive and 1:1**: no series parts, no lifted
+pins, so DMM readings reflect the panel, not the board.
+
+**(F) CORRECTION TO THE PROJECT BRIEF: the iPod LCD flex has 34 conductors, not 33.**
+Confirmed by the collaborator. This reconciles everything: the connectors are 35-position
+and were described as having "one more pin than the iPod" (35 vs 34), and the interposer's
+own flex is built with all positions wired and the topmost conductor cut so it fits.
+All 34 routed nets `/2`…`/35` are therefore **live**. `pinout.json` rebuilt for 34 pins.
+
+An earlier intermediate reading — that header pin 1 was electrically dead — was a
+consequence of the brief's 33-pin figure and is **withdrawn**. It was never measured.
+Asking for the connector position count rather than assuming is what caught it; had we
+guessed, every recorded pin index would have been silently offset by one.
+
+**(F) Numbering convention, now authoritative** (see
+`probe_maps/v1-interposer-convention.md`):
+
+```
+FLEX pin N = probe-header pin N = net /(N+1)      N = 1..34
+```
+
+Header pin 1 is **TOP-LEFT** with the board oriented as in the photo (title readable
+top-left, Logic board/J2 left, Display/J3 right). Odd pins = LEFT column, even = RIGHT,
+17 rows, increasing downward. FLEX 1 is the topmost live conductor. Internal convention
+anchored to geometry; not claimed to match Apple's own pin 1.
+
+**Sanity check:** 34 conductors fits the expected signal set — 18 data + WR/RD/CS/DC/
+RESET/TE = 24, leaving ~10 for rails, grounds and backlight. Essentially no slack.
+
+**(H) Panel module marking:** `LS025Q7UX05A S20 1227 003256 Z20 A1 RC`, read off the
+panel in the photo. `LS025` indicates a Sharp 2.5" LCD module. No datasheet located for
+this exact part; a sibling `LS025Q7UX01` is indexed by panel-spec sites but the host was
+unreachable. Recorded as a lead only — Phase 1 will measure this unit directly, which is
+better evidence than a sibling part's datasheet.
+
+**Next step:** Phase 1 DMM triage, backlight first per safety rule 1.
