@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "version": "v0",
-  "updated": "2026-07-26",
+  "version": "v0.1",
+  "updated": "2026-08-01",
   "device": {
     "model": "Apple iPod Classic 2009 'thin' 160GB, A1238",
     "logic_board": "820-2437-A",
@@ -12,15 +12,24 @@
   },
   "numbering_convention": "UNSET - must be fixed from an interposer photo before any measurement is recorded. header pin N == flex pin N.",
   "panel_type": {
-    "value": null,
-    "confidence": "none",
-    "candidates": [
-      0,
-      1,
-      2,
-      3
+    "value": 2,
+    "confidence": "high",
+    "method": "read directly from Rockbox debug menu, cross-checked against raw GPIO",
+    "evidence": [
+      "Rockbox 'View HW info' reported: LCD type: 2",
+      "Rockbox 'View I/O ports' reported: GPIO 6: 0000006b",
+      "(0x6b & 0x30) >> 4 == 2, matching lcd_target_get_info() in lcd-6g.c:264"
     ],
-    "note": "selected board-side by (PDAT6 & 0x30) >> 4"
+    "implications": {
+      "cmdset_bits": 16,
+      "cmdset_family": "ILI9320/ILI9326-like 16-bit index/register set",
+      "cmd_mode_reg": "LCD_MODE_P18 (0x80000da8)",
+      "frame_mode_reg": "LCD_MODE_P16 (0x80100db0)",
+      "init_seq": "lcd_init_seq_23, 146 bus writes (73 cmd + 73 data) in bootloader",
+      "sleep_seq": "lcd_deepstandby_seq_23, 18 bus writes",
+      "awake_seq": "lcd_init_seq_23 WITH 6x NOP prefix = 152 bus writes, in firmware",
+      "note": "seq_awake IS the init sequence: a display sleep/wake cycle replays a full init on demand, giving a repeatable trigger without rebooting."
+    }
   },
   "vddio": {
     "value": null,

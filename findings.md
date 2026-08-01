@@ -263,7 +263,107 @@ convention from a photo before any measurement is recorded.
 
 ## Phase 1 — DMM triage
 
-*(not started — blocked on interposer installation and pin-1 convention)*
+### 2026-07-26 — Interposer installed early; ATA error decoded
+
+**Action:** Collaborator installed the interposer board and booted the iPod ahead of the
+planned sequence. Screen works. Rockbox shows `ATA error: -2147483605`.
+
+**Result 1 — (F) the interposer is electrically sound.** The panel initialises and
+displays normally through it, and the boot reached `apps/main.c`. So the Rockbox
+*bootloader* ran a complete LCD init through the interposer, and read enough of the
+drive to load and launch `rockbox.ipod`. This de-risks phase 3 considerably.
+
+**Result 2 — the ATA error decoded from source.** `-2147483605` = `0x8000002B`.
+Error codes here are a nested call trace, built by macros in
+`firmware/target/arm/s5l8702/ipod6g/mmcdefs-target.h`:
+
+```c
+#define ERR_RC(val)               (BIT(31) | (val))
+#define PASS_RC(expr, bits, val)  ... return ERR_RC((rc << (bits)) | (val))
+```
+
+Each layer shifts the inner code left and ORs its own tag, so reading from the LSB
+upward walks outward-to-inward. `0x2B` = `0b101011`:
+
+| bits | val | site |
+|---|---|---|
+| `[2:0]` = 3 | 3 | `ata_power_up()`, **non-CE-ATA branch**, `PASS_RC(ata_identify(...), 3, 3)` |
+| `[3]` = 1 | 1 | `ata_identify()`, `PASS_RC(ata_wait_for_start_of_transfer(...), 1, 1)` |
+| `[5:4]` = 2 | 2 | `ata_wait_for_start_of_transfer()`, `RET_ERR(2)` |
+
+Reconstruction check: `ERR_RC(2)=0x80000002` → `(<<1)|1 = 5` → `(<<3)|3 = 0x2B`. ✓
+
+**Interpretation:** the drive did not respond to IDENTIFY within the 10 s timeout.
+`RET_ERR(2)` is the timeout path, *not* `RET_ERR(1)` which is "drive asserted ERR" — so
+the drive is not reporting a fault, it is not answering at all. Printed from
+`apps/main.c:598`, i.e. the **main firmware**, whose `storage_init()` re-initialises and
+re-powers the drive from scratch after the bootloader had already read from it
+successfully. A device that reads once and then fails a cold re-init points at a
+marginal connection or a drive that will not spin up again, rather than at corruption.
+
+Most likely cause, cheapest first: **the drive's ZIF ribbon was disturbed during the
+interposer installation.** Other candidates: failing/stiction-prone HDD, low battery
+failing under spin-up load.
+
+**Result 3 — (F) a free route to deliverable #4 (panel type).** The error screen offers
+"Press button to debug", which calls `dbg_ports()`
+(`firmware/target/arm/s5l8702/debug-s5l8702.c:213`). That dumps every GPIO port
+including **`GPIO 6`**, and `lcd_target_get_info()` selects the panel from
+`(PDAT6 & 0x30) >> 4`. So the panel type can be read straight off the screen with no
+capture at all. The same dump shows **`GPIO 11`**, and `ata_init()` sets
+`ceata = PDAT(11) & BIT(1)` — which diagnoses why the driver took the parallel-ATA
+branch. `dbg_hw_info()` at the same file prints `"LCD type: %d"` directly, but is
+reachable only from a fully booted Rockbox.
+
+**Next step:** read GPIO 6 and GPIO 11 off the debug screen before touching the drive.
+
+---
+
+### 2026-07-26 — ATA fault resolved; **panel type identified: TYPE 2**
+
+**Action:** Collaborator found the HDD ZIF connector was inserted rotated 180°.
+Corrected; Rockbox now boots fully. Read the debug menu.
+
+**Result — (F) `LCD type: 2`.** Verified two independent ways:
+
+| source | reading | derivation |
+|---|---|---|
+| `View HW info` | `LCD type: 2` | `dbg_hw_info()` prints `lcd_type` directly |
+| `View I/O ports` | `GPIO 6: 0000006b` | `(0x6b & 0x30) >> 4 = 2` per `lcd-6g.c:264` |
+
+The two agree exactly. **Deliverable #4 is complete** — and it resolves the ambiguity
+that bus traffic never could, since Rockbox drives types 2 and 3 identically.
+
+The flipped connector also explains the error signature precisely: a drive that is not
+electrically present cannot answer IDENTIFY at all, which is the timeout path
+(`RET_ERR(2)`) rather than the drive-reports-error path (`RET_ERR(1)`). The
+"connection, not dead drive" reading held.
+
+**Consequences — this reshapes phases 3–5:**
+
+1. **16-bit register command set** (ILI9320/ILI9326-like). Command mode is
+   `LCD_MODE_P18`, frame mode `LCD_MODE_P16`. Target sequences are
+   `lcd_init_seq_23` / `lcd_deepstandby_seq_23`.
+2. **(F) A repeatable init trigger exists without rebooting.** For type 2,
+   `seq_awake == lcd_init_seq_23`, so an LCD sleep/wake cycle replays a full init.
+   `HAVE_LCD_SLEEP_SETTING` is defined for this target, so the sleep timeout is
+   settable from the Rockbox UI. Phase 3 no longer needs repeated cold boots.
+3. **(F) The two boot paths are distinguishable at a glance.** Cold init (bootloader)
+   opens `CMD 0x0008, DATA 0x0808`. Wake replay (firmware) opens with 6× `CMD 0x0000`
+   spaced 1.28 ms apart — an unmistakable capture signature. 146 vs 152 bus writes.
+4. **(F) LANE-SOLVER LIMITATION, found in advance from ground truth.** Across all 146
+   (or 152) init writes, **bit columns 14 and 15 never toggle** — every value in
+   `lcd_init_seq_23` is < `0x4000`. Column-matching therefore identifies only 14 of the
+   16 data lanes from the init; the two lanes carrying bits 14/15 are stuck at 0 and
+   mutually indistinguishable. All other columns are unique, there are no exact-inverse
+   pairs, and the D/C column matches no data column (so D/C is unambiguous).
+   **Mitigation:** frame-mode pixel data uses the full RGB565 range, and bits 15/14 are
+   the red MSBs. A solid red or white fill exercises them. **Phase 5's colour fills are
+   therefore load-bearing for the pinout, not merely confirmatory** — phase 4 cannot
+   complete the lane map without them.
+
+**Next step:** Phase 1 proper — fix the pin-numbering convention from a photo, then DMM
+triage starting with the backlight (safety rule 1).
 
 ## Phase 2 — Survey capture
 
