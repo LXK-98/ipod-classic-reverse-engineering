@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "version": "v1.3",
+  "version": "v2-draft",
   "updated": "2026-08-01",
   "device": {
     "model": "Apple iPod Classic 2009 'thin' 160GB, A1238",
@@ -178,7 +178,7 @@
       "r_to_gnd_ohms": 0.6
     },
     "9": {
-      "function": "bus-or-TE? fast",
+      "function": "D-bus APB bit 15 (predicted)",
       "voltage": 1.8,
       "header_pin": 9,
       "net": "/10",
@@ -186,16 +186,16 @@
       "header_row": 5,
       "la_device": null,
       "la_channel": null,
-      "confidence": "low",
+      "confidence": "medium",
       "evidence": [
         "2026-08-01_ground-sweep.tsv",
         "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "Bursts at ~15 ms cadence, distinct from the 1 s group. TE (~60-70 Hz) or a data lane with different activity.",
+      "notes": "Predicted by the descending pin->bit run that fits all 10 confirmed lanes (skipping GND pins 17 and 8). NOT yet observed: probe reads constant 0.",
       "r_to_gnd_ohms": 3800000.0
     },
     "10": {
-      "function": "bus? idle-low",
+      "function": "D-bus APB bit 14 (predicted)",
       "voltage": 1.8,
       "header_pin": 10,
       "net": "/11",
@@ -203,16 +203,16 @@
       "header_row": 5,
       "la_device": null,
       "la_channel": null,
-      "confidence": "low",
+      "confidence": "medium",
       "evidence": [
         "2026-08-01_ground-sweep.tsv",
         "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "Idles LOW, bursts to ~1.8-2 V every 1s.",
+      "notes": "Predicted by the descending pin->bit run that fits all 10 confirmed lanes (skipping GND pins 17 and 8). NOT yet observed: probe reads constant 0.",
       "r_to_gnd_ohms": 3700000.0
     },
     "11": {
-      "function": "bus? idle-low",
+      "function": "D-bus APB bit 13",
       "voltage": 1.8,
       "header_pin": 11,
       "net": "/12",
@@ -220,16 +220,16 @@
       "header_row": 6,
       "la_device": null,
       "la_channel": null,
-      "confidence": "low",
+      "confidence": "high",
       "evidence": [
         "2026-08-01_ground-sweep.tsv",
         "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "Idles LOW, bursts to ~1.8-2 V every 1s.",
+      "notes": "Exact 69-write match against lcd_init_seq_23 (firmware wake). APB[13].",
       "r_to_gnd_ohms": 3700000.0
     },
     "12": {
-      "function": "bus? idle-low",
+      "function": "D-bus APB bit 12",
       "voltage": 1.8,
       "header_pin": 12,
       "net": "/13",
@@ -237,16 +237,16 @@
       "header_row": 6,
       "la_device": null,
       "la_channel": null,
-      "confidence": "low",
+      "confidence": "high",
       "evidence": [
         "2026-08-01_ground-sweep.tsv",
         "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "Idles LOW, bursts to ~1.8-2 V every 1s.",
+      "notes": "Exact 69-write match against lcd_init_seq_23 (firmware wake). APB[12].",
       "r_to_gnd_ohms": 3700000.0
     },
     "13": {
-      "function": "bus? idle-low",
+      "function": "D-bus APB bit 11",
       "voltage": 1.8,
       "header_pin": 13,
       "net": "/14",
@@ -254,16 +254,16 @@
       "header_row": 7,
       "la_device": null,
       "la_channel": null,
-      "confidence": "low",
+      "confidence": "high",
       "evidence": [
         "2026-08-01_ground-sweep.tsv",
         "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "Idles LOW, bursts to ~1.8-2 V every 1s.",
+      "notes": "Exact 69-write match against lcd_init_seq_23 (firmware wake). APB[11].",
       "r_to_gnd_ohms": 3700000.0
     },
     "14": {
-      "function": "bus? idle-low",
+      "function": "D-bus APB bit 10",
       "voltage": 1.8,
       "header_pin": 14,
       "net": "/15",
@@ -271,16 +271,16 @@
       "header_row": 7,
       "la_device": null,
       "la_channel": null,
-      "confidence": "low",
+      "confidence": "high",
       "evidence": [
         "2026-08-01_ground-sweep.tsv",
         "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "Idles LOW, bursts to ~1.8-2 V every 1s.",
+      "notes": "Exact 69-write match against lcd_init_seq_23 (firmware wake). APB[10].",
       "r_to_gnd_ohms": 3700000.0
     },
     "15": {
-      "function": "bus? idle-low",
+      "function": "D-bus APB bit 9",
       "voltage": 1.8,
       "header_pin": 15,
       "net": "/16",
@@ -288,16 +288,16 @@
       "header_row": 8,
       "la_device": null,
       "la_channel": null,
-      "confidence": "low",
+      "confidence": "high",
       "evidence": [
         "2026-08-01_ground-sweep.tsv",
         "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "Idles LOW, bursts to ~1.8-2 V every 1s.",
+      "notes": "Exact 69-write match against lcd_init_seq_23 (firmware wake). APB[9].",
       "r_to_gnd_ohms": 3700000.0
     },
     "16": {
-      "function": "bus? idle-low",
+      "function": "D-bus APB bit 8",
       "voltage": 1.8,
       "header_pin": 16,
       "net": "/17",
@@ -305,12 +305,12 @@
       "header_row": 8,
       "la_device": null,
       "la_channel": null,
-      "confidence": "low",
+      "confidence": "high",
       "evidence": [
         "2026-08-01_ground-sweep.tsv",
         "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "Idles LOW, bursts to ~1.8-2 V every 1s.",
+      "notes": "Exact 69-write match against lcd_init_seq_23 (firmware wake). APB[8].",
       "r_to_gnd_ohms": 3700000.0
     },
     "17": {
@@ -331,7 +331,7 @@
       "r_to_gnd_ohms": 1.5
     },
     "18": {
-      "function": "bus? idle-low",
+      "function": "D-bus APB bit 7",
       "voltage": 1.8,
       "header_pin": 18,
       "net": "/19",
@@ -339,16 +339,16 @@
       "header_row": 9,
       "la_device": null,
       "la_channel": null,
-      "confidence": "low",
+      "confidence": "high",
       "evidence": [
         "2026-08-01_ground-sweep.tsv",
         "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "Idles LOW, bursts to ~1.8-2 V every 1s.",
+      "notes": "Exact 69-write match against lcd_init_seq_23 (firmware wake). APB[7].",
       "r_to_gnd_ohms": 3700000.0
     },
     "19": {
-      "function": "bus? idle-low",
+      "function": "D-bus APB bit 6 (predicted)",
       "voltage": 1.8,
       "header_pin": 19,
       "net": "/20",
@@ -356,16 +356,16 @@
       "header_row": 10,
       "la_device": null,
       "la_channel": null,
-      "confidence": "low",
+      "confidence": "medium",
       "evidence": [
         "2026-08-01_ground-sweep.tsv",
         "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "Idles LOW, bursts to ~1.8-2 V every 1s.",
+      "notes": "Predicted by the descending pin->bit run that fits all 10 confirmed lanes (skipping GND pins 17 and 8). NOT yet observed: probe reads constant 0.",
       "r_to_gnd_ohms": 3700000.0
     },
     "20": {
-      "function": "bus? idle-low",
+      "function": "D-bus APB bit 5 (predicted)",
       "voltage": 1.8,
       "header_pin": 20,
       "net": "/21",
@@ -373,16 +373,16 @@
       "header_row": 10,
       "la_device": null,
       "la_channel": null,
-      "confidence": "low",
+      "confidence": "medium",
       "evidence": [
         "2026-08-01_ground-sweep.tsv",
         "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "Idles LOW, bursts to ~1.8-2 V every 1s.",
+      "notes": "Predicted by the descending pin->bit run that fits all 10 confirmed lanes (skipping GND pins 17 and 8). NOT yet observed: probe reads constant 0.",
       "r_to_gnd_ohms": 3700000.0
     },
     "21": {
-      "function": "control? active-low",
+      "function": "D-bus APB bit 4 (predicted)",
       "voltage": 1.8,
       "header_pin": 21,
       "net": "/22",
@@ -390,16 +390,16 @@
       "header_row": 11,
       "la_device": null,
       "la_channel": null,
-      "confidence": "low",
+      "confidence": "medium",
       "evidence": [
         "2026-08-01_ground-sweep.tsv",
         "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "Idles HIGH ~1.8 V, pulses LOW during update bursts. Active-low control candidate (/CS, /WR, /RD, /RESET).",
+      "notes": "Predicted by the descending pin->bit run that fits all 10 confirmed lanes (skipping GND pins 17 and 8). NOT yet observed: probe reads constant 0.",
       "r_to_gnd_ohms": 600000.0
     },
     "22": {
-      "function": "bus? idle-low",
+      "function": "D-bus APB bit 3 (predicted)",
       "voltage": 1.8,
       "header_pin": 22,
       "net": "/23",
@@ -407,16 +407,16 @@
       "header_row": 11,
       "la_device": null,
       "la_channel": null,
-      "confidence": "low",
+      "confidence": "medium",
       "evidence": [
         "2026-08-01_ground-sweep.tsv",
         "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "Idles LOW, bursts to ~1.8-2 V every 1s.",
+      "notes": "Predicted by the descending pin->bit run that fits all 10 confirmed lanes (skipping GND pins 17 and 8). NOT yet observed: probe reads constant 0.",
       "r_to_gnd_ohms": 500000.0
     },
     "23": {
-      "function": "bus? idle-low",
+      "function": "D-bus APB bit 2",
       "voltage": 1.8,
       "header_pin": 23,
       "net": "/24",
@@ -424,16 +424,16 @@
       "header_row": 12,
       "la_device": null,
       "la_channel": null,
-      "confidence": "low",
+      "confidence": "high",
       "evidence": [
         "2026-08-01_ground-sweep.tsv",
         "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "Idles LOW, bursts to ~1.8-2 V every 1s.",
+      "notes": "Exact 69-write match against lcd_init_seq_23 (firmware wake). APB[2].",
       "r_to_gnd_ohms": 600000.0
     },
     "24": {
-      "function": "bus? idle-low",
+      "function": "D-bus APB bit 1",
       "voltage": 1.8,
       "header_pin": 24,
       "net": "/25",
@@ -441,16 +441,16 @@
       "header_row": 12,
       "la_device": null,
       "la_channel": null,
-      "confidence": "low",
+      "confidence": "high",
       "evidence": [
         "2026-08-01_ground-sweep.tsv",
         "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "Idles LOW, bursts to ~1.8-2 V every 1s.",
+      "notes": "Exact 69-write match against lcd_init_seq_23 (firmware wake). APB[1].",
       "r_to_gnd_ohms": 500000.0
     },
     "25": {
-      "function": "bus? idle-low",
+      "function": "D-bus APB bit 0",
       "voltage": 1.8,
       "header_pin": 25,
       "net": "/26",
@@ -458,12 +458,12 @@
       "header_row": 13,
       "la_device": null,
       "la_channel": null,
-      "confidence": "low",
+      "confidence": "high",
       "evidence": [
         "2026-08-01_ground-sweep.tsv",
         "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "Idles LOW, bursts to ~1.8-2 V every 1s.",
+      "notes": "Exact 69-write match against lcd_init_seq_23 (firmware wake). APB[0].",
       "r_to_gnd_ohms": 600000.0
     },
     "26": {
@@ -484,7 +484,7 @@
       "r_to_gnd_ohms": 3700000.0
     },
     "27": {
-      "function": "/WR (write strobe, active low)",
+      "function": "/WR",
       "voltage": 1.8,
       "header_pin": 27,
       "net": "/28",
@@ -501,7 +501,7 @@
       "r_to_gnd_ohms": 3700000.0
     },
     "28": {
-      "function": "control? active-low",
+      "function": "D/C (RS)",
       "voltage": 1.8,
       "header_pin": 28,
       "net": "/29",
@@ -509,12 +509,12 @@
       "header_row": 14,
       "la_device": null,
       "la_channel": null,
-      "confidence": "low",
+      "confidence": "high",
       "evidence": [
         "2026-08-01_ground-sweep.tsv",
         "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "Idles HIGH ~1.8 V, pulses LOW during update bursts. Active-low control candidate (/CS, /WR, /RD, /RESET).",
+      "notes": "0 = command, 1 = data. Exact match over 69 writes.",
       "r_to_gnd_ohms": 3800000.0
     },
     "29": {
@@ -700,5 +700,41 @@
     "CH20": 27,
     "CH21": 28,
     "CH22": 29
+  },
+  "lane_map": {
+    "confirmed": {
+      "25": 0,
+      "24": 1,
+      "23": 2,
+      "18": 7,
+      "16": 8,
+      "15": 9,
+      "14": 10,
+      "13": 11,
+      "12": 12,
+      "11": 13
+    },
+    "predicted": {
+      "22": 3,
+      "21": 4,
+      "20": 5,
+      "19": 6,
+      "10": 14,
+      "9": 15
+    },
+    "model": "flex pin -> APB bit descends monotonically, skipping GND pins 17 and 8",
+    "evidence": "captures/20260801_193606_dryrun.csv burst 7, 69 writes vs firmware seq_awake"
+  },
+  "wiring_faults": {
+    "P09_equals_P14": "byte-identical over 69 writes; CH4 (pin 9) is almost certainly landed on pin 14, so pin 9 is unprobed and bit 10 truly belongs to pin 14",
+    "constant_zero_but_should_toggle": [
+      20,
+      21,
+      22
+    ],
+    "unverifiable_here": [
+      19,
+      10
+    ]
   }
 }

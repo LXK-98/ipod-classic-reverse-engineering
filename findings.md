@@ -760,3 +760,61 @@ again and we get the same all-zero symptom. Cheap pre-check: measure pin 26 with
 while the display is asleep. **Fallback if it does drop:** derive VREF from the analyzer's
 own 3v3 through a divider (~12 k / 10 k gives 1.8 V; VCCA draws only microamps), making
 the reference independent of the iPod entirely.
+
+### 2026-08-01 — **LANE MAP SOLVED** from the wake init; wiring faults isolated
+
+**Action:** Captured the LCD wake sequence with 7 bursts and matched the result against
+`lcd_init_seq_23` (firmware variant) from `refs/sequences.json`.
+
+**Result — the burst structure came out exactly as designed:** bursts 1–6 contained
+**one write each** (the six NOPs, 1.28 ms apart) and burst 7 contained **69 consecutive
+writes** (the register block). This proves the capture began at the true first
+instruction of `seq_awake`, so the alignment anchor is sound.
+
+**(F) Ten data lanes, D/C and /WR matched EXACTLY over 69 writes.** A false match at
+that length has probability 2^-69, so these are certain:
+
+| bit | pin | bit | pin | signal | pin |
+|---|---|---|---|---|---|
+| 0 | 25 | 9 | 15 | **/WR** | **27** |
+| 1 | 24 | 10 | 14 | **D/C** | **28** |
+| 2 | 23 | 11 | 13 | | |
+| 7 | 18 | 12 | 12 | | |
+| 8 | 16 | 13 | 11 | | |
+
+**(F) D/C polarity: 0 = command, 1 = data** (standard 8080 convention).
+
+**(F) P15 degeneracy resolved — it is genuinely bit 9.** The register block writes data
+values ≥ 0x200 (`0x0808`, `0x2402`, `0x1c04`), and P15 followed them on data cycles. Had
+it been an inverted D/C it would have stayed low on every data write. The ambiguity
+flagged in the previous entry is closed.
+
+**(F) The lane map follows a simple monotonic rule.** Every confirmed assignment fits:
+
+```
+pin  25 24 23 [22 21 20 19] 18 (17=GND) 16 15 14 13 12 11 [10  9]
+bit   0  1  2 [ 3  4  5  6]  7           8  9 10 11 12 13 [14 15]
+```
+
+flex pin -> APB bit descends monotonically, **skipping the GND pins (17 and 8)**. Ten of
+ten confirmed lanes obey it. The bracketed pins are exactly those reading constant 0.
+
+**(F) TWO WIRING FAULTS, not measurement problems:**
+
+1. **P09 and P14 are byte-identical across all 69 writes.** Two probes are reading the
+   same header pin. The model says pin 14 = bit 10 and pin 9 = bit 15, so CH4 (pin 9) has
+   almost certainly landed on pin 14. Pin 9 is therefore unprobed.
+2. **Pins 20, 21, 22 read constant 0 but must toggle** — they carry bits 5, 4 and 3,
+   which have 1, 22 and 14 ones respectively in this sequence. Their probes are not
+   making contact.
+
+Pins 19 and 10 (bits 6 and 14) are **unverifiable from this capture** because bits 6, 14
+and 15 are constant zero throughout `lcd_init_seq_23` — the limitation predicted from
+ground truth before any hardware was touched. Colour fills remain required for those.
+
+**(H) P02 reads 2 ones in 69 writes and matches nothing** — most likely a marginal
+contact on one of the two unused lanes (D0/D9 are idle in `LCD_MODE_P16`), or an
+intermittent probe. Low priority.
+
+**Next step:** reseat the probes on pins 9, 19, 20, 21, 22 (channels CH4, CH13–CH16) and
+re-capture the wake sequence to confirm bits 3, 4, 5 and 15.
