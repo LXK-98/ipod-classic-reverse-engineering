@@ -126,6 +126,7 @@ def main() -> int:
             v |= data[pix, idx[nm]].astype(np.uint16) << (len(pins) - 1 - k)
         return v
 
+    # fields are stored MSB->LSB; red/blue LSB is a hardware replica of their MSB
     r6, g6, b6 = channel("RED"), channel("GREEN"), channel("BLUE")
     rgb = np.stack([(r6 * 255 // 63), (g6 * 255 // 63), (b6 * 255 // 63)], axis=1).astype(np.uint8)
 

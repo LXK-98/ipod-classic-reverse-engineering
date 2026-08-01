@@ -1192,3 +1192,49 @@ captured.
 Practical options:
 - 24 ch @ 20 MS/s, 32767 samples -> ~2700 px = ~8 rows of 320, full 18-bit colour, no rewiring.
 - 8 ch (/WR + 7 lanes on CH1-8) @ 20 MS/s, 131071 samples -> ~10700 px = ~33 rows, ~2 bits/colour.
+
+### 2026-08-01 — **P09==P14 SOLVED.** Bit order within fields; 5->6 expansion rule
+
+**Trigger for the correction:** collaborator reported the top of the screen is **grey**,
+but our reconstruction decoded it as green RGB(48,145,24). Saturated fills cannot detect a
+wrong bit order *within* a colour field — every lane is high, so any ordering agrees. The
+ordering had been **assumed** (pin order = MSB..LSB), never measured.
+
+**Action:** captured the lamp plugin's **indigo** (75,0,130), whose channels are
+deliberately non-saturated: R5=9=`01001`, G6=0, B5=16=`10000`.
+
+**(F) Both non-green channels showed one MORE high lane than the 5-bit source has.**
+That is the RGB565->RGB666 expansion **replicating the MSB into the LSB**:
+
+```
+6bit = (5bit << 1) | (5bit >> 4)
+```
+
+**(F) Field orderings, MSB -> LSB:**
+
+| field | order | note |
+|---|---|---|
+| RED | P09 P10 P11 P12 P13 **P14** | **P14 is a hardware replica of P09** |
+| BLUE | P21 P22 P23 P24 P25 **P02** | **P02 is a hardware replica of P21** |
+| GREEN | P01 P15 P16 P18 P19 P20 | order still **unverified** |
+
+**(F) THIS RESOLVES P09 == P14.** The two pins are byte-identical in every capture, sit
+6.66 MOhm apart, and are correctly wired — because **P14 carries a hardware copy of P09**,
+the replicated red MSB. It was never a short, never a probe error, and never a bus fault.
+Every earlier hypothesis (solder bridge, miswire, crosstalk, contention) was wrong.
+
+It also explains the contradiction that blocked progress for hours: in **command** mode
+P14 carries APB bit 10, while in **frame** mode it carries the replicated red MSB. Same
+pin, two different signals depending on the SoC's output mode - which is exactly why it
+matched bit 10 across 68 init writes yet tracked the red MSB in the colour fills.
+
+And it explains why blue appeared to lack a duplicate pair: the partner is **P02**, which
+had been mis-filed as the blue MSB rather than the replicated LSB.
+
+**Verified against every capture:** red 63/63, green 0/0, blue 63/63, white 63/63,
+indigo R 18/18 and B 33/33, and the grey menu top giving R == B == 12 as grey requires.
+Indigo is the load-bearing case - its asymmetric patterns would have exposed a wrong order.
+
+**Still open:** the GREEN field's internal order. Green needs no expansion (already 6-bit),
+so no replica identifies it. The lamp's **violet** (238,130,238) has G6=32=`100000` -
+exactly one green lane high - which identifies the green MSB with no inference.

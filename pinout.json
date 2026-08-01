@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "version": "v4.1",
+  "version": "v5",
   "updated": "2026-08-01",
   "device": {
     "model": "Apple iPod Classic 2009 'thin' 160GB, A1238",
@@ -73,7 +73,7 @@
         "2026-08-01_ground-sweep.tsv",
         "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "Idles LOW, bursts to ~1.8-2 V every 1s. | Frame mode: BLUE channel (driven high only by the blue fill).",
+      "notes": "Frame mode: BLUE LSB, a hardware replica of the blue MSB (pin 21).",
       "r_to_gnd_ohms": 3800000.0,
       "rgb_field": "BLUE"
     },
@@ -283,7 +283,7 @@
         "2026-08-01_ground-sweep.tsv",
         "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "Exact 69-write match against lcd_init_seq_23 (firmware wake). APB[10]. | Frame mode: RED channel (driven high only by the red fill).",
+      "notes": "Frame mode: RED LSB, a hardware replica of the red MSB (pin 9). This - not a short - is why P09 and P14 are byte-identical in every capture.",
       "r_to_gnd_ohms": 3700000.0,
       "rgb_field": "RED"
     },
@@ -797,12 +797,12 @@
         "P20"
       ],
       "BLUE": [
-        "P02",
         "P21",
         "P22",
         "P23",
         "P24",
-        "P25"
+        "P25",
+        "P02"
       ]
     },
     "evidence": "solid red/green/blue fills from Rockbox lamp plugin; each saturated channel drives exactly 6 lanes high",
@@ -812,9 +812,27 @@
         "P09",
         "P14"
       ],
-      "GREEN": [],
-      "BLUE": []
+      "BLUE": [
+        "P21",
+        "P02"
+      ],
+      "GREEN": []
     },
-    "open_question": "blue shows no duplicate pair though a 5->6 expansion needs one; the expansion is not symmetric between red and blue. P02's role is also unclear (only 2 ones across the 69-write init)."
+    "open_question": "GREEN within-field bit order still unverified (saturated fills cannot show it)",
+    "bit_order": "each field listed MSB -> LSB",
+    "expansion": {
+      "rule": "6bit = (5bit << 1) | (5bit >> 4)  [MSB replicated into LSB]",
+      "red_replica": "P14 duplicates P09 (red MSB)",
+      "blue_replica": "P02 duplicates P21 (blue MSB)",
+      "green": "already 6-bit in RGB565; no replication",
+      "verified_against": [
+        "red",
+        "green",
+        "blue",
+        "white",
+        "indigo",
+        "grey menu top"
+      ]
+    }
   }
 }
