@@ -1162,3 +1162,33 @@ hand-edited.
 
 **Remaining low-confidence item:** pin 34, ~1.5 V with ~100 mV ripple at ~80 us
 (12.5 kHz) — a switching or bias node rather than logic, still unidentified.
+
+### 2026-08-01 — Frame reconstruction validates the protocol end to end
+
+**Action:** Wrote `tools/frame2png.py`, which recovers the update rectangle from the
+window-setup commands (`0x210`-`0x213`), decodes pixel writes as RGB666, and renders a
+PNG with the stdlib only.
+
+**(F) The decoder reproduces the lamp plugin's colours exactly:**
+
+| fill | decoded RGB666 | RGB888 | expected |
+|---|---|---|---|
+| red | (63,0,0) | (255,0,0) | (255,0,0) |
+| green | (0,63,0) | (0,255,0) | (0,255,0) |
+| blue | (0,0,63) | (0,0,255) | (0,0,255) |
+| white | (63,63,63) | (255,255,255) | (255,255,255) |
+
+Byte-exact on all four. This validates, in one step, the pin assignment, the RGB666 field
+mapping, the /WR rising-edge latch and the D/C polarity — by reconstruction rather than
+by pattern matching, so it is an independent check of the whole chain.
+
+**(F) A full frame cannot be captured with this hardware.** 76800 px x 610 ns = 46.9 ms;
+catching a 70-80 ns /WR low needs >= 20 MS/s (a pulse longer than the sample period
+guarantees at least one sample inside it), so ~940k samples are required against a
+131,071-sample maximum. **Short by roughly 7x.** Partial capture is unaffected: the
+window commands give the true rectangle, and the renderer lays down as many rows as were
+captured.
+
+Practical options:
+- 24 ch @ 20 MS/s, 32767 samples -> ~2700 px = ~8 rows of 320, full 18-bit colour, no rewiring.
+- 8 ch (/WR + 7 lanes on CH1-8) @ 20 MS/s, 131071 samples -> ~10700 px = ~33 rows, ~2 bits/colour.
