@@ -27,6 +27,11 @@ disagree with the Rockbox source they are marked as such, with the evidence.
 
 **[→ Full pinout: PINOUT.md](PINOUT.md)** (generated from [`pinout.json`](pinout.json))
 
+![Reconstructed status bar](docs/frame-example-magnified.png)
+
+*End-to-end proof: rows 0–3 of a live screen, reconstructed from a raw logic-analyzer
+capture — blue icon, text glyphs, and the battery outline with its red low-charge fill.*
+
 ### Pin summary
 
 | pins | function |

@@ -136,6 +136,13 @@ long.
 
 ### Verification
 
+![Reconstructed status bar](frame-example-magnified.png)
+
+*Rows 0–3 of a live Rockbox screen, reconstructed from a raw bus capture by
+`tools/frame2png.py` (pixels stretched 4×24 for legibility; true-scale version in
+`frame-example.png`). The blue icon, text glyph tops and the grey battery outline with its
+red low-charge fill are all recovered from the 18 data lanes with no post-processing.*
+
 The mapping is verified against nine captures of known colours, including three
 asymmetric ones that would expose any ordering error:
 
