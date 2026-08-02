@@ -1,0 +1,153 @@
+{
+  "capture_id": "20260802_130138_dryrun",
+  "timestamp": "2026-08-02T13:03:31",
+  "preset": "dryrun",
+  "preset_description": "Pipeline validation against a Pico PWM of known freq and duty.",
+  "probe_map": "v4-p30-dup-ch3",
+  "note": "COLD BOOT, trigger on /CS (P29) falling = first LCD transfer, with 30ms PRE-TRIGGER. Captures the state of P30/P32 throughout power-up rather than relying on catching a specific edge. Neither pin produced a falling OR rising edge in earlier attempts.",
+  "port": "/dev/serial/by-id/usb-Dr._Gusman_LogicAnalyzer_5033592712586E1F-if00",
+  "session": {
+    "Frequency": 1000000,
+    "PreTriggerSamples": 30000,
+    "PostTriggerSamples": 2766,
+    "LoopCount": 0,
+    "MeasureBursts": false,
+    "CaptureChannels": [
+      {
+        "ChannelNumber": 0,
+        "ChannelName": "P01",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 1,
+        "ChannelName": "P02",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 2,
+        "ChannelName": "P30b",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 3,
+        "ChannelName": "P09",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 4,
+        "ChannelName": "P10",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 5,
+        "ChannelName": "P11",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 6,
+        "ChannelName": "P12",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 7,
+        "ChannelName": "P13",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 8,
+        "ChannelName": "P14",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 9,
+        "ChannelName": "P15",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 10,
+        "ChannelName": "P16",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 11,
+        "ChannelName": "P18",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 12,
+        "ChannelName": "P19",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 13,
+        "ChannelName": "P20",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 14,
+        "ChannelName": "P21",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 15,
+        "ChannelName": "P22",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 16,
+        "ChannelName": "P23",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 17,
+        "ChannelName": "P24",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 18,
+        "ChannelName": "P25",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 19,
+        "ChannelName": "P27",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 20,
+        "ChannelName": "P28",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 21,
+        "ChannelName": "P29",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 22,
+        "ChannelName": "P30",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 23,
+        "ChannelName": "P32",
+        "Hidden": false
+      }
+    ],
+    "TriggerType": 0,
+    "TriggerChannel": 21,
+    "TriggerInverted": true,
+    "TriggerBitCount": 1,
+    "TriggerPattern": 0
+  },
+  "command": [
+    "/home/alex/Documents/Code/ipod-classic-reverse-engineering/vendor/TerminalCapture",
+    "capture",
+    "/dev/serial/by-id/usb-Dr._Gusman_LogicAnalyzer_5033592712586E1F-if00",
+    "/home/alex/Documents/Code/ipod-classic-reverse-engineering/captures/20260802_130138_dryrun.tcs",
+    "/home/alex/Documents/Code/ipod-classic-reverse-engineering/captures/20260802_130138_dryrun.csv"
+  ],
+  "returncode": -2,
+  "csv": null,
+  "csv_bytes": 0
+}

@@ -1,8 +1,8 @@
 {
-  "Frequency": 20000000,
-  "PreTriggerSamples": 1,
-  "PostTriggerSamples": 16383,
-  "LoopCount": 1,
+  "Frequency": 100000000,
+  "PreTriggerSamples": 64,
+  "PostTriggerSamples": 508,
+  "LoopCount": 63,
   "MeasureBursts": true,
   "CaptureChannels": [
     {
@@ -17,7 +17,7 @@
     },
     {
       "ChannelNumber": 2,
-      "ChannelName": "P07",
+      "ChannelName": "P30b",
       "Hidden": false
     },
     {

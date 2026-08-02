@@ -7,29 +7,53 @@ which block driving the panel.
 
 ## 1. Which of pins 30 and 32 is /RD, and which is /RESET?
 
-**Status:** both identified as active-low control lines, assignment between them unknown.
+**Status:** unresolved after five cold-boot attempts. Parked deliberately — see impact.
 
-Both sit constant high across a 164 ms window. That is expected rather than suspicious:
-Rockbox never issues a read (`S5L_LCD_WITH_READID` is undefined for `ipod6g`) and /RESET
-only moves at power-on. They were placed as a pair by elimination — every other function
-on the 34-pin flex is accounted for.
+Both are confirmed active-low control lines, idle high, never exercised during normal
+operation. They were placed as a pair by elimination: every other function on the 34-pin
+flex is accounted for.
 
-**How to resolve.** Capture a **cold boot**; /RESET pulses low early in the sequence while
-/RD does not.
+### What was tried
 
-**The obstacle.** The shifter's `VREF` is currently fed from the iPod's own 1.8 V rail
-(pin 26), so as the target powers down VREF collapses, every channel goes high-Z, and the
-collapse trips the edge trigger. This was tried and produced 24 channels of flat zero.
+| attempt | trigger | result |
+|---|---|---|
+| warm reset (Menu+Select) | P30 falling, then P32 falling | neither fired |
+| cold boot | P30 falling, then P32 falling | neither fired |
+| cold boot | P30 **rising** | did not fire |
+| cold boot | **/CS falling** (P29), 30 ms pre-trigger | did not fire |
+| cold boot | /CS falling, after rig validation | did not fire |
 
-**The fix.** Derive VREF independently — a divider off the analyzer's 3v3 rail gives
-1.8 V, and the TXU0104's VCCA draws only microamps, so tolerance is irrelevant. Roughly
-12 kΩ over 10 kΩ. Then arm before power-on.
+### What was established along the way
 
-**Impact if left unresolved:** low. A driver must deassert both anyway; only the *order*
-of reset release versus first write would matter, and that is knowable from the ILI9320
-family datasheets.
+- **(F) The panel is not reset on a warm reboot.** The SoC restarts and the bootloader
+  re-runs the LCD init, but neither line moves. A replacement driver must therefore drive
+  reset itself at power-up; it cannot rely on a warm reset.
+- **(F) A resistive divider on `VRF` is unusable for cold-boot work at 10 kΩ.** It reads
+  0.60 V — a junction drop — because with the iPod powered down the TXU0104 A-side inputs
+  are clamped to a dead board, presenting roughly 2.9 kΩ on VCCA. At **1 kΩ** the divider
+  holds **1.6 V** even with the target off, which is sufficient.
+- **(F) The 1 kΩ divider reference works.** Validated against known traffic: the
+  window-setup commands decode byte-exactly at VREF = 1.6 V.
+- **(F) VREF on the `3v3` switch position does NOT work** — see FINDINGS.
 
----
+### The unexplained part
+
+**/CS demonstrably goes low** — it frames every write burst, and we watched it do so with
+the same wiring minutes before and after. Yet a /CS falling-edge trigger never fires
+during a cold boot, across two attempts including one after the rig was validated. No
+explanation has been established. Candidate causes not yet tested: VREF sagging during the
+target's power-up transient, or the analyzer's edge detection behaving differently when an
+input is in an indeterminate state at arm time.
+
+### Impact: low, with a trivial workaround
+
+Nothing here blocks Phase 6. A driver can hold **both** pins high permanently and operate
+the panel correctly, since Rockbox never reads and reads are not required. The only
+capability lost is resetting the panel — and if that is ever needed, the identification is
+a five-second experiment on live hardware: pull one pin low and observe whether the
+display re-initialises.
+
+Five boots is already disproportionate to what the distinction is worth.
 
 ## 2. ~~What is pin 34?~~ — RESOLVED 2026-08-02
 

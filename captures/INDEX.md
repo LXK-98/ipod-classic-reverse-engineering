@@ -42,4 +42,11 @@ the capture is a throwaway. Read the note column.
 | `20260801_223723_dryrun` | 100 MS/s | 24 | 32576 | 64 | ORANGE fill (255,165,0): R5=31->63, G6=41=101001 (positions 5,3,0), B5=0. Resolves which of P01/P18 sits at green position 3 and which of P16/P19/P… |
 | `20260801_224147_dryrun` | 100 MS/s | 24 | 32576 | 64 | Custom background R=0 G=16 B=0 (RGB565 units). G6=16=010000 -> exactly one green lane high = the position-4 pin. Resolves P16 vs P19. |
 | `20260801_224807_dryrun` | 100 MS/s | 24 | 32576 | 64 | Green status bar at row 0. If it is the R=0 G=16 B=0 setting, exactly one green lane should be high = the position-4 pin, resolving P16 vs P19. |
+| `20260802_124256_dryrun` | 100 MS/s | 24 | 32576 | 64 | Threshold check with VREF switch on 3v3 (independent of the iPod). If 1.8V logic still decodes byte-exactly, the worst-case VT+ of 1.92V is not bei… |
+| `20260802_125222_dryrun` *(failed, no data)* | 1 MS/s | 24 | 32766 | 1 | COLD BOOT /RESET hunt. VREF from a 1k/1k divider off the analyzer 3v3 (1.6V, independent of the target). Armed with the iPod OFF; trigger on P30 fa… |
+| `20260802_125453_dryrun` *(failed, no data)* | 1 MS/s | 24 | 32766 | 1 | COLD BOOT /RESET hunt, attempt 2: trigger on P32 falling. P30 did not pulse on a cold boot. VREF from 1k/1k divider off analyzer 3v3 (1.6V). |
+| `20260802_125835_dryrun` *(failed, no data)* | 1 MS/s | 24 | 32766 | 1 | COLD BOOT rising-edge timing. Both P30 and P32 sit at 0V while the iPod is off and rise at power-on; a falling-edge trigger could never fire (desig… |
+| `20260802_130138_dryrun` *(failed, no data)* | 1 MS/s | 24 | 32766 | 1 | COLD BOOT, trigger on /CS (P29) falling = first LCD transfer, with 30ms PRE-TRIGGER. Captures the state of P30/P32 throughout power-up rather than … |
+| `20260802_130335_dryrun` | 100 MS/s | 24 | 32576 | 64 | VALIDATION: does the analyzer read the bus correctly with VREF from the 1k/1k divider (1.6V)? Decode the window-setup commands to confirm before sp… |
+| `20260802_130459_dryrun` *(failed, no data)* | 1 MS/s | 24 | 32766 | 1 | COLD BOOT retry, rig now VALIDATED (window-setup commands decode byte-exactly at VREF=1.6V from the divider). Trigger /CS falling, 30ms pre-trigger… |
 

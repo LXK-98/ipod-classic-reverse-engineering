@@ -1407,3 +1407,26 @@ commands were simply absent.
 also ruled out (the ~2.9 kOhm ESD clamp load when the iPod is powered down). Options:
 3x 1N4148 in series from 3v3 through ~1 kOhm (~1.95 V, ~60 Ohm dynamic impedance), a red
 LED in the same arrangement (~1.8-2.0 V), or a 1.8 V LDO.
+
+### 2026-08-02 — /RD vs /RESET parked after five attempts
+
+Five cold/warm boot captures failed to trigger: P30 falling, P32 falling, P30 rising,
+/CS falling, and /CS falling again after validating the rig.
+
+**Design error, attempts 1-3.** With the iPod off both lines sit at 0 V and rise at
+power-on; **a falling-edge trigger could never have fired**. Reset is asserted by the rail
+being down and released by the line rising, not by the SoC pulling it low. Two cold boots
+were spent on a test that was incapable of succeeding.
+
+**Wrong diagnosis, attempt 4.** When /CS also failed to trigger I concluded the VREF
+switch must still be on `3v3` and withdrew the earlier negative results. Validation showed
+the opposite: at VREF = 1.6 V from the 1k/1k divider the window-setup commands decode
+**byte-exactly**. The reference was never the problem, and the withdrawal was wrong.
+
+**Still unexplained.** /CS visibly frames every write burst when the iPod is running, yet a
+/CS falling-edge trigger does not fire during a cold boot - reproduced after the rig was
+validated. Candidates not tested: VREF sagging during the target's power-up transient, or
+analyzer edge detection behaving differently when an input is indeterminate at arm time.
+
+**Parked.** The distinction has a trivial workaround (hold both high; identify reset later
+by pulling one pin on live hardware) and nothing in Phase 6 depends on it.

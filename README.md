@@ -37,7 +37,7 @@ disagree with the Rockbox source they are marked as such, with the evidence.
 | 7 | TE (tearing effect, 67.9 Hz) |
 | 26, 33 | VDDIO 1.8 V / 3.0 V rail |
 | 27, 28, 29 | /WR, D/C, /CS |
-| 30, 32 | /RD and /RESET (which is which: [open](docs/OPEN-QUESTIONS.md)) |
+| 30, 32 | /RD and /RESET — both active-low, idle high ([which is which: open](docs/OPEN-QUESTIONS.md)) |
 | 34 | ~1.54 V analog reference — an **input** the panel expects |
 
 > ⚠️ **Pin 4 reaches 12.76 V.** Never connect it to a logic analyzer — a TXU0104
