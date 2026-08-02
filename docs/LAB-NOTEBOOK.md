@@ -1349,3 +1349,38 @@ headroom. PWM the low side for dimming.
 
 **Safety note updated:** pin 4 reaches **12.76 V**, not 10.7 V. Still far above the
 TXU0104's 5.5 V A-side maximum; the prohibition is unchanged but the margin is worse.
+
+### 2026-08-02 — Pin 34 resolved; /RESET not asserted on a warm reboot
+
+**Pin 34 — (F) an analog reference INPUT to the panel, ~1.54 V, supplied by the logic
+board.** With the display flex disconnected the board still holds it at ~1.54 V, so the
+panel receives it rather than generating it. A replacement driver must supply it.
+
+**(F) CORRECTION — all previously reported activity on pin 34 was charger noise.** The
+"~80 us square wave", the "~12.5 kHz ripple", a 125 Hz frequency readout and bursts of
+ringing all vanish on battery power and return when the USB charger is connected. The pin
+carries no signal. The tell, missed at the time: **the apparent period changed with the
+timebase it was viewed at** - 80 us, then ~13 ms, then ~8 ms. A real signal does not do
+that. Lesson: take analog measurements on battery.
+
+**(F) Neither pin 30 nor pin 32 pulses during a Menu+Select soft reset.** Both were armed
+on a falling edge across a 32.7 ms window with 8 ms pre-trigger, and neither triggered.
+
+Interpretation: **the panel's reset line is not asserted on a warm reboot.** The SoC
+restarts and the bootloader re-runs the LCD init, but the reset GPIO is evidently left
+high throughout - reset is asserted only at cold power-on, most likely by the PMU during
+rail sequencing.
+
+This is useful in its own right: **a replacement driver cannot rely on a warm reset to
+initialise the panel and must drive the reset line itself at power-up.**
+
+It also means separating /RD from /RESET still requires a genuine cold boot, and therefore
+a VREF source independent of the target.
+
+**(F) A resistive divider will NOT work as that VREF source.** Attempting one gave
+**0.60 V** - a silicon junction drop, not a divider ratio - with ~270 uA flowing through a
+single 10k from 3v3. With the iPod powered down, the TXU0104 A-side inputs are clamped to
+a dead board and the chips' internal ESD structures present roughly a 2.9 kOhm load on
+VCCA. The load appears in precisely the condition the divider is needed for. A **stiff**
+source is required: an LDO, or a shunt reference (series diodes / a red LED) that can
+actually sink current.
