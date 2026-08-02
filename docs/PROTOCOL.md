@@ -1,5 +1,8 @@
 # Display protocol
 
+> Building a driver? Start with **[DRIVING.md](DRIVING.md)**, which collects everything
+> needed in implementation order. This document covers how the protocol was characterised.
+
 Everything needed to drive this panel. All figures measured on the target unless marked
 otherwise.
 

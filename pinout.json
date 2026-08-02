@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "version": "v7",
+  "version": "v8",
   "updated": "2026-08-01",
   "device": {
     "model": "Apple iPod Classic 2009 'thin' 160GB, A1238",
@@ -723,7 +723,22 @@
     "full_frame_ms": 46.9,
     "transfers_per_pixel": 1,
     "evidence": "captures/20260801_185127_dryrun.csv",
-    "note": "Confirms LCD_MODE_P16 RGB565 1-transfer-per-pixel from Rockbox source."
+    "note": "Confirms LCD_MODE_P16 RGB565 1-transfer-per-pixel from Rockbox source.",
+    "data_setup_ns": {
+      "min": 30,
+      "typical": 65,
+      "note": "data stable before the /WR rising edge (latch)"
+    },
+    "data_hold_ns": {
+      "min": 270,
+      "note": "data stable after the latch"
+    },
+    "dc_setup_ns": {
+      "min": 380,
+      "note": "D/C stable before the latch"
+    },
+    "cs_behaviour": "held low for the whole transfer burst (99.6% low during a pixel burst); not toggled per write",
+    "caveat": "these are what the SoC does and the panel accepts, NOT panel datasheet minima"
   },
   "phase2_channel_map": {
     "CH1": 1,

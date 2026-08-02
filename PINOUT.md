@@ -1,6 +1,6 @@
 # iPod Classic LCD flex pinout
 
-Generated from `pinout.json` v7 (2026-08-01) by `tools/report.py`.
+Generated from `pinout.json` v8 (2026-08-01) by `tools/report.py`.
 Do not edit by hand.
 
 ## Device

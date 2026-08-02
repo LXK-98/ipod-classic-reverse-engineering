@@ -55,6 +55,7 @@ capture — blue icon, text glyphs, and the battery outline with its red low-cha
 | document | contents |
 |---|---|
 | [PINOUT.md](PINOUT.md) | the pinout table, generated from `pinout.json` |
+| **[docs/DRIVING.md](docs/DRIVING.md)** | **how to build a driver — start here for Phase 6** |
 | [docs/HARDWARE.md](docs/HARDWARE.md) | target device, interposer, instrumentation, safety rules |
 | [docs/PROTOCOL.md](docs/PROTOCOL.md) | bus protocol, init sequences, timing, pixel format |
 | [docs/METHODOLOGY.md](docs/METHODOLOGY.md) | how each result was obtained and how to reproduce it |
