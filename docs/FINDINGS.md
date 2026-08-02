@@ -134,6 +134,20 @@ misleads:
 | 5 | U3 | CH9–12 | C3, C9 |
 | 6 | U2 | **CH13–16** | C2, C8 |
 
+### The analyzer intermittently drops off USB
+
+Observed twice in one session: the LogicAnalyzer disappears from the USB bus entirely — no
+`/dev/serial/by-id` entry, nothing in `lsusb` — and returns after a reseat or on its own.
+
+This matters because of how it presents during a long armed wait: a capture that is armed
+when the device drops looks identical to **"the trigger never fired."** Several
+inconclusive cold-boot captures in this project may have been affected; it was never
+established either way.
+
+**Practical rule:** before interpreting a non-triggering capture as a fact about the
+target, confirm the analyzer is still enumerated. `tools/capture.py --list-ports` is the
+one-line check.
+
 ### A level shifter referenced too high fails silently
 
 At a 3.3 V reference the TXU0104's V<sub>T+</sub> maximum is **1.92 V** — *above* a 1.8 V
