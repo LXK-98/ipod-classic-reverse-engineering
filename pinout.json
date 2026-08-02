@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "version": "v6.2",
+  "version": "v7",
   "updated": "2026-08-01",
   "device": {
     "model": "Apple iPod Classic 2009 'thin' 160GB, A1238",
@@ -621,20 +621,20 @@
       "r_to_gnd_ohms": 266000.0
     },
     "34": {
-      "function": "unresolved-analog",
-      "voltage": 1.5,
+      "function": "VREF ~1.54 V (analog reference INPUT to panel)",
+      "voltage": 1.54,
       "header_pin": 34,
       "net": "/35",
       "header_column": "RIGHT",
       "header_row": 17,
       "la_device": null,
       "la_channel": null,
-      "confidence": "low",
+      "confidence": "high",
       "evidence": [
         "2026-08-01_ground-sweep.tsv",
         "2026-08-01_powered-sweep.tsv"
       ],
-      "notes": "~1.5 V with ~100 mV ripple at ~80 us (12.5 kHz). Switching/charge-pump or bias node rather than logic.",
+      "notes": "Supplied BY the logic board: still present at ~1.54 V with the display flex disconnected, so the panel receives it rather than generating it. Quiet and flat on battery power. 1 MOhm to ground unpowered = high-impedance decoupled reference, not a supply rail. A replacement driver MUST supply this.",
       "r_to_gnd_ohms": 1000000.0
     }
   },
@@ -872,5 +872,16 @@
       "P18=pos2": "grey status bar G6=12 (001100): P01,P18 high",
       "P19=pos1": "by elimination"
     }
+  },
+  "pin34_investigation": {
+    "conclusion": "analog reference input to the panel, ~1.54 V, board-supplied",
+    "input_or_output": "INPUT - present with the display disconnected",
+    "observed_range_v": [
+      1.541,
+      1.546
+    ],
+    "impedance": "1 MOhm to signal ground, unpowered",
+    "artifact_warning": "All previously reported activity on this pin - a '~80 us square wave', '~12.5 kHz ripple', a 125 Hz frequency readout and bursts of ringing - was CHARGER NOISE. It disappears entirely on battery power and returns when the USB charger is connected. The pin carries no signal.",
+    "phase6": "supply ~1.54 V from a low-impedance buffered source with local decoupling; exact tolerance unknown"
   }
 }

@@ -174,8 +174,12 @@ reaching 12.8 V under load — design for ≥14 V compliance. PWM the low side.
 |---|---|
 | 26 | **1.8 V** — VDDIO, the logic domain |
 | 33 | **3.0 V** — analog/panel supply |
-| 34 | ~1.5 V with ~100 mV ripple at ~12.5 kHz — unidentified, see open questions |
+| 34 | **~1.54 V analog reference — an INPUT the panel expects.** A replacement driver must supply it |
 | 3, 6, 8, 17, 31 | GND |
+
+Pin 34 is board-supplied: it remains at ~1.54 V with the display disconnected. It reads
+1 MΩ to ground unpowered, i.e. a high-impedance decoupled reference rather than a rail.
+Any apparent AC on it is charger noise — measure on battery.
 
 The iPod bonds **chassis ground to signal ground through ~300 Ω**. Instruments must
 reference signal ground (the flex GND pins or the HDD case), not the case or dock shell.

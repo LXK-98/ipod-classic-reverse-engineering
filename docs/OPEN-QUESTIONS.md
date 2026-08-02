@@ -31,39 +31,20 @@ family datasheets.
 
 ---
 
-## 2. What is pin 34?
+## 2. ~~What is pin 34?~~ — RESOLVED 2026-08-02
 
-**Status:** unidentified analog node.
+**Answer: an analog reference input to the panel, ~1.54 V, supplied by the logic board.**
 
-Reads **~1.5 V with ~100 mV ripple at roughly 80 µs (~12.5 kHz)**. Not logic — it sits
-permanently above the shifter's ~1.23 V threshold, so a logic analyzer reads it as a
-constant high and cannot see the ripple. Characterising it needs a scope.
+With the display flex disconnected the board still holds pin 34 at ~1.54 V, so the panel
+*receives* it rather than generating it. Its 1 MΩ-to-ground reading (unpowered) fits a
+high-impedance decoupled reference rather than a supply rail.
 
-**Leading hypothesis: VCOM**, the LCD common-electrode drive. A DC level of a couple of
-volts with a small AC component from inversion drive fits. If so its frequency should be a
-harmonic of the line rate, which is known exactly from TE:
+**Phase 6 impact:** a replacement driver **must supply this**. Feed ~1.54 V from a
+low-impedance buffered source with local decoupling. The required tolerance is unknown —
+the panel's sensitivity to it has not been tested.
 
-```
-TE = 67.93 Hz  →  240 lines × 67.93 = 16.3 kHz (61.3 µs)
-                  with ~262 total lines ≈ 17.8 kHz (56 µs)
-```
-
-The rough 80 µs estimate fits neither cleanly, so an accurate frequency is the decisive
-measurement — it either lands on a line-rate harmonic or it does not.
-
-**Alternatives:** a panel-internal charge-pump node for gate drive (would be a fixed
-frequency unrelated to the line rate, and triangular rather than square), or something in
-the backlight feedback path (would shift with brightness).
-
-**How to resolve.** Scope pin 34 and record: DC level, ripple amplitude, **accurate
-frequency**, waveform shape, and whether any of it changes with backlight brightness.
-
-**Impact if left unresolved:** low-to-moderate. If it is VCOM it is generated on the panel
-side and a driver need not produce it. If it is a bias the panel *expects* to receive, a
-replacement driver would have to supply it — so this should be settled before Phase 6
-hardware is committed.
-
----
+**Everything previously reported as activity on this pin was charger noise.** See
+[FINDINGS](FINDINGS.md#11-charger-noise-contaminated-every-analog-measurement).
 
 ## 3. Why is the green channel's lane order irregular?
 

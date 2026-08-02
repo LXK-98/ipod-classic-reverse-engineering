@@ -1,6 +1,6 @@
 # iPod Classic LCD flex pinout
 
-Generated from `pinout.json` v6.2 (2026-08-01) by `tools/report.py`.
+Generated from `pinout.json` v7 (2026-08-01) by `tools/report.py`.
 Do not edit by hand.
 
 ## Device
@@ -60,7 +60,7 @@ Do not edit by hand.
 | 31 | GND | **high** | 0 V powered; 0.6-1.5 ohm to signal ground unpowered. |
 | 32 | /RD or /RESET (active low, idle high) | medium | Constant high over 164 ms. Assigned by elimination: all other functions are placed, and these are the only … |
 | 33 | PWR 3.0V rail | **high** | 3.0 V - too high for the 1.8 V logic domain, so a genuine supply. |
-| 34 | unresolved-analog | low | ~1.5 V with ~100 mV ripple at ~80 us (12.5 kHz). Switching/charge-pump or bias node rather than logic. |
+| 34 | VREF ~1.54 V (analog reference INPUT to panel) | **high** | Supplied BY the logic board: still present at ~1.54 V with the display flex disconnected, so the panel rece… |
 
 ## Pixel format
 

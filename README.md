@@ -7,7 +7,7 @@ Samsung S5L8702 — the revision Rockbox calls `ipod6g`).
 Everything here was **measured**, not inferred from documentation. Where the results
 disagree with the Rockbox source they are marked as such, with the evidence.
 
-**Status:** all six original goals complete. Two minor items open — see
+**Status:** all six original goals complete. One minor item open — see
 [docs/OPEN-QUESTIONS.md](docs/OPEN-QUESTIONS.md).
 
 ---
@@ -38,7 +38,7 @@ disagree with the Rockbox source they are marked as such, with the evidence.
 | 26, 33 | VDDIO 1.8 V / 3.0 V rail |
 | 27, 28, 29 | /WR, D/C, /CS |
 | 30, 32 | /RD and /RESET (which is which: [open](docs/OPEN-QUESTIONS.md)) |
-| 34 | analog node, ~1.5 V @ 12.5 kHz ([open](docs/OPEN-QUESTIONS.md)) |
+| 34 | ~1.54 V analog reference — an **input** the panel expects |
 
 > ⚠️ **Pin 4 reaches 12.76 V.** Never connect it to a logic analyzer — a TXU0104
 > level shifter is rated 5.5 V absolute maximum on its input side.

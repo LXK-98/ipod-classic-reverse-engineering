@@ -199,3 +199,24 @@ because the LED string is PWM-dimmed and the boost converter is barely loaded at
 Deriving the LED count from the low-brightness figure gave **3 LEDs**. The correct figure
 gives **4** (12.26 V across the string ÷ 3.07 V per LED). A driver designed against the
 first number would target ~11 V and fail to light the panel at all.
+
+---
+
+## 11. Charger noise contaminated every analog measurement
+
+Pin 34 was chased for a long time on the strength of an apparent signal: a "~80 µs square
+wave", then a "~12.5 kHz ripple", then bursts of ringing and a 125 Hz frequency readout.
+Different timebases produced different, mutually inconsistent descriptions — which should
+have been the clue.
+
+**None of it was real.** Every one of those observations disappears when the USB charger
+is unplugged and returns when it is reconnected. The pin is a quiet DC reference; the
+"signal" was switching noise from the charging circuit coupling onto a high-impedance
+node.
+
+**Take analog measurements on battery power.** Digital captures are largely immune —
+they are threshold-based and the noise is far below a logic swing — but anything measured
+with a scope or read as a small AC component needs the charger disconnected.
+
+The tell, in hindsight: a signal whose apparent period changes with the timebase you view
+it at is not a signal.
