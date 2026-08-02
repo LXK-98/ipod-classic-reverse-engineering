@@ -1384,3 +1384,26 @@ a dead board and the chips' internal ESD structures present roughly a 2.9 kOhm l
 VCCA. The load appears in precisely the condition the divider is needed for. A **stiff**
 source is required: an LDO, or a shunt reference (series diodes / a red LED) that can
 actually sink current.
+
+### 2026-08-02 — VREF at 3v3 fails, and fails QUIETLY
+
+**Action:** Tested whether the shifter could run with its reference switch on `3v3`
+(independent of the iPod, which would solve the cold-boot VREF problem) by capturing
+known bus traffic with the iPod running.
+
+**Result — (F) it does not work.** 18 of 24 channels read **constant 0 with zero edges**;
+the entire data bus is unreadable. Only /WR, D/C, /CS and pins 30/32 registered at all.
+
+This confirms the datasheet margin in practice: at VCCI = 3.3 V the TXU0104's V(T+)
+maximum is **1.92 V**, above a 1.8 V logic high. The data lanes never cross it.
+
+**The important part is the failure mode.** The capture reported success, returned 190
+writes and two plausible-looking data values (`0x0000`, `0x0010`), and produced no error
+of any kind. Against unknown data it would have been accepted as real. It was caught only
+because the test used traffic whose correct decoding was already known - the window-setup
+commands were simply absent.
+
+**Consequence:** the cold-boot capture needs a **stiff ~1.8 V source**, since a divider is
+also ruled out (the ~2.9 kOhm ESD clamp load when the iPod is powered down). Options:
+3x 1N4148 in series from 3v3 through ~1 kOhm (~1.95 V, ~60 Ohm dynamic impedance), a red
+LED in the same arrangement (~1.8-2.0 V), or a 1.8 V LDO.
