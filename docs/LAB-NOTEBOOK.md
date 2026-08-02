@@ -1430,3 +1430,26 @@ analyzer edge detection behaving differently when an input is indeterminate at a
 
 **Parked.** The distinction has a trivial workaround (hold both high; identify reset later
 by pulling one pin on live hardware) and nothing in Phase 6 depends on it.
+
+### 2026-08-02 — **VISUAL CONFIRMATION AGAINST THE PHYSICAL PANEL**
+
+Reconstructed rows 0-3 of a live Rockbox screen from a raw bus capture and compared the
+result against the actual display. **Collaborator confirms it is recognisable, is the top
+of the status bar, and the colours are correct.**
+
+This is the strongest verification in the project, and categorically different from the
+others. Every previous check compared captured data against values we *predicted* - the
+init sequence, the window-setup commands, known colour fills. Those are strong, but they
+share a failure mode: an error that is consistent between prediction and decode passes
+unnoticed. That is exactly how the within-field bit-order bug survived nine byte-exact
+protocol matches.
+
+An image has no such failure mode. It either resembles the screen or it does not.
+
+It simultaneously confirms the 34-pin map, the RGB666 field assignment **and bit order
+within each field**, the /WR rising-edge latch, the D/C polarity, and the window-setup
+geometry decode - since an error in any one of them would visibly scramble, shear or
+mis-colour the result.
+
+**Rule worth carrying forward: validate against the physical system, not only against
+your own predictions.**
