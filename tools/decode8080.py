@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: MIT
 """Decode an 8080-bus capture into command/data transactions.
 
 Takes an EXPLICIT capture path -- never guesses at "the newest file", which

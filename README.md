@@ -128,11 +128,17 @@ evidence in [docs/FINDINGS.md](docs/FINDINGS.md).
 
 ## Licensing
 
-The files in `refs/` are **Rockbox sources, GPL v2**, redistributed under those terms —
-see [refs/README.md](refs/README.md). `refs/sequences.json` is derived from them and
-inherits that licence.
+**This project is MIT licensed** — see [LICENSE](LICENSE). That covers the tools,
+documentation, measurements, captures, `pinout.json` and the interposer hardware design.
 
-No licence has been chosen for the original work in this repository yet.
+**One exception:** the vendored Rockbox sources in [`refs/`](refs/) are **GPL v2** and are
+redistributed under those terms, with the licence text at [`refs/COPYING`](refs/COPYING)
+and provenance in [`refs/README.md`](refs/README.md). `refs/sequences.json` is generated
+from them and is treated as a derived work under the same terms.
+
+These sit alongside the project as separate works — GPL v2 §2 "mere aggregation" — so they
+do not place the rest of the repository under the GPL. Nothing outside `refs/` contains
+Rockbox code; `tools/rockbox_seq.py` only parses those files.
 
 ## Credits
 

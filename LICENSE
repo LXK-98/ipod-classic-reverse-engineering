@@ -1,0 +1,34 @@
+MIT License
+
+Copyright (c) 2026 Alex Karlin
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+EXCEPTION: the files in refs/ are NOT covered by this licence.
+
+  refs/lcd-6g.c, refs/lcd-s5l8702.c, refs/lcd-s5l8702.h, refs/lcd-target.h,
+  refs/ipod6g.h        -- Rockbox project, GPL v2, redistributed under those
+                          terms. See refs/README.md and refs/COPYING.
+  refs/sequences.json  -- machine-generated from the above and therefore
+                          treated as a derived work under the same terms.
+
+These are distributed alongside this project as separate works (GPL v2 s2,
+"mere aggregation") and do not place the rest of this repository under the GPL.

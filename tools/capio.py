@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Shared capture I/O.
 
 Captures are stored gzipped: they are one-bit-per-channel CSV text and compress

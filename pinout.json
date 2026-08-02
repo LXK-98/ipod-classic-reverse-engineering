@@ -898,5 +898,9 @@
     "impedance": "1 MOhm to signal ground, unpowered",
     "artifact_warning": "All previously reported activity on this pin - a '~80 us square wave', '~12.5 kHz ripple', a 125 Hz frequency readout and bursts of ringing - was CHARGER NOISE. It disappears entirely on battery power and returns when the USB charger is connected. The pin carries no signal.",
     "phase6": "supply ~1.54 V from a low-impedance buffered source with local decoupling; exact tolerance unknown"
+  },
+  "license": {
+    "project": "MIT (see LICENSE)",
+    "exception": "refs/ contains Rockbox sources under GPL v2; refs/sequences.json is derived from them"
   }
 }

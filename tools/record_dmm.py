@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: MIT
 """Ingest a DMM sweep (TSV) into pinout.json, with classification.
 
 Keeps bench measurements as files rather than conversation state, per the project

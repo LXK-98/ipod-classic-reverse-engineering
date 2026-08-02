@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: MIT
 """Per-channel statistics and heuristic labelling of a capture.
 
 Phase 0 uses this to verify the pipeline against a known signal (--expect).

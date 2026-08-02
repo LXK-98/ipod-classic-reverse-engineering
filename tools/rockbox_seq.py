@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: MIT
 """Parse Rockbox lcd-6g.c into machine-readable LCD bus sequence tables.
 
 Ground truth for the whole project. Emits, for each panel type (0..3) and each

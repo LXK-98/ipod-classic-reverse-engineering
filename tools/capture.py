@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: MIT
 """Capture wrapper around gusmanb TerminalCapture.
 
 Release 6.0.0.1 ships TerminalCapture, not the CLCapture the project brief

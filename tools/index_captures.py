@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: MIT
 """Regenerate captures/INDEX.md from the capture sidecars.
 
 Capture filenames are timestamps and carry no meaning; the sidecar JSON records

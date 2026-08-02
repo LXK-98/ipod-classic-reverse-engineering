@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: MIT
 """Reconstruct a (partial) framebuffer image from an 8080-bus capture.
 
 End-to-end protocol validation: if the pinout, the RGB666 field mapping, the /WR

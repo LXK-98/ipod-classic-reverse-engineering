@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: MIT
 """Drive a MicroPython Pico as a known-signal generator for toolchain validation.
 
 Used in phase 0 to produce a signal whose frequency and duty cycle we know

@@ -16,6 +16,9 @@ They are unmodified copies; `tools/rockbox_seq.py` parses them into
 
 Source: <https://github.com/Rockbox/rockbox>
 
+A full copy of the GPL v2 is included here as [`COPYING`](COPYING), as that licence
+requires when redistributing.
+
 **These files are licensed GPL v2 by the Rockbox project** and are redistributed here
 under those terms. Copyright remains with their respective authors (Dave Chapman,
 Michael Sparmann and others). They are included so the analysis is reproducible without

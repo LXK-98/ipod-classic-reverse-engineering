@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: MIT
 """Regenerate PINOUT.md from pinout.json.
 
 Single source of truth is pinout.json; this file is derived and should never be
