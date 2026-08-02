@@ -105,14 +105,20 @@ binaries in `vendor/` (gitignored — download from that project's Releases).
 Three results contradict or resolve things the Rockbox source leaves open. Details and
 evidence in [docs/FINDINGS.md](docs/FINDINGS.md).
 
-1. **The bus carries RGB666, not raw RGB565.** `lcd-s5l8702.c` documents frame mode as
-   `APB[15:0] -> D[17:10, 8:1]` and marks it "TBC". That mapping would leave two lanes
-   undriven. In reality all 18 lanes are driven and the SoC performs a genuine 5→6 bit
-   expansion, `6bit = (5bit << 1) | (5bit >> 4)`, replicating each channel's MSB into its
-   LSB.
-2. **Two pin pairs are permanently identical by design** — pins 9/14 and 21/2 — because
-   they carry the replicated MSB of the red and blue channels. This looks exactly like a
-   short circuit and is not one.
+1. **All 18 lanes are actively driven — none is idle.** Every lane is observed both high
+   and low across solid-colour fills. `lcd-s5l8702.c` describes frame mode as
+   `APB[15:0] -> D[17:10, 8:1]`, which would leave two lanes carrying nothing; a lane that
+   is never driven cannot track colour data in both directions, and none behaves that way.
+   The lanes group as **6 per colour channel (RGB666)**, and the data is consistent with
+   the SoC expanding 5-bit channels by `6bit = (5bit << 1) | (5bit >> 4)`.
+   *Caveat: that Rockbox comment block is headed `XXX: WIP, TBC` — its authors flagged it
+   as unconfirmed, and their driver is correct regardless, since nothing in it depends on
+   the comment.*
+2. **Two pin pairs carry identical data under Rockbox** — pins 9/14 and 21/2 — consistent
+   with each being the replicated MSB of a 5-bit channel widened to 6. They measure
+   6.66 MΩ apart, so this is not a short. **Untested:** whether a driver can give those
+   pairs *different* values for true 6-bit colour. All our data comes from an RGB565
+   source, where they are identical by construction.
 3. **One bus transfer per pixel**, confirmed by a 46.92 ms measured frame time matching
    76 800 × 610 ns to 0.1 %.
 

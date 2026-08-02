@@ -6,15 +6,23 @@ in [LAB-NOTEBOOK.md](LAB-NOTEBOOK.md).
 
 ---
 
-## 1. The bus is RGB666, not raw RGB565
+## 1. All 18 lanes are driven; the bus behaves as RGB666
 
-**What Rockbox says.** `lcd-s5l8702.c` documents frame mode as
-`APB[15:0] -> D[17:10, 8:1]` and marks it *"TBC"*. That mapping would place the 16-bit
-RGB565 word onto 16 of the 18 lanes and leave **D9 and D0 undriven**.
+**What Rockbox says.** `lcd-s5l8702.c` describes frame mode as
+`APB[15:0] -> D[17:10, 8:1]`, which would place the 16-bit RGB565 word onto 16 of the 18
+lanes and leave two carrying nothing.
 
-**What we measure.** All 18 lanes are driven. Saturating one colour channel drives
-**exactly six** lanes high — 6/6/6, not the 5/6/5 the documented mapping implies. The SoC
-performs a genuine 5→6 bit expansion:
+**Important context:** that comment block opens with `XXX: WIP, TBC`. The authors marked
+it unconfirmed, and **the Rockbox driver is correct regardless** — it sets `LCD_MODE_P16`
+and DMAs RGB565, so whatever the SoC does internally is transparent to it. This is a
+mismatch between measurement and an explicitly-provisional comment, **not a bug in
+Rockbox**.
+
+**What we measure.** Every one of the 18 lanes is observed **both high and low** across
+solid-colour fills — none is stuck at a level. An undriven line floats and cannot track
+colour data in both directions, so no lane is idle. Saturating one channel drives
+**exactly six** lanes high: 6/6/6, not the 5/6/5 the description implies. The data is
+consistent with a 5→6 bit expansion:
 
 ```
 6bit = (5bit << 1) | (5bit >> 4)      # replicate the MSB into the LSB
@@ -24,11 +32,17 @@ Red and blue (5-bit in RGB565) are expanded; green (already 6-bit) passes throug
 
 **Evidence.** Nine captures of known colours, including three asymmetric ones —
 indigo (`R5=01001, B5=10000`), violet (`G6=100000`) and orange (`G6=101001`) — where a
-wrong model fails visibly. All match exactly.
+wrong model fails visibly. All match exactly, plus a reconstructed image that matches the
+physical screen.
+
+**Limit of the claim.** Our pin numbering is anchored to the interposer and has **no known
+mapping to the SoC's `D0`–`D17`**. So the finding is "no lane is undriven", not "D9 and D0
+specifically are driven". The contradiction is with observable behaviour, not with their
+pin names.
 
 ---
 
-## 2. Two pin pairs are identical by design and look exactly like a short
+## 2. Two pin pairs carry identical data and look exactly like a short
 
 **Pins 9 and 14 carry byte-identical data in every capture. So do pins 21 and 2.**
 
@@ -42,6 +56,13 @@ driver winning contention fits the colour fills but **cannot** fit the init capt
 the two pins tracked a *varying* signal that one of them should not have carried.
 
 **If you see two data lanes on this panel that never disagree, this is why.**
+
+**Not yet verified:** whether those pairs can be driven *independently* to obtain true
+6-bit-per-channel colour. Every capture we have comes from an RGB565 framebuffer, where
+they are identical by construction, so we have never observed — nor caused — them to
+differ. They are not shorted (6.66 MΩ) and the interface is 18 lanes wide, which makes
+independent drive likely, but it is an inference. Settling it requires driving the panel
+(phase 6).
 
 ---
 

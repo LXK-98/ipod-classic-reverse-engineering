@@ -88,14 +88,26 @@ GREEN = pins 15  16   1  18  19  20
 BLUE  = pins 21  22  23  24  25   2
 ```
 
-A native driver simply drives all 18 lanes with true 6-bit-per-channel colour — **you do
-not need to replicate Rockbox's expansion.**
+Rockbox's framebuffer is RGB565 and the SoC widens it with
+`6bit = (5bit << 1) | (5bit >> 4)`. A consequence visible in every capture: **pins 9/14
+and 21/2 carry identical data**, each being a replicated channel MSB.
 
-That expansion exists only because Rockbox's framebuffer is RGB565 and the SoC widens it
-with `6bit = (5bit << 1) | (5bit >> 4)`. A consequence visible in captures: pins 9/14 and
-21/2 carry identical data under Rockbox, because each is a replicated channel MSB. **This
-is an artefact of the source format, not a property of the panel** — drive them
-independently.
+> ⚠️ **Unverified: whether those pairs can be driven independently.**
+>
+> Every measurement in this project comes from an RGB565 source, where those lanes are
+> identical *by construction*. We have never observed them differ, because nothing we
+> captured could make them differ. So "drive all 18 independently and get true RGB666" is
+> an **inference**, not a measurement.
+>
+> What supports it: the pairs are **not shorted** (6.66 MΩ between pins 9 and 14), the
+> interface is 18 lanes wide, and RGB666 is the natural interpretation of 6 lanes per
+> channel.
+>
+> **Test it early.** Write a value where a pair differs — e.g. red = `0b111110` — and see
+> whether the panel renders the expected shade. If the pairs turn out to be tied inside
+> the panel, fall back to driving each pair together, which reduces you to 5 effective
+> bits on red and blue and exactly reproduces Rockbox's behaviour. Either way the panel
+> works; only the achievable colour depth differs.
 
 **One bus transfer per pixel.** A full frame is 76 800 writes ≈ 46.9 ms at 610 ns.
 
@@ -180,3 +192,10 @@ Be aware of these before committing hardware:
 5. **Panel datasheet minima are unknown.** All timing here is what the SoC does, which the
    panel accepts — not the panel's limits. Do not treat 610 ns as a floor; it may go
    faster, or may not.
+6. **True 6-bit colour on red and blue is unverified** — see the warning in
+   [§4](#4-pixel-format). Worst case you get 5 effective bits per channel on red and blue,
+   matching Rockbox.
+7. **Our pin numbering has no known mapping to the SoC's `D0`–`D17`.** Everything here is
+   expressed in flex-pin numbers anchored to the interposer
+   ([HARDWARE.md](HARDWARE.md#pin-numbering-convention)). That is sufficient to drive the
+   panel, but do not try to correlate it with pin names in the Rockbox source.
