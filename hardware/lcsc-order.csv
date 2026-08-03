@@ -1,0 +1,28 @@
+LCSC Part Number,Manufacture Part Number,Manufacturer,Quantity,Designator,Description
+C27643,SN74LVC8T245PWR,Texas Instruments,8,U1-U6,8-bit dual-supply level translator TSSOP-24 - 3 for the test rig 6 for the board
+C7843,SN74LVC1T45DBVR,Texas Instruments,3,U9,1-bit level translator SOT-23-6 - TE up-shift
+C10096,SN74LVC1G32DBVR,Texas Instruments,3,U8,Single 2-input OR gate SOT-23-5 - /WR = PCLK OR /DE
+C7827,SN74LVC1G04DBVR,Texas Instruments,3,U7,Single inverter SOT-23-5 - complementary /OE
+C58756,TPS61165DBVR,Texas Instruments,3,U10,White LED boost driver SOT-23-6 - backlight constant current
+C398358,TLV9061IDBVR,Texas Instruments,5,U13,RRIO op-amp SOT-23-5 - 1.54 V reference buffer
+C176944,AP2112K-1.8TRG1,Diodes Incorporated,5,U11,1.8 V 600 mA LDO SOT-25 with enable - VDDIO rail
+C403651,ME6211C30M5G-N,MICRONE,5,U12,3.0 V LDO SOT-23-5 with enable - panel rail (AP2112K-3.0 does not exist)
+C2765186,TYPE-C 16PIN 2MD(073),Korean Hroparts Elec,5,J1,USB-C receptacle 16-pin power only
+C7519,USBLC6-2SC6,STMicroelectronics,5,D1,ESD protection SOT-23-6L
+C64885,B5819W,Slkor,10,D2 D3,Schottky 40V 1A SOD-123 - boost rectifier and VSYS feed
+C167883,FNR4030S220MT,Sunlord,5,L1,22 uH shielded power inductor 4x4 mm - backlight boost
+C2685134,PH-00047,Ckmtw,3,J4,2x17 2.54 mm pin header - interposer-compatible probe header
+C118954,3296W-1-103,BOCHEN,5,RV1,10k 25-turn trimmer THT - 1.54 V reference adjust
+C2903232,MF1/4W-10K±1%-ST52,VO,20,R-THT,10k 1% 1/4W through-hole resistor - breadboard rig pull-ups
+C2832506,CC1H104ZA1ED3F5P1100,Dersonic,20,C-THT,100nF 50V through-hole ceramic 2.54 mm pitch - rig decoupling
+C2839237,FK26X7R1H105KRE06,TDK,6,C-THT,1uF 50V X7R through-hole ceramic 5 mm pitch - rig LDO in/out
+C43846,KF106M025C05RR0VH2FP0,CX,10,C-THT,10uF 25V electrolytic through-hole D4xL5mm - rig bulk
+C23140,0603WAF330JT5E,UNI-ROYAL,50,R 0603,33R 1% 0603 - series damping on bus lines
+C170441,WR06X10R2FTL,Walsin Tech Corp,10,R8,10.2R 1% 0603 - SETS BACKLIGHT CURRENT to 19.5 mA - must be 1%
+C14663,CC0603KRX7R9BB104,YAGEO,100,C 0603,100nF 50V X7R 0603 - decoupling
+C29936,CL10B105KA8NNNC,Samsung Electro-Mechanics,50,C 0603,1uF 25V X7R 0603 - LDO and backlight output
+C15850,CL21A106KAYNNNE,Samsung Electro-Mechanics,30,C 0805,10uF 25V X5R 0805 - bulk
+C1622,CL10B473KB8NNNC,Samsung Electro-Mechanics,10,C12,47nF 50V X7R 0603 - TPS61165 COMP
+C3014307,LM317T,UMW,3,U14,Adjustable regulator TO-220 - wired as 18 mA constant-current source for the backlight
+C173041,MFR-25FTE52-68R,YAGEO,10,R-BL,68R 1% 1/4W through-hole - LM317 current-set resistor (1.25V / 68R = 18.4 mA)
+C2337,2.54-1*40PStraight pin,BOOMELE,5,H1,2.54mm 1x40 male header strip - snap to length for the SMD-to-DIP adapter boards

@@ -85,6 +85,38 @@ That the first six bursts each contain **exactly one write** is itself the proof
 capture began at the sequence's true start, so the alignment is anchored rather than
 assumed.
 
+**Sizing bursts is a real tradeoff, and getting it wrong corrupts results silently.**
+After each burst the device re-arms and waits for the *next* trigger edge, so **a write can
+be lost at every burst boundary**:
+
+| arrangement | effect |
+|---|---|
+| many small bursts | more total coverage of activity, but one dropped write per boundary |
+| few large bursts | fewer boundaries, long contiguous runs |
+
+For **sequence matching** a dropped write destroys alignment against the expected list, so
+use only as many bursts as there are known gaps to absorb (here: six NOPs, hence seven
+bursts). For **image reconstruction** a dropped write shifts every subsequent pixel and
+shears the picture diagonally — two bursts were used there, so the image comes entirely
+from one contiguous run.
+
+### Attempts that failed, and why
+
+Worth knowing before repeating this:
+
+- **Arming before a cold boot does not work** if VREF is taken from the target. The
+  shifter loses its reference as the iPod powers down, every output goes high-Z, and the
+  collapse itself trips the trigger — 24 channels of flat zero. Use the sleep/wake trigger,
+  or derive VREF independently (a 1 kΩ divider off the analyzer's 3v3 holds 1.6 V).
+- **A contiguous capture at 100 MS/s lands inside the NOP prefix.** The wake sequence opens
+  with six NOPs spread over 7.7 ms; the entire sample budget is 328 µs. Such a capture
+  returns two writes and looks like a failure when it is really a window-size problem.
+- **Triggering on /WR during idle catches the wrong thing.** With a static screen there is
+  no traffic at all, so the trigger fires on the *next* screen update — which begins with
+  `displaylcd_setup()`, not the init. That accident is how the 13-write window-setup
+  sequence was first identified, but it is not the init.
+
+
 ### 4 — Solving the lane map
 
 With alignment fixed, each physical channel's bit history across the captured writes must
