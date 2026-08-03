@@ -134,6 +134,12 @@ the Rockbox source by `tools/rockbox_seq.py`. For this panel use
 **`configs.bootloader.types.2.sequences.init`** — 146 bus writes, 240 ms of embedded
 sleeps.
 
+**This is measured, not just source-derived.** 151 of the 152 writes of the wake variant
+were captured byte-exactly on the bus (`20260803_203836_init-burst`), and that variant
+minus its six NOPs is byte-identical to the bootloader init above. The one write not
+captured was lost in a burst re-arm gap and is a duplicate of one that was. So the
+sequence you send is the sequence the panel is known to accept.
+
 ```python
 import json
 seq = json.load(open("refs/sequences.json"))

@@ -133,6 +133,20 @@ Fix in [`docs/99-bench-instruments.rules`](99-bench-instruments.rules). Note tha
 Had this first appeared as garbled data from an unknown 33-pin flex, the obvious suspects
 would have been probe contact or undersampling.
 
+### The highest sample rate is usually the wrong one
+
+Sample rate buys pulse fidelity and costs window, and on a fixed-depth analyzer the window
+is what is normally scarce. Capturing the init at the maximum 100 MS/s gave 46.7 µs per
+burst and returned **69 of the 140** writes in the register block, which needs ~98 µs.
+
+The failure mode is the dangerous kind: all 69 writes were *correct*, byte-exact against
+the source, and the capture reported success. It read as a hardware ceiling for two days.
+Dropping to **20 MS/s** — still 2.5× the rate needed to catch a 70–80 ns pulse — quadrupled
+the window and captured **151 of 152** writes.
+
+**Spend only what the narrowest pulse needs, then spend the rest on window.** Compute the
+longest contiguous run you must hold *before* choosing a rate.
+
 ### A dead group of exactly four channels means one translator's OE pin
 
 Both gusmanb LogicAnalyzer V2 boards had **exactly four adjacent channels stuck at 0**,
@@ -142,6 +156,13 @@ perfect 3.3 V**.
 
 `OE` is pin 8, adjacent to `GND` on pin 7 — the corner a drag-solder pass most easily
 skips. Reflowing fixed it; no part replacement.
+
+**A dead group can survive a capture that otherwise looks convincing.** Re-running
+`tools/seqmatch.py` over `20260801_200739_dryrun` — taken on LA-B *before* the U4 reflow —
+reports every DATA write decoding as CMD. Channels 20–23 (silkscreen CH21–24 = P28, P29,
+P30, P32) have **exactly zero edges** for the whole capture: D/C was dead throughout. The
+capture still produced a plausible 74-write sequence with correct data values. Comparing
+against the expected sequence is what surfaces it; eyeballing the decode does not.
 
 The V2 chip-to-channel map is **not** in physical order, so identifying a chip by eye
 misleads:

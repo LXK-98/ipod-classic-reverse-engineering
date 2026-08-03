@@ -1453,3 +1453,98 @@ mis-colour the result.
 
 **Rule worth carrying forward: validate against the physical system, not only against
 your own predictions.**
+
+### 2026-08-03 — **INIT SEQUENCE CAPTURED END TO END.** 151 of 152 writes, byte-exact
+
+**Action:** Re-ran the wake-init capture with two parameters changed from the 2026-08-01
+attempt: **100 → 20 MS/s** and **7 → 10 bursts** (`--post 3270 --loops 9`, 24 channels,
+trigger /WR falling on ch19). Same probe map, same wiring, no rehandling of the rig.
+Capture `20260803_203836_init-burst`.
+
+**(F) The 69-write ceiling was never a capture failure — it was arithmetic.** The
+2026-08-01 run used `post 4670 @ 100 MS/s` = **46.7 µs per burst**, and 69 writes is
+simply what fits in 46.7 µs at the ~690 ns/write the bus actually runs. The 140-write
+register block needs ~98 µs. Halving the rate quadrupled the window to 163.5 µs and the
+whole block landed in one contiguous burst.
+
+Worth stating plainly because it was mis-filed for two days: the documented failures
+(VREF collapse, the NOP prefix, the wrong-trigger accident) are all about the **cold
+boot**. None of them was blocking the init writes. That gap was open because nobody
+re-did the burst-sizing sum after the lane map was solved.
+
+**(F) Burst structure came out `[1,1,1,1,1,1,140,2,2,8]`** against the sleep structure
+of `seq_awake`, which is `[1,1,1,1,1,1,140,2,2,2]`. Bursts 1–6 holding exactly one write
+each is the alignment anchor: it proves the capture began at the true first instruction
+of the sequence rather than somewhere convenient.
+
+**(F) 151 of 152 writes match `configs.firmware.types.2.sequences.awake` byte-exactly.**
+Previous best was 75 of 152 (six NOPs plus 69 of the register block).
+
+| | 2026-08-01 | 2026-08-03 |
+|---|---|---|
+| NOP prefix | 6 / 6 | 6 / 6 |
+| register block | 69 / 140 | **140 / 140** |
+| tail pairs | 0 / 6 | 5 / 6 |
+| **total** | **75 / 152** | **151 / 152** |
+
+**(F) The one lost write carries no information.** Expected #150 `CMD 0x0007` was dropped
+in the re-arm gap at the burst 9→10 boundary — burst 10 opened with D/C already low and
+/WR already back high, i.e. mid-cycle, after that pulse had passed. This is exactly the
+"one write per boundary" cost the burst-sizing tradeoff predicts, and it landed on the
+one boundary preceded by the longest sleep (150 ms). It is **byte-identical to #148
+`CMD 0x0007`**, captured intact two writes earlier, and its data word `DATA 0x0173` was
+captured. Every distinct value in `lcd_init_seq_23` has now been observed on the bus.
+
+**(F) Since `firmware/awake` minus its six NOPs is byte-identical to `bootloader/init`,
+this also verifies the cold-boot init's write content.** Confirmed programmatically
+against `refs/sequences.json`, not assumed from the shared array name. **A cold boot is
+no longer needed for any question about the init writes** — only for rail sequencing and
+reset.
+
+**(F) 20 MS/s is sound for this bus, measured rather than argued.** 158 falling edges and
+158 rising edges — every pulse complete, none clipped or merged. /WR low measured 50–100 ns
+(1–2 samples), consistent with the documented 70–80 ns. Had a pulse been missed the edge
+counts would not balance.
+
+**(F) Register-block timing, now over the full 140 writes.** The block spans **97.5 µs**
+of the 163.5 µs window (68 % headroom). Write-to-write spacing 600–1400 ns, mean **701 ns**,
+with 55 intervals at 600 ns and 44 at 650 ns — the 610–1110 ns range measured earlier from
+69 writes holds over the full block, with a few outliers to 1400 ns.
+
+**Wrote `tools/seqmatch.py`.** `decode8080.py` answers "what is on the bus"; nothing
+answered "is this the sequence we expected, in order, with nothing missing". It segments
+by burst against the sidecar's geometry, compares the per-burst counts to the sequence's
+run/sleep structure, and diffs with `difflib` rather than a fixed offset — so a write
+dropped in a re-arm gap reports as one deletion at a known index instead of shifting
+everything after it into a wall of false mismatches.
+
+**Unexpected dividend: it retro-flags a known-bad capture.** Run against
+`20260801_200739_dryrun` (the LA-B trial) it reports every DATA write decoding as CMD.
+Checking edges per channel: **channels 20–23 (silkscreen CH21–24 = P28, P29, P30, P32)
+have exactly zero edges** — the U4 group, captured *before* the reflow repair. D/C was
+dead for that entire capture. The lane map was solved from the three LA-A captures, which
+have D/C healthy (34 DATA / 40 CMD), so nothing downstream is affected — but it is a
+reminder that a capture can be structurally convincing and still have a dead quarter.
+
+### 2026-08-03 — Six window-setup writes absent from the post-wake redraw
+
+**Observation, not yet explained.** Burst 10 caught seven writes after the init ended —
+the panel had woken and Rockbox redrew. They decode as recognisable window-setup
+registers and terminate correctly:
+
+```
+CMD 0x0210  DATA 0x0000  DATA 0x0000  CMD 0x0213  CMD 0x0201  DATA 0x0000  CMD 0x0202
+```
+
+followed by ~97 µs of silence, consistent with the documented >1.6 ms memcpy gap after
+`0x202`. But `displaylcd_setup()` emits **13** writes and only **7** are present:
+`0x211`, `0x212`, `0x200` and their data words are missing.
+
+**It is not undersampling.** Falling and rising edge counts balance across the whole
+capture, and the region 29740–29830 contains exactly seven /WR pulses for seven decoded
+writes. The gaps between them are 1400 ns — about two write cycles — but carry no pulses
+at all. There is no burst boundary anywhere near: all seven sit inside burst 10.
+
+So the bus genuinely carried seven writes where the source says thirteen. Recorded as an
+open question; it does not touch the init result, and the 13-write structure itself was
+confirmed byte-exactly in earlier captures.

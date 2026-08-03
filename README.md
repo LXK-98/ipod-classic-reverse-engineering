@@ -7,8 +7,9 @@ Samsung S5L8702 — the revision Rockbox calls `ipod6g`).
 Everything here was **measured**, not inferred from documentation. Where the results
 disagree with the Rockbox source they are marked as such, with the evidence.
 
-**Status:** all six original goals complete. One minor item open — see
-[docs/OPEN-QUESTIONS.md](docs/OPEN-QUESTIONS.md).
+**Status:** all six original goals complete, and the panel's initialisation sequence is
+now verified write-by-write on the bus. Remaining loose ends — none of which block
+building a driver — are in [docs/OPEN-QUESTIONS.md](docs/OPEN-QUESTIONS.md).
 
 ---
 
@@ -22,6 +23,7 @@ disagree with the Rockbox source they are marked as such, with the evidence.
 | Bus | 8080-series parallel, **18-bit RGB666**, data latched on **rising edge of /WR** |
 | Write cycle | **610 ns** (1.64 MHz) — 70–80 ns low, 530–540 ns high |
 | Full frame | 76 800 writes ≈ **46.9 ms**, **one transfer per pixel** |
+| Init sequence | **146 writes**, 240 ms of sleeps — **151 of 152 wake writes verified byte-exact on the bus** |
 | Refresh (TE) | **67.9 Hz** |
 | Backlight | **4 white LEDs**, **19.5 mA**, **12.76 V** at full brightness, low-side PWM |
 
@@ -90,6 +92,9 @@ python3 tools/index_captures.py             # regenerate captures/INDEX.md
 
 # decode any capture against the known lane map
 python3 tools/decode8080.py captures/20260801_215011_dryrun.csv
+
+# check a capture against the expected Rockbox sequence, write by write
+python3 tools/seqmatch.py captures/20260803_203836_init-burst.csv
 
 # reconstruct an image from a captured frame
 python3 tools/frame2png.py captures/20260801_222433_dryrun.csv -o frame.png

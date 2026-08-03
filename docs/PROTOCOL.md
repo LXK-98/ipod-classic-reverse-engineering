@@ -42,8 +42,11 @@ Measured at 100 MS/s during DMA pixel bursts:
 | cycle | **610 ns** → **1.64 MHz** |
 | full frame | 76 800 writes ≈ **46.9 ms** |
 
-Command writes are slower and less regular — 610–1110 ns apart, median ~780 ns — because
-the CPU polls `LCD_STATUS` between them rather than using DMA.
+Command writes are slower and less regular than pixel writes because the CPU polls
+`LCD_STATUS` between them rather than using DMA. Measured across the **full 140-write
+register block** of the init: **600–1400 ns apart, mean 701 ns**, the bulk at 600–650 ns.
+The block takes **97.5 µs** end to end. (An earlier figure of "610–1110 ns, median
+~780 ns" came from the first 69 writes only.)
 
 `LCD_PHTIME = 0x33` is set by `lcd_init_device()` for this target.
 
@@ -84,7 +87,12 @@ see the setup and then apparent silence.
 ### Initialisation
 
 Byte-exact sequences for all four panel variants are parsed from the Rockbox source into
-[`refs/sequences.json`](../refs/sequences.json) by `tools/rockbox_seq.py`.
+[`refs/sequences.json`](../refs/sequences.json) by `tools/rockbox_seq.py`, and the type-2
+sequence has been **verified on the wire**: 151 of 152 writes byte-exact
+(`20260803_203836_init-burst`, checked by `tools/seqmatch.py`). The single missing write
+is `CMD 0x0007`, dropped in a burst re-arm gap and byte-identical to another `CMD 0x0007`
+captured intact two writes earlier — so every distinct value in `lcd_init_seq_23` has been
+observed.
 
 For type 2:
 
@@ -101,6 +109,11 @@ Two consequences that matter in practice:
 - **On type 2, `seq_awake` *is* the init sequence**, so an LCD sleep/wake cycle replays a
   full initialisation on demand — a repeatable trigger that needs no reboot. This is by
   far the easiest way to capture the init.
+
+`firmware/awake` minus its six NOPs is **byte-identical** to `bootloader/init` (verified
+programmatically, not assumed from the shared array name). Capturing the wake sequence
+therefore verifies the cold-boot init's write content too, so **no cold boot is needed
+for any question about the init writes** — only for rail sequencing and reset.
 
 The two variants are distinguishable at a glance: a cold init opens `CMD 0x008,
 DATA 0x0808`, while a wake replay opens with **six `CMD 0x0000` NOPs spaced 1.28 ms

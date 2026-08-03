@@ -16,6 +16,7 @@ All re-runnable, all reading state from files rather than from memory.
 | `capture.py` | wrapper around `TerminalCapture`; presets, port autodetection, sample-budget guard, JSON sidecar per capture |
 | `classify.py` | per-channel statistics and conservative heuristic labels |
 | `decode8080.py` | latches the bus on /WR, splits command/data by D/C, assembles words from the lane map |
+| `seqmatch.py` | diffs a decoded capture against a known sequence in `refs/sequences.json`, and checks the per-burst write counts against that sequence's run/sleep structure |
 | `frame2png.py` | reconstructs an image from a capture; recovers the update rectangle from the window-setup commands |
 | `record_dmm.py` | ingests DMM sweeps (TSV) into `pinout.json` with classification |
 | `report.py` | regenerates `PINOUT.md` from `pinout.json` |
@@ -77,13 +78,44 @@ matters because VREF is derived from the target (see
 [HARDWARE](HARDWARE.md#level-shifting--the-critical-setting)).
 
 **Burst mode is what makes it fit.** The wake sequence opens with six NOPs spaced 1.28 ms
-apart — a 7.7 ms prefix, where the entire capture budget at 100 MS/s is 328 µs. Seven
-bursts solve it: the first six are each consumed by one NOP, and the seventh lands on the
-register block, capturing ~69 consecutive writes.
+apart — a 7.7 ms prefix, where the entire capture budget at 100 MS/s is 328 µs. Bursts
+solve it: each NOP is consumed by one burst, and the next burst lands on the register
+block.
 
 That the first six bursts each contain **exactly one write** is itself the proof that the
 capture began at the sequence's true start, so the alignment is anchored rather than
 assumed.
+
+#### Size the plan from the sequence, then pick the rate to fit
+
+The run/sleep structure of the target sequence *is* the burst plan. Read it out of
+`refs/sequences.json` before capturing — for type-2 `seq_awake` it is:
+
+```
+1,1,1,1,1,1 (NOPs, 1.28 ms apart) → 140 → 30 ms → 2 → 60 ms → 2 → 150 ms → 2
+```
+
+Nine gaps, therefore **ten bursts**, and the observed per-burst counts must come back as
+`[1,1,1,1,1,1,140,2,2,2]`. `tools/seqmatch.py` checks exactly that, so the plan
+self-validates.
+
+Then three constraints fix the rate, and **the binding one is usually the burst
+duration, not the sample rate**:
+
+| constraint | value here |
+|---|---|
+| burst must hold the longest run | 140 writes ≈ **98 µs** at ~700 ns/write |
+| burst must end before the next event, so re-arm falls in a sleep | shortest gap **1.28 ms** |
+| rate must catch the 70–80 ns /WR low | **≥20 MS/s** |
+
+`burst_samples = budget / bursts`, so `rate ≤ budget / (bursts × longest_run_duration)`.
+At 24 channels: 32 767 / (10 × 98 µs) ≈ 33 MS/s. **20 MS/s** was used, giving 163.5 µs per
+burst — 68 % headroom on the 97.5 µs the block actually took.
+
+This sum is what the first attempt got wrong. It ran at 100 MS/s with seven bursts, giving
+46.7 µs per burst, and returned 69 of the 140 writes — not a fault, just a window shorter
+than the run. **Sample rate buys pulse fidelity; it costs window. Spend only what the
+narrowest pulse needs.**
 
 **Sizing bursts is a real tradeoff, and getting it wrong corrupts results silently.**
 After each burst the device re-arms and waits for the *next* trigger edge, so **a write can
@@ -94,11 +126,17 @@ be lost at every burst boundary**:
 | many small bursts | more total coverage of activity, but one dropped write per boundary |
 | few large bursts | fewer boundaries, long contiguous runs |
 
-For **sequence matching** a dropped write destroys alignment against the expected list, so
-use only as many bursts as there are known gaps to absorb (here: six NOPs, hence seven
-bursts). For **image reconstruction** a dropped write shifts every subsequent pixel and
-shears the picture diagonally — two bursts were used there, so the image comes entirely
-from one contiguous run.
+This is observed, not theoretical: in the 10-burst capture the write that should have
+triggered burst 10 was lost, the burst opening mid-cycle with D/C already low and /WR
+already high. Use only as many bursts as there are known gaps to absorb, and expect to
+pay up to one write per boundary.
+
+For **sequence matching** the cost is now bounded rather than fatal — `seqmatch.py` diffs
+instead of assuming a fixed offset, so a dropped write reports as one deletion at a known
+index rather than shifting everything after it into a wall of false mismatches. For
+**image reconstruction** a dropped write shifts every subsequent pixel and shears the
+picture diagonally — two bursts were used there, so the image comes entirely from one
+contiguous run.
 
 ### Attempts that failed, and why
 
@@ -111,11 +149,20 @@ Worth knowing before repeating this:
 - **A contiguous capture at 100 MS/s lands inside the NOP prefix.** The wake sequence opens
   with six NOPs spread over 7.7 ms; the entire sample budget is 328 µs. Such a capture
   returns two writes and looks like a failure when it is really a window-size problem.
+- **Running burst mode at the maximum rate truncates the register block.** The same
+  window-size mistake one level down: 100 MS/s over seven bursts gives 46.7 µs each, and
+  the 140-write block needs ~98 µs. It returns 69 writes that are all *correct*, which is
+  why it read as a hardware ceiling for two days rather than as a parameter to change.
 - **Triggering on /WR during idle catches the wrong thing.** With a static screen there is
   no traffic at all, so the trigger fires on the *next* screen update — which begins with
   `displaylcd_setup()`, not the init. That accident is how the 13-write window-setup
   sequence was first identified, but it is not the init.
 
+**One that looked like a failure and was not.** The init writes sat at 69 of 140 for two
+days, filed alongside the cold-boot problems above. They were never a cold-boot problem:
+the sleep/wake trigger reaches them with the target powered and VREF valid. Only the
+burst-sizing sum was wrong, and redoing it captured **151 of 152 writes byte-exactly**.
+Check which unknown a failure actually belongs to before inheriting its blockers.
 
 ### 4 — Solving the lane map
 

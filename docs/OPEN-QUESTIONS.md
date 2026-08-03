@@ -117,7 +117,36 @@ active blit.
 
 ---
 
-## 5. Minor
+## 5. Why did a post-wake redraw emit 7 window-setup writes instead of 13?
+
+**Status:** observed once, unexplained. Does not affect anything currently relied on.
+
+Burst 10 of `20260803_203836_init-burst` caught the start of a screen redraw immediately
+after the init finished. It decodes as recognisable window-setup traffic that terminates
+correctly:
+
+```
+CMD 0x0210  DATA 0x0000  DATA 0x0000  CMD 0x0213  CMD 0x0201  DATA 0x0000  CMD 0x0202
+```
+
+followed by ~97 µs of silence, consistent with the documented >1.6 ms memcpy gap after
+`0x202`. But `displaylcd_setup()` emits **13** writes; `0x211`, `0x212`, `0x200` and their
+data words are absent.
+
+**It is not undersampling.** Falling and rising /WR edge counts balance across the entire
+capture (158 each), and the region contains exactly seven pulses for seven decoded writes.
+The 1400 ns gaps between them — about two write cycles — carry no pulses at all. All seven
+sit inside one burst, so no re-arm boundary is involved.
+
+**Impact: none established.** The 13-write structure was confirmed byte-exactly in earlier
+captures and is what [DRIVING.md §7](DRIVING.md#7-blitting) specifies. Candidates not
+tested: a partial-window update path in Rockbox that skips registers already holding the
+right value, or a decode artefact specific to this burst. Worth one capture of a redraw in
+isolation.
+
+---
+
+## 6. Minor
 
 - **Green MSB position.** Pin 15 carries APB bit 10 in frame mode but APB bit 9 during
   command writes — consistent with the mode-dependent lane behaviour of finding 3 in
