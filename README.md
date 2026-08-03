@@ -8,7 +8,7 @@ Everything here was **measured**, not inferred from documentation. Where the res
 disagree with the Rockbox source they are marked as such, with the evidence.
 
 **Status:** all six original goals complete, and the panel's initialisation sequence is
-now verified write-by-write on the bus. Remaining loose ends — none of which block
+now verified write-by-write on the bus (152/152). Remaining loose ends — none of which block
 building a driver — are in [docs/OPEN-QUESTIONS.md](docs/OPEN-QUESTIONS.md).
 
 ---
@@ -22,8 +22,9 @@ building a driver — are in [docs/OPEN-QUESTIONS.md](docs/OPEN-QUESTIONS.md).
 | Logic level | **1.8 V** |
 | Bus | 8080-series parallel, **18-bit RGB666**, data latched on **rising edge of /WR** |
 | Write cycle | **610 ns** (1.64 MHz) — 70–80 ns low, 530–540 ns high |
+| Command writes | two regimes: **818 ns** (60–80 ns low) and **309 ns** (30–40 ns low) — both accepted by the panel |
 | Full frame | 76 800 writes ≈ **46.9 ms**, **one transfer per pixel** |
-| Init sequence | **146 writes**, 240 ms of sleeps — **151 of 152 wake writes verified byte-exact on the bus** |
+| Init sequence | **146 writes**, 240 ms of sleeps — **all 152 wake writes verified byte-exact on the bus** |
 | Refresh (TE) | **67.9 Hz** |
 | Backlight | **4 white LEDs**, **19.5 mA**, **12.76 V** at full brightness, low-side PWM |
 

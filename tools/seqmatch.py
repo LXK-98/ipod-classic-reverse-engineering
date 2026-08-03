@@ -87,7 +87,43 @@ def decode(path: Path, lanes: dict[int, int], wr: str, dc: str):
     bits = np.zeros(len(rise), dtype=np.uint16)
     for pin, bit in lanes.items():
         bits |= data[rise, idx[f"P{pin:02d}"]].astype(np.uint16) << bit
-    return [(int(data[s, idx[dc]]), int(v)) for s, v in zip(rise, bits)], rise
+    return [(int(data[s, idx[dc]]), int(v)) for s, v in zip(rise, bits)], rise, data[:, idx[dc]]
+
+
+def undersampling_check(dc_trace, samples, pre: int, post: int, bursts: int) -> list[str]:
+    """Flag bursts where /WR pulses were missed.
+
+    Balanced falling/rising edge counts do NOT prove a capture is complete -- a
+    pulse shorter than the sample interval vanishes entirely, taking both its
+    edges with it. D/C is the independent witness: it changes only between
+    writes of different kinds, so within one burst
+
+        writes >= D/C transitions + 1
+
+    always holds. A violation means writes happened that /WR never showed, i.e.
+    the sample rate is too low for the traffic in that burst. This bus has a
+    fast command regime (~309 ns/write, 30-40 ns /WR low) that needs >=33 MS/s;
+    20 MS/s only covers the ~818 ns regime.
+
+    Only transitions *between* the first and last observed pulse of a burst
+    count. Anything before the first or after the last lies outside the observed
+    write span -- in burst 1 that region is the pre-trigger buffer, whose D/C
+    state belongs to whatever preceded the sequence and proves nothing.
+    """
+    warn = []
+    for b in range(bursts):
+        lo = 0 if b == 0 else pre + post + (b - 1) * post
+        hi = pre + post if b == 0 else lo + post
+        inb = samples[(samples >= lo) & (samples < hi)]
+        if len(inb) < 2:
+            continue
+        seg = dc_trace[int(inb[0]):int(inb[-1]) + 1]
+        trans = int(np.sum(seg[:-1] != seg[1:]))
+        if len(inb) < trans + 1:
+            warn.append(f"  burst {b + 1}: {len(inb)} /WR pulses but {trans} D/C transitions "
+                        f"between the first and last -> at least {trans + 1 - len(inb)} "
+                        f"write(s) missed; raise the sample rate")
+    return warn
 
 
 def burst_index(sample: int, pre: int, post: int) -> int:
@@ -115,7 +151,7 @@ def main() -> int:
 
     path = Path(args.csv)
     lanes = load_lane_map(Path(args.pinout))
-    got, samples = decode(path, lanes, args.wr, args.dc)
+    got, samples, dc_trace = decode(path, lanes, args.wr, args.dc)
     exp, runs = expected(Path(args.sequences), args.config, args.ptype, args.sequence)
 
     sc = capio.sidecar(path).get("session", {})
@@ -139,6 +175,11 @@ def main() -> int:
         print("                  " + ("MATCH — boundaries landed in the sleeps"
                                        if per == runs else
                                        "DIFFERS — see the diff below before trusting alignment"))
+
+        warn = undersampling_check(dc_trace, samples, pre, post, bursts)
+        if warn:
+            print("\nUNDERSAMPLED — D/C moved more often than /WR pulsed:")
+            print("\n".join(warn))
 
     print()
     sm = difflib.SequenceMatcher(a=exp, b=got, autojunk=False)

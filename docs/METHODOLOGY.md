@@ -16,7 +16,7 @@ All re-runnable, all reading state from files rather than from memory.
 | `capture.py` | wrapper around `TerminalCapture`; presets, port autodetection, sample-budget guard, JSON sidecar per capture |
 | `classify.py` | per-channel statistics and conservative heuristic labels |
 | `decode8080.py` | latches the bus on /WR, splits command/data by D/C, assembles words from the lane map |
-| `seqmatch.py` | diffs a decoded capture against a known sequence in `refs/sequences.json`, and checks the per-burst write counts against that sequence's run/sleep structure |
+| `seqmatch.py` | diffs a decoded capture against a known sequence in `refs/sequences.json`; checks per-burst write counts against that sequence's run/sleep structure, and cross-checks /WR pulses against D/C transitions to catch undersampling |
 | `frame2png.py` | reconstructs an image from a capture; recovers the update rectangle from the window-setup commands |
 | `record_dmm.py` | ingests DMM sweeps (TSV) into `pinout.json` with classification |
 | `report.py` | regenerates `PINOUT.md` from `pinout.json` |
@@ -123,13 +123,18 @@ be lost at every burst boundary**:
 
 | arrangement | effect |
 |---|---|
-| many small bursts | more total coverage of activity, but one dropped write per boundary |
+| many small bursts | more total coverage of activity, but a risk of a dropped write at every boundary |
 | few large bursts | fewer boundaries, long contiguous runs |
 
 This is observed, not theoretical: in the 10-burst capture the write that should have
 triggered burst 10 was lost, the burst opening mid-cycle with D/C already low and /WR
-already high. Use only as many bursts as there are known gaps to absorb, and expect to
-pay up to one write per boundary.
+already high.
+
+**But the loss rate is much lower than one-per-boundary.** `20260801_212943_dryrun` chops
+the same 140-write block across roughly twenty boundaries and loses **one** write in total.
+Treat one-per-boundary as a worst case, not an expectation. The design rule still stands —
+put boundaries inside known sleeps — because *which* write is lost is unpredictable, and
+one lost write in the wrong place is enough to matter.
 
 For **sequence matching** the cost is now bounded rather than fatal — `seqmatch.py` diffs
 instead of assuming a fixed offset, so a dropped write reports as one deletion at a known
@@ -215,9 +220,15 @@ problem. **Compare against the physical device, not only against predictions.**
   and then silence.
 - **Stop a capture with SIGINT, never SIGTERM** — SIGTERM leaves the analyzer armed and it
   will refuse the next capture until replugged.
-- **Sample rate floor is ~13 MS/s** for this bus and realistically 20 MS/s. Below that the
-  70–80 ns /WR pulse is missed, and undersampling produces *convincing* wrong answers, not
-  obvious noise.
+- **Sample rate floor is ~33 MS/s** for command traffic of unknown provenance. 20 MS/s
+  covers the slow regime (70–80 ns /WR low) and pixel bursts, but the bus also has a **fast
+  command regime with a 30–40 ns low**, which is *shorter than the 50 ns sample interval at
+  20 MS/s* and vanishes without trace. Undersampling produces *convincing* wrong answers,
+  not obvious noise — see [FINDINGS §12](FINDINGS.md#12-the-bus-has-two-command-write-speeds-and-the-fast-one-needs-33-mss).
+- **Balanced /WR edge counts are not proof of a complete capture.** A pulse falling between
+  two samples takes both its edges with it. Cross-check against D/C, which changes only
+  between writes of different kinds: within one burst `writes ≥ D/C transitions + 1` must
+  hold. `seqmatch.py` checks this automatically.
 
 ## Reproducing
 

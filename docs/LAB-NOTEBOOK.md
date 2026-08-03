@@ -1506,6 +1506,13 @@ reset.
 (1–2 samples), consistent with the documented 70–80 ns. Had a pulse been missed the edge
 counts would not balance.
 
+> **CORRECTED later the same day — the last sentence is wrong.** A pulse shorter than the
+> sample interval takes *both* its edges with it, so balanced counts prove nothing about
+> completeness; they only rule out clipping at a window boundary. 20 MS/s *is* sound for
+> the init, which is entirely slow-regime, and the 140-write block independently passes the
+> D/C cross-check. But six writes elsewhere in this same capture were missed. See the
+> 2026-08-03 entry below.
+
 **(F) Register-block timing, now over the full 140 writes.** The block spans **97.5 µs**
 of the 163.5 µs window (68 % headroom). Write-to-write spacing 600–1400 ns, mean **701 ns**,
 with 55 intervals at 600 ns and 44 at 650 ns — the 610–1110 ns range measured earlier from
@@ -1548,3 +1555,110 @@ at all. There is no burst boundary anywhere near: all seven sit inside burst 10.
 So the bus genuinely carried seven writes where the source says thirteen. Recorded as an
 open question; it does not touch the init result, and the 13-write structure itself was
 confirmed byte-exactly in earlier captures.
+
+### 2026-08-03 — **The "missing" window-setup writes were undersampling.** Two write regimes on this bus
+
+**Action:** Investigated the 7-vs-13 anomaly logged an hour earlier, entirely from existing
+captures — no hardware, the parts for the bench rig have not arrived.
+
+**(F) All 13 writes happened. Six /WR pulses were never sampled.** D/C is the witness: over
+the region it makes **13 transitions in the pattern `0,1,0,1,…,0`** — one run per write,
+starting and ending on a command, which is exactly the shape of `displaylcd_setup()`. Only
+7 /WR pulses appear. The missing six map precisely onto the runs with no pulse:
+`CMD 0x211`, `DATA 0x013F`, `CMD 0x212`, `DATA 0x00EF`, `CMD 0x200`, `DATA 0x0000`.
+
+**(F) CORRECTION — "balanced edge counts prove nothing was missed" is wrong,** and it was
+the reasoning used to dismiss undersampling in the entry above. A pulse that falls entirely
+between two samples removes its falling *and* rising edge, so the counts stay balanced and
+the write vanishes silently. Balanced counts only rule out a pulse **clipped at a window
+boundary**. The sound check is `writes ≥ D/C transitions + 1` within a burst.
+
+**(F) The bus has two command-write regimes.** Measured on 100 MS/s captures of the
+identical 13-write block, so this is a property of the traffic and not of the capture:
+
+| regime | write cycle | /WR low | min sample rate |
+|---|---|---|---|
+| slow | **818 ns** | **60–80 ns** | 16.7 MS/s |
+| fast | **309 ns** | **30–40 ns** | **33.3 MS/s** |
+
+Across the capture set both appear; 100 MS/s captures resolve either. Every previous
+20 MS/s capture that returned a clean 13/13 happened to land on a **slow** redraw. This one
+landed on a fast one, and at 20 MS/s a 30 ns pulse is *shorter than the 50 ns sample
+interval* — it can miss entirely. Six of thirteen did.
+
+**What selects the regime is not understood.** Both occur with the same command values and
+the same panel state as far as anything captured shows.
+
+**(F) The init result is unaffected.** Burst 7 has **140 /WR pulses against 139 D/C
+transitions** — exactly the expected relationship for 140 strictly-alternating writes — and
+it matched 140/140 byte-exactly against the source. The init runs entirely in the slow
+regime (600–1400 ns, mean 701 ns). Nothing from the previous entry needs revisiting except
+the reasoning quoted above.
+
+**Phase 6 dividend, and the more valuable half of this.** The panel demonstrably accepts a
+**309 ns write cycle with a 30–40 ns /WR low** — the SoC does it routinely. That is 2.6×
+faster than the 610 ns "known-good" point `DRIVING.md` was written around, and it partly
+pre-answers the planned write-rate sweep. A full frame at 309 ns is **23.7 ms** against
+46.9 ms at 610 ns; tear-free at the panel's 67.9 Hz still needs ~192 ns, so the sweep is
+still worth running, but it starts from a much better-informed position.
+
+**`tools/seqmatch.py` now cross-checks /WR against D/C per burst** and reports how many
+writes were missed. Run against this capture it flags burst 10 with "at least 6 writes
+missed"; it stays quiet on the slow-regime captures. Verified against
+`20260802_131348_dryrun` (20 MS/s, slow regime, clean).
+
+**Method note.** This came out of asking why 15 earlier captures all showed 7/7
+window-setup commands and one showed 4/7 — a comparison across the whole evidence set
+rather than a closer look at the odd one. The capture index and per-capture sidecars are
+what made that sweep a five-minute job.
+
+### 2026-08-03 — **The init was already captured on 2026-08-01.** 152/152 across two captures
+
+**Action:** Ran the new `seqmatch.py` over the whole capture set as a regression check.
+
+**(F) `20260801_212943_dryrun` contains 151 of the 152 wake-init writes** and has done
+since it was taken. Its sidecar note reads *"Post-reflow check: burst capture of ordinary
+screen activity. D/C (P28, CH21) must toggle if the CH21-24 group is alive."* It was armed
+for an unrelated purpose while the display happened to wake, and swept up the entire
+sequence across its 64 small bursts.
+
+The match is contiguous, not a scattered-subsequence artefact:
+
+```
+equal   exp[0:105]    got[0:105]      105 writes
+delete  exp[105:106]                  one write lost at a burst boundary
+equal   exp[106:152]  got[105:151]     46 writes
+insert                got[151:759]    608 writes of subsequent screen activity
+```
+
+Burst structure opens `[1,1,1,1,1,1,7,8,6,8,…]` — the six single-write NOP bursts are
+present, so the alignment anchor holds there too.
+
+**(F) Together the two captures cover the whole sequence: 152/152.** They lose *different*
+writes — `20260801_212943` is missing expected #105 (`DATA 0x0300`), `20260803_203836` is
+missing #150 (`CMD 0x0007`). **Every write of `lcd_init_seq_23` has now been observed on
+the bus**, not merely every distinct value.
+
+**This is the uncomfortable part.** The project spent two days believing it had 69 of 140
+writes and treating the rest as blocked. A capture taken **40 minutes later on the same
+evening** already held 151 of 152. Nothing was missing but a tool that compared captures
+against the expected sequence — `decode8080.py` answers "what is on the bus", and nobody
+had asked "is this the sequence we expected". The evidence set was searched by *intent
+recorded in a note*, never by *content*.
+
+**Rule worth carrying forward: when you build a new analysis, run it over the whole
+existing evidence set before collecting more.** It cost five minutes here and would have
+saved a bench session.
+
+**(F) Burst boundaries lose writes far less often than assumed.** That capture chops the
+140-write register block across roughly twenty boundaries and loses **one** write in total,
+not twenty. The existing guidance — "many small bursts: one dropped write per boundary" —
+is an upper bound and a pessimistic one; the observed rate here is nearer 5 % per boundary.
+The design rule (put boundaries in known sleeps) still holds, because *which* write is lost
+is not predictable.
+
+**What today's capture still contributes.** It is not redundant: the 140-write block sits
+in **one contiguous burst**, which is what makes the block-level timing measurable
+(97.5 µs end to end, spacing histogram, mean 701 ns). In `20260801_212943` the block is
+twenty fragments, so only per-fragment spacing survives. It is also a deliberate,
+reproducible plan whose burst structure self-validates, rather than a lucky accident.

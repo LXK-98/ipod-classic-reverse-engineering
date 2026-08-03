@@ -50,11 +50,39 @@ The block takes **97.5 µs** end to end. (An earlier figure of "610–1110 ns, m
 
 `LCD_PHTIME = 0x33` is set by `lcd_init_device()` for this target.
 
+### Two command-write speeds
+
+The 610 ns figure above is the **pixel-burst** rate. Command writes run in one of two
+regimes, both measured on 100 MS/s captures of the identical 13-write `displaylcd_setup()`
+block:
+
+| regime | write cycle | /WR low | minimum sample rate |
+|---|---|---|---|
+| slow | **818 ns** | **60–80 ns** | 16.7 MS/s |
+| fast | **309 ns** | **30–40 ns** | **33.3 MS/s** |
+
+Both appear across the capture set; what selects one over the other is not understood. The
+init sequence is entirely slow-regime (600–1400 ns, mean 701 ns over its 140-write block).
+
+**For a driver this is the useful number:** the panel demonstrably accepts a **309 ns
+cycle with a 30–40 ns /WR low**, so the known-good operating point is far faster than 610 ns
+suggests.
+
 ### Timing traps
 
-A sample rate below ~13 MS/s **cannot** reliably catch the 70–80 ns /WR low pulse. At
-20 MS/s (50 ns period) the pulse is longer than one sample interval, so at least one
-sample is guaranteed to land inside it — that is the practical floor.
+A sample rate below ~13 MS/s **cannot** reliably catch a 70–80 ns /WR low pulse. At
+20 MS/s (50 ns period) that pulse is longer than one sample interval, so at least one
+sample is guaranteed to land inside it.
+
+**That floor only covers the slow regime.** A 30–40 ns fast-regime pulse is *shorter* than
+the 50 ns interval at 20 MS/s and can vanish entirely — 6 of 13 writes did exactly that in
+`20260803_203836_init-burst`. Use **≥33 MS/s** for command traffic unless you already know
+it is slow-regime.
+
+**Balanced /WR edge counts do not prove a capture is complete.** A pulse that falls between
+two samples removes both of its edges, so the counts stay balanced and the write disappears
+without trace. Cross-check against D/C instead: within one burst
+`writes ≥ D/C transitions + 1` always holds, and `tools/seqmatch.py` enforces it.
 
 Undersampling does not look like noise. A 1 MS/s capture of this 1.64 MHz strobe produced
 a clean, entirely convincing **91 kHz** signal with perfectly uniform run lengths, because
@@ -88,11 +116,18 @@ see the setup and then apparent silence.
 
 Byte-exact sequences for all four panel variants are parsed from the Rockbox source into
 [`refs/sequences.json`](../refs/sequences.json) by `tools/rockbox_seq.py`, and the type-2
-sequence has been **verified on the wire**: 151 of 152 writes byte-exact
-(`20260803_203836_init-burst`, checked by `tools/seqmatch.py`). The single missing write
-is `CMD 0x0007`, dropped in a burst re-arm gap and byte-identical to another `CMD 0x0007`
-captured intact two writes earlier — so every distinct value in `lcd_init_seq_23` has been
-observed.
+sequence has been **verified on the wire, in full**. Two independent captures each match
+151 of 152 writes byte-exactly and lose *different* writes, so their union covers
+**152/152** — every write of `lcd_init_seq_23` has been observed, not merely every
+distinct value:
+
+| capture | rate | missing |
+|---|---|---|
+| `20260801_212943_dryrun` | 100 MS/s | #105 `DATA 0x0300` |
+| `20260803_203836_init-burst` | 20 MS/s | #150 `CMD 0x0007` |
+
+Both losses are single writes dropped in burst re-arm gaps. Checked by
+`tools/seqmatch.py`.
 
 For type 2:
 

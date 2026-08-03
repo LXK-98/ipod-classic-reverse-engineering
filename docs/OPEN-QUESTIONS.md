@@ -117,32 +117,22 @@ active blit.
 
 ---
 
-## 5. Why did a post-wake redraw emit 7 window-setup writes instead of 13?
+## 5. ~~Why did a post-wake redraw emit 7 window-setup writes instead of 13?~~ — RESOLVED 2026-08-03
 
-**Status:** observed once, unexplained. Does not affect anything currently relied on.
+**Answer: it emitted all 13. Six /WR pulses were too short to sample at 20 MS/s.**
 
-Burst 10 of `20260803_203836_init-burst` caught the start of a screen redraw immediately
-after the init finished. It decodes as recognisable window-setup traffic that terminates
-correctly:
+Raised and closed the same day, from the existing capture — no new bench work. See
+[FINDINGS §12](FINDINGS.md#12-the-bus-has-two-command-write-speeds-and-the-fast-one-needs-33-mss).
 
-```
-CMD 0x0210  DATA 0x0000  DATA 0x0000  CMD 0x0213  CMD 0x0201  DATA 0x0000  CMD 0x0202
-```
+**D/C is the witness.** Across the region it makes **13 transitions in the pattern
+`0,1,0,1,…,0`** — exactly one run per write, starting and ending on a command, which is
+precisely the shape of `displaylcd_setup()`'s 13 writes. Only 7 /WR pulses were sampled.
+The writes happened; the strobe was not seen.
 
-followed by ~97 µs of silence, consistent with the documented >1.6 ms memcpy gap after
-`0x202`. But `displaylcd_setup()` emits **13** writes; `0x211`, `0x212`, `0x200` and their
-data words are absent.
-
-**It is not undersampling.** Falling and rising /WR edge counts balance across the entire
-capture (158 each), and the region contains exactly seven pulses for seven decoded writes.
-The 1400 ns gaps between them — about two write cycles — carry no pulses at all. All seven
-sit inside one burst, so no re-arm boundary is involved.
-
-**Impact: none established.** The 13-write structure was confirmed byte-exactly in earlier
-captures and is what [DRIVING.md §7](DRIVING.md#7-blitting) specifies. Candidates not
-tested: a partial-window update path in Rockbox that skips registers already holding the
-right value, or a decode artefact specific to this burst. Worth one capture of a redraw in
-isolation.
+**The reasoning that dismissed undersampling was wrong.** Balanced falling/rising edge
+counts prove nothing here: a pulse shorter than the sample interval vanishes entirely,
+taking *both* its edges with it. `tools/seqmatch.py` now cross-checks /WR pulses against
+D/C transitions per burst, which catches exactly this.
 
 ---
 

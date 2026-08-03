@@ -147,6 +147,13 @@ the window and captured **151 of 152** writes.
 **Spend only what the narrowest pulse needs, then spend the rest on window.** Compute the
 longest contiguous run you must hold *before* choosing a rate.
 
+⚠️ **But know what the narrowest pulse actually is.** 20 MS/s was chosen against the
+70–80 ns /WR low of the slow regime. The bus also has a **fast** command regime with a
+**30–40 ns** low, which 20 MS/s misses outright — see
+[finding 12](#12-the-bus-has-two-command-write-speeds-and-the-fast-one-needs-33-mss). The
+init itself is entirely slow-regime, so that capture is unaffected, but the general rule
+needs the faster figure: **≥33 MS/s** unless you know the traffic is slow.
+
 ### A dead group of exactly four channels means one translator's OE pin
 
 Both gusmanb LogicAnalyzer V2 boards had **exactly four adjacent channels stuck at 0**,
@@ -276,3 +283,67 @@ with a scope or read as a small AC component needs the charger disconnected.
 
 The tell, in hindsight: a signal whose apparent period changes with the timebase you view
 it at is not a signal.
+
+---
+
+## 12. The bus has two command-write speeds, and the fast one needs 33 MS/s
+
+The documented "610 ns cycle, 70–80 ns /WR low" is **not the only regime**. The same
+13-write `displaylcd_setup()` block was captured at both:
+
+| regime | write cycle | /WR low | minimum sample rate |
+|---|---|---|---|
+| slow | **818 ns** | **60–80 ns** | 16.7 MS/s |
+| fast | **309 ns** | **30–40 ns** | **33.3 MS/s** |
+
+Measured on 100 MS/s captures of the identical command sequence; both regimes appear
+across the capture set, and which one a given redraw uses is not yet understood.
+
+**A 30 ns pulse is shorter than the 50 ns sample interval at 20 MS/s, so it can be missed
+entirely.** That is not a marginal risk, it is a certainty for some phase alignments: in
+`20260803_203836_init-burst`, **6 of 13** window-setup writes left no trace on /WR.
+
+**Correcting a claim made earlier in this project:** balanced falling and rising /WR edge
+counts were treated as proof that no pulse was missed. They are not. A pulse that falls
+entirely between two samples removes *both* of its edges, so the counts stay balanced and
+the write disappears silently. The check only rules out pulses **clipped at a window
+boundary**.
+
+**The sound check is D/C.** It changes only between writes of different kinds, so within
+one burst `writes ≥ D/C transitions + 1` always holds. A violation proves writes occurred
+that /WR never showed. `tools/seqmatch.py` applies this per burst.
+
+**Two consequences.**
+
+- **For capture:** use **≥33 MS/s** for command traffic of unknown provenance. 20 MS/s is
+  sufficient only for the slow regime and for pixel bursts (610 ns, 70–80 ns low).
+- **For a driver:** the panel demonstrably accepts **309 ns write cycles with a 30–40 ns
+  /WR low** — the SoC itself does this routinely. The known-good operating point is
+  therefore considerably faster than the 610 ns figure suggests. See
+  [DRIVING §3](DRIVING.md#3-bus-protocol).
+
+---
+
+## 13. The evidence set was searched by intent, never by content
+
+The full init sequence — 151 of 152 writes — sat in `20260801_212943_dryrun` from the
+evening it was taken. Its sidecar note says *"post-reflow check: burst capture of ordinary
+screen activity"*. It was armed for an unrelated reason while the display happened to wake,
+and swept up the whole sequence.
+
+Nobody knew, because the project had a tool that answered **"what is on the bus"**
+(`decode8080.py`) and none that answered **"is this the sequence we expected"**. Captures
+were located by reading the note column of `INDEX.md`, which records the *intent* of a
+capture and not what it actually contains. For two days the init was treated as blocked at
+69 of 140 writes.
+
+Writing `seqmatch.py` and running it across all 40 captures — five minutes — found it
+immediately, and also retro-flagged a capture with a dead D/C channel (see finding 7).
+
+**Rule: when you build a new analysis, run it over the whole existing evidence set before
+collecting more data.** A capture taken for one purpose routinely contains the answer to
+another, and only a content-based search will find it.
+
+A useful side effect: the two init captures lose *different* writes (#105 and #150), so
+their union covers **152/152**. Redundant captures of the same event are not waste — the
+losses are uncorrelated.

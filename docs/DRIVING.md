@@ -74,6 +74,27 @@ These are what the SoC does and the panel demonstrably accepts. They are **not**
 panel's datasheet minima, which are unknown — so treat them as a known-good operating
 point rather than limits to optimise against.
 
+**The panel is known to accept considerably faster than this.** The same command block was
+measured in two regimes, and the SoC uses both routinely:
+
+| regime | write cycle | /WR low |
+|---|---|---|
+| slow (the table above) | 818 ns | 60–80 ns |
+| **fast** | **309 ns** | **30–40 ns** |
+
+So **309 ns / 30 ns is also a measured, panel-accepted operating point**, 2.6× faster than
+the conservative figures. What that buys on a full frame:
+
+| write cycle | 76 800 writes | vs one TE period (14.73 ms) |
+|---|---|---|
+| 610 ns (SoC pixel rate) | 46.9 ms | 3.2× too slow |
+| **309 ns (measured, accepted)** | **23.7 ms** | 1.6× too slow |
+| 192 ns | 14.7 ms | tear-free, **untested** |
+
+The 610 ns figure is nowhere near a ceiling — but 309 ns still does not reach a tear-free
+full-frame update at the panel's native 67.9 Hz. Whether ~192 ns works remains open (gap 5
+below); this only narrows the gap you have to close.
+
 **/CS** is held **low for the duration of a transfer burst** — measured at 99.6 % low
 throughout a pixel burst. It is not toggled per write. Assert before the first write of a
 burst, release after the last.
@@ -134,11 +155,11 @@ the Rockbox source by `tools/rockbox_seq.py`. For this panel use
 **`configs.bootloader.types.2.sequences.init`** — 146 bus writes, 240 ms of embedded
 sleeps.
 
-**This is measured, not just source-derived.** 151 of the 152 writes of the wake variant
-were captured byte-exactly on the bus (`20260803_203836_init-burst`), and that variant
-minus its six NOPs is byte-identical to the bootloader init above. The one write not
-captured was lost in a burst re-arm gap and is a duplicate of one that was. So the
-sequence you send is the sequence the panel is known to accept.
+**This is measured, not just source-derived.** All 152 writes of the wake variant have
+been captured byte-exactly on the bus, across two captures that each got 151/152 and lost
+different writes. That variant minus its six NOPs is byte-identical to the bootloader init
+above. So the sequence you send is, write for write, the sequence the panel is known to
+accept.
 
 ```python
 import json
@@ -196,8 +217,9 @@ Be aware of these before committing hardware:
 3. **Which of pins 30/32 is /RESET is unresolved.**
 4. **The tolerance on pin 34's 1.54 V reference is untested.**
 5. **Panel datasheet minima are unknown.** All timing here is what the SoC does, which the
-   panel accepts — not the panel's limits. Do not treat 610 ns as a floor; it may go
-   faster, or may not.
+   panel accepts — not the panel's limits. 610 ns is definitely not a floor: **309 ns with
+   a 30–40 ns /WR low is measured and accepted**. Whether it goes to ~192 ns, the rate a
+   tear-free full-frame update at 67.9 Hz needs, is untested.
 6. **True 6-bit colour on red and blue is unverified** — see the warning in
    [§4](#4-pixel-format). Worst case you get 5 effective bits per channel on red and blue,
    matching Rockbox.
