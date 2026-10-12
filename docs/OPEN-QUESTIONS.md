@@ -119,11 +119,11 @@ buffered source with local decoupling, and make the level **adjustable**. The re
 tolerance is unknown — the panel's sensitivity to it has not been tested.
 
 ⚠️ **AMENDED 2026-10-12: 1.54 V is the unloaded figure and is the wrong build target.**
-With the flex connected and the panel running it reads **1.26 V on charge and 1.36 V on
-battery**. The node is weakly driven — a megohm-class source — so load, charger noise and
-even a 10 MΩ DMM all move it, and **no DMM reading is the true operating value**. Target
-~1.35 V, keep a trimmer, and tune against the panel. See
-[DRIVING.md §1](DRIVING.md#1-electrical--what-you-must-supply).
+With the flex connected and the panel running, on battery, it read **1.26 V and later
+1.36 V** — the 0.10 V spread is **unexplained** and is not the charger or the backlight,
+both of which were ruled out. The node is weakly driven (1–2 MΩ), so even a 10 MΩ DMM
+loads it and **no DMM reading is the true operating value**. Target ~1.3 V, keep a trimmer,
+tune against the panel. See [DRIVING.md §1](DRIVING.md#1-electrical--what-you-must-supply).
 
 **Everything previously reported as activity on this pin was charger noise.** See
 [FINDINGS](FINDINGS.md#11-charger-noise-contaminated-every-analog-measurement).

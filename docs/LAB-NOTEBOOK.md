@@ -2164,17 +2164,25 @@ operating point a driver should actually copy.
 | condition | reading |
 |---|---|
 | flex disconnected, board unloaded | **1.54 V** |
-| flex connected, panel running, charger connected | **1.26 V** |
-| flex connected, panel running, charger disconnected | **1.36 V** |
+| flex connected, panel running, on battery | **1.26 V**, then **1.36 V** |
 
 **(F) Not brightness dependent.** Identical with the screen on and off, i.e. with the
 backlight both on and off — consistent with the backlight being an independent circuit on
 pins 4/5.
 
-**(F) The 0.10 V charger offset is finding 11 again, on the very pin it was discovered on.**
-That finding came from chasing a phantom signal on pin 34 that vanished when the charger was
-unplugged. Same node, same cause, a quantified DC offset this time rather than a phantom
-waveform.
+> ⚠️ **CORRECTED within the hour.** This entry first attributed the 0.10 V spread between
+> the two in-operation readings to the charger, citing finding 11. **Both readings were
+> taken on battery with no charger attached.** The collaborator corrected it. The
+> attribution was mine, from circumstantial fit: finding 11 concerns this exact pin, so a
+> charger explanation looked immediately plausible and I did not check the condition before
+> committing it. See the method note below.
+
+**(F) The 0.10 V spread is unexplained.** Both in-operation readings were on battery, and
+both were identical with the screen on and off, so neither the charger nor the backlight
+accounts for it. Candidates not yet separated: settling of a high-impedance node under DMM
+load, panel internal state, or probe contact. **That the node will not give a repeatable
+number is itself the useful result** — it is the argument for making the level adjustable
+rather than for measuring harder.
 
 **(F) The node is weakly driven — megohm-class source impedance.** Losing 0.18 V to a 10 MΩ
 DMM implies roughly 1–2 MΩ of source impedance. The consequence matters more than the
@@ -2193,7 +2201,26 @@ understood.
 unity-gain follower would read it without loading, giving the first trustworthy figure. It
 also pre-tests the board's own reference buffer, so it is two jobs in one.
 
-**Method note.** This was found by asking what condition a documented number was measured
-under, not by distrusting the number. "~1.54 V" was correct for what it measured; the
-spec built on it was wrong, because the caveat lived in OPEN-QUESTIONS and the build target
-lived in DRIVING.md.
+**Method note.** The finding came from asking what condition a documented number was
+measured under, not from distrusting the number. "~1.54 V" was correct for what it
+measured; the spec built on it was wrong, because the caveat lived in OPEN-QUESTIONS while
+the build target lived in DRIVING.md. **Worth auditing other figures the same way:** when a
+number and its conditions are recorded in different documents, the conditions stop
+travelling with the number.
+
+**Method note 2, on a pattern rather than an incident.** Four claims of mine were corrected
+on 2026-10-12, all the same shape — a cause assigned because it fitted the circumstances,
+not because it was checked:
+
+| claim | reality |
+|---|---|
+| TRG is for chaining analyzers | it is a trigger *output*; chaining uses a separate connector |
+| an oversized pre-trigger prevents arming | documented ceilings are far higher; cause still unknown |
+| the USB disappearances were drop-outs | the operator unplugged it |
+| the 0.10 V shift was charger noise | both readings were on battery |
+
+Each was plausible, each was wrong, and in three of four cases the authoritative answer was
+one lookup or one question away. The rule that would have caught all four: **state the
+mechanism as a hypothesis until the specification, the sidecar, or the person at the bench
+confirms it.** Being right about the *measurement* three times today was not matched by
+being right about the *reason*.

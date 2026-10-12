@@ -28,21 +28,23 @@ pin, all with a 10 MΩ DMM:
 | condition | reading |
 |---|---|
 | flex **disconnected**, board unloaded | **1.54 V** |
-| flex connected, panel running, charger **connected** | **1.26 V** |
-| flex connected, panel running, charger **disconnected** | **1.36 V** |
+| flex connected, panel running, **on battery** | **1.26 V**, then **1.36 V** |
 
-The spread is the point: the node moves with load, with the charger
-([finding 11](FINDINGS.md#11-charger-noise-contaminated-every-analog-measurement) striking
-again on the very pin it was discovered on), and almost certainly with the DMM's own 10 MΩ
-input — a drop of 0.18 V under a DMM alone implies a source impedance in the megohms. **So
-no DMM reading gives the panel's true operating voltage**, and a scope would be worse at
-1 MΩ.
+Both in-operation readings were taken on battery with no charger attached, and both with
+the screen on and off — so neither the charger nor the backlight explains the 0.10 V spread
+between them. **It is unexplained, and that is itself the useful result:** this node does
+not give a repeatable number under a DMM.
+
+A source losing 0.18 V to a 10 MΩ meter implies 1–2 MΩ of source impedance, which fits a
+reading that wanders. **So no DMM measurement gives the panel's true operating voltage**,
+and a scope at 1 MΩ would load it harder still.
 
 **Design accordingly:**
 
-1. **Target ~1.35 V**, the closest figure measured in operation on battery — not 1.54 V.
+1. **Target ~1.3 V**, mid-way through the range actually seen in operation — not 1.54 V.
 2. **Make it adjustable.** A trimmer into a buffer lets you tune against the panel once it
-   runs, which is the only arbiter that matters given the measurement problem.
+   runs, which is the only arbiter that matters given that the node cannot be measured
+   repeatably.
 3. **To measure it properly**, buffer it: a CMOS-input op-amp (the `TLV9061` in the parts
    list draws picoamps) as a unity-gain follower reads the node without loading it. That
    also pre-tests the board's own reference buffer.
