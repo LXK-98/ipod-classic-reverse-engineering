@@ -114,9 +114,16 @@ With the display flex disconnected the board still holds pin 34 at ~1.54 V, so t
 *receives* it rather than generating it. Its 1 MΩ-to-ground reading (unpowered) fits a
 high-impedance decoupled reference rather than a supply rail.
 
-**Phase 6 impact:** a replacement driver **must supply this**. Feed ~1.54 V from a
-low-impedance buffered source with local decoupling. The required tolerance is unknown —
-the panel's sensitivity to it has not been tested.
+**Phase 6 impact:** a replacement driver **must supply this**. Feed it from a low-impedance
+buffered source with local decoupling, and make the level **adjustable**. The required
+tolerance is unknown — the panel's sensitivity to it has not been tested.
+
+⚠️ **AMENDED 2026-10-12: 1.54 V is the unloaded figure and is the wrong build target.**
+With the flex connected and the panel running it reads **1.26 V on charge and 1.36 V on
+battery**. The node is weakly driven — a megohm-class source — so load, charger noise and
+even a 10 MΩ DMM all move it, and **no DMM reading is the true operating value**. Target
+~1.35 V, keep a trimmer, and tune against the panel. See
+[DRIVING.md §1](DRIVING.md#1-electrical--what-you-must-supply).
 
 **Everything previously reported as activity on this pin was charger noise.** See
 [FINDINGS](FINDINGS.md#11-charger-noise-contaminated-every-analog-measurement).

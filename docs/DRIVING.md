@@ -15,12 +15,37 @@ Companion documents: [PINOUT.md](../PINOUT.md) for the pin table,
 |---|---|---|
 | 26 | **1.8 V** | VDDIO, the logic domain. All bus signals swing to this. |
 | 33 | **3.0 V** | analog/panel supply |
-| **34** | **~1.54 V** | **analog reference INPUT** — the panel expects to receive this. High impedance (1 MΩ to GND unpowered), so a buffered divider with local decoupling suffices. **Required tolerance unknown.** |
+| **34** | **~1.35 V, adjustable** | **analog reference INPUT** — the panel expects to receive this. Weakly driven, so the value depends on load; see the caution below. **Required tolerance unknown.** |
 | 3, 6, 8, 17, 31 | **GND** | five pins; connect all |
 | 4, 5 | backlight | see [§5](#5-backlight) |
 
 Pin 34 is easy to overlook. It is not a rail the panel generates — the logic board drives
 it, confirmed by it still reading 1.54 V with the display flex disconnected.
+
+⚠️ **Do not build to 1.54 V. That is the *unloaded* figure.** Three readings of the same
+pin, all with a 10 MΩ DMM:
+
+| condition | reading |
+|---|---|
+| flex **disconnected**, board unloaded | **1.54 V** |
+| flex connected, panel running, charger **connected** | **1.26 V** |
+| flex connected, panel running, charger **disconnected** | **1.36 V** |
+
+The spread is the point: the node moves with load, with the charger
+([finding 11](FINDINGS.md#11-charger-noise-contaminated-every-analog-measurement) striking
+again on the very pin it was discovered on), and almost certainly with the DMM's own 10 MΩ
+input — a drop of 0.18 V under a DMM alone implies a source impedance in the megohms. **So
+no DMM reading gives the panel's true operating voltage**, and a scope would be worse at
+1 MΩ.
+
+**Design accordingly:**
+
+1. **Target ~1.35 V**, the closest figure measured in operation on battery — not 1.54 V.
+2. **Make it adjustable.** A trimmer into a buffer lets you tune against the panel once it
+   runs, which is the only arbiter that matters given the measurement problem.
+3. **To measure it properly**, buffer it: a CMOS-input op-amp (the `TLV9061` in the parts
+   list draws picoamps) as a unity-gain follower reads the node without loading it. That
+   also pre-tests the board's own reference buffer.
 
 ### Power-up sequencing — MEASURED 2026-10-12
 

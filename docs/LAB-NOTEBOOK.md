@@ -2151,3 +2151,49 @@ instead of collecting new ones — after the init (finding 13) and the pair repl
 scale. In this case it also *cancelled* a planned bench session involving a toolchain build,
 a firmware plugin and a rewiring. Worth asking "what do the existing captures already
 determine?" before any experiment that needs new tooling.
+
+### 2026-10-12 (night) — **Pin 34 is 1.36 V in operation, not 1.54 V.** And it is weakly driven
+
+**Action:** `DRIVING.md` specified the analog reference as "~1.54 V", but
+OPEN-QUESTIONS §2 records that this was measured **with the display flex disconnected** —
+i.e. unloaded. Measured it with the flex connected and the panel running, which is the
+operating point a driver should actually copy.
+
+**(F) Three readings of the same pin, all with a 10 MΩ DMM:**
+
+| condition | reading |
+|---|---|
+| flex disconnected, board unloaded | **1.54 V** |
+| flex connected, panel running, charger connected | **1.26 V** |
+| flex connected, panel running, charger disconnected | **1.36 V** |
+
+**(F) Not brightness dependent.** Identical with the screen on and off, i.e. with the
+backlight both on and off — consistent with the backlight being an independent circuit on
+pins 4/5.
+
+**(F) The 0.10 V charger offset is finding 11 again, on the very pin it was discovered on.**
+That finding came from chasing a phantom signal on pin 34 that vanished when the charger was
+unplugged. Same node, same cause, a quantified DC offset this time rather than a phantom
+waveform.
+
+**(F) The node is weakly driven — megohm-class source impedance.** Losing 0.18 V to a 10 MΩ
+DMM implies roughly 1–2 MΩ of source impedance. The consequence matters more than the
+number: **every way of measuring this node perturbs it**, so no DMM reading is the panel's
+true operating voltage, and a scope at 1 MΩ would be worse. The "high impedance (1 MΩ to
+GND unpowered)" note in OPEN-QUESTIONS §2 was about the panel side; the *board* side turns
+out to be weak too.
+
+**Design consequence, and it is a real escape.** Do not try to pin down the original's exact
+value — it may not be knowable with the instruments here. Target ~1.35 V, **make the level
+adjustable**, and tune against the panel once it runs. The `3296W` 10-turn trimmer in the
+parts order just earned its place; it was bought for this job before the problem was
+understood.
+
+**Not yet done:** buffering the node with a CMOS-input op-amp (`TLV9061`, picoamp bias) as a
+unity-gain follower would read it without loading, giving the first trustworthy figure. It
+also pre-tests the board's own reference buffer, so it is two jobs in one.
+
+**Method note.** This was found by asking what condition a documented number was measured
+under, not by distrusting the number. "~1.54 V" was correct for what it measured; the
+spec built on it was wrong, because the caveat lived in OPEN-QUESTIONS and the build target
+lived in DRIVING.md.
