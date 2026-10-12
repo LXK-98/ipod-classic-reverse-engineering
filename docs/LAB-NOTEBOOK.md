@@ -2264,3 +2264,31 @@ not on a channel in these captures.
 (SN74LVC8T245 VCC isolation) until VDDIO rises, then low. This is recorded as a deviation
 from the original, and as a suspect alongside reset timing if init fails to take. It is not
 grounds to change the design beforehand.
+
+### 2026-10-13 — **The driver's bus encoding is known pin-exactly.** 151/151 on all 18 lanes
+
+**Action:** before writing any driver firmware, settled how a 16-bit register value goes
+onto 18 pins, using the iPod's own init capture `20260803_203836_init-burst` (all 18 lanes,
+`rc=0`, not invalid). `tools/encoder_check.py` aligns writes exactly as `seqmatch.py` does,
+then compares **every pin**.
+
+**(F) This encoder reproduces all 151 aligned writes pin-exactly on all 18 lanes.** Number
+the lanes D17..D0 in DRIVING §4 pixel order (P09 P10 P11 P12 P13 P14 | P15 P16 P01 P18 P19 P20
+| P21 P22 P23 P24 P25 P02):
+
+- value bits 15..8 → D17..D10, bits 7..0 → D8..D1, with D9 (P01) and D0 (P02) low;
+- on **DATA** writes only, P09 (D17) is replaced by bit 10 and P02 (D0) by bit 4.
+
+Without the DATA replication it matches 116/151, and the misses are exactly the pair pins.
+So a driver can present the panel with **the pin levels it has always received**. Bits 14–15
+are never set in the init, so their placement is untested and irrelevant to it.
+
+*Inference, not measured:* the CMD half is the standard ILI932x 18-bit register layout
+(DB17–10 = IB15–8, DB8–1 = IB7–0). Also corrects a table omission: DRIVING/FINDINGS list no
+pin for APB bit 5. It is **P20**, by this match.
+
+**On "152 writes":** that is `firmware.awake`, six `CMD 0x0000` NOPs followed by a sequence
+byte-identical to the 146-write `bootloader.init` (checked). At cold boot the original sends
+the 146-write version (no NOP envelopes before the +615 ms block). Its runs are
+[140, 2, 2, 2], so a driver capture of it needs **4 bursts (`loops=3`)**. The 10-burst config
+of `203836` would wait forever for six NOPs that never come.
