@@ -213,6 +213,11 @@ and 21/2 carry identical data**, each being a replicated channel MSB.
 > the panel, fall back to driving each pair together, which reduces you to 5 effective
 > bits on red and blue and exactly reproduces Rockbox's behaviour. Either way the panel
 > works; only the achievable colour depth differs.
+>
+> **The original SoC cannot easily run this test (measured 2026-10-12).** It replicates
+> the pairs on every D/C = 1 write — in `LCD_MODE_P18` command mode as well as frame mode —
+> and drives them independently only on command writes, which the panel does not treat as
+> pixels. See the [lab notebook](LAB-NOTEBOOK.md), 2026-10-12 (night).
 
 **One bus transfer per pixel.** A full frame is 76 800 writes ≈ 46.9 ms at 610 ns.
 

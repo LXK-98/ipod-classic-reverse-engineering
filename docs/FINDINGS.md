@@ -76,6 +76,12 @@ A lane map derived from the init sequence is therefore **not** a valid model for
 pixels, and vice versa. Conflating them produces a phantom one-bit error that appears only
 in colours where the two interpretations diverge.
 
+> **CORRECTED 2026-10-12.** The dividing line is **D/C, not the output mode.** Re-reading the
+> 2026-08-03 init capture: in `LCD_MODE_P18` itself, pins 9/14 and 21/2 are independent on
+> all 82 command writes but identical on all 76 data writes, including 24 where the 16-bit
+> map predicts they differ. The init-derived map is valid for **commands** only. See the
+> [lab notebook](LAB-NOTEBOOK.md), 2026-10-12 (night).
+
 ---
 
 ## 4. One transfer per pixel

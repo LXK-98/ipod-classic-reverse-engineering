@@ -2010,3 +2010,54 @@ pre-trigger window, so it happened earlier. Catching it needs a wider pre-trigge
 **Another data point on the silent no-arm.** 25 kS/s worked here; 5 kS/s failed minutes
 earlier with the same pre, post and channel count, and both are above the documented 3.1 kHz
 floor. Whatever the real constraint is, sample rate is implicated — see the entry above.
+
+### 2026-10-12 (night) — **The pairs are replicated on every DATA write, in command mode too**
+
+**Action:** no bench work. Before planning the RGB666 pair test, re-read the existing
+2026-08-03 init capture (`20260803_203836_init-burst`, sidecar `returncode: 0`, all 18 lanes
+probed) and split pins 9/14 and 21/2 at each /WR rising edge by D/C. The lead being checked:
+`lcd-s5l8702.c` runs commands in `LCD_MODE_P18`, so a pixel written as a command-mode DATA
+write might escape the RGB565 expansion and put a differing pair on the bus.
+
+**(F) It does not escape it.** 158 latches, 82 CMD and 76 DATA:
+
+| writes | (P09, P14) | (P02, P21) | P01 |
+|---|---|---|---|
+| **CMD** (D/C = 0), 82 | (0,0) ×80, **(0,1) ×2** | (0,0) ×53, **(0,1) ×29** | 0 throughout |
+| **DATA** (D/C = 1), 76 | (0,0) ×52, **(1,1) ×24** | (0,0) ×62, **(1,1) ×14** | 0 throughout |
+
+- **(F) On command writes the pairs are driven independently.** The two `CMD 0x0400/0x0401`
+  put P14 high with P09 low; 29 commands put P21 high with P02 low.
+- **(F) On data writes, in the same `LCD_MODE_P18`, they are identical every time** —
+  including the 24 writes where the 16-bit command map predicts P09 = 0, P14 = 1 (no
+  `lcd_init_seq_23` data word has bit 15 set; 24 have bit 10 set). P09 went high on all 24.
+  Likewise P02 copied P21 on all 14 data words with bit 4 set.
+- **(F) P01 is low on all 158 writes**, consistent with a 16-bit word mapped onto
+  `D[17:10,8:1]` with D9 unused.
+
+**Why the 2026-08-03 "byte-exact" match never saw this:** the lane map `seqmatch.py` uses
+(`pinout.json`, `lane_map.confirmed`) has no entry for pins 9, 10 or 2. Those lanes were never
+compared. The match result stands for the 14 lanes it covers.
+
+**Inference (not measured):** the replication is tied to **D/C = 1**, not to the frame-mode
+`LCD_CON` value, so it is a data-path stage in the SoC's LCD controller that both
+`LCD_MODE_P16` and `LCD_MODE_P18` pass through. Its exact form is open: this capture cannot
+distinguish "P09 = bit 10" from "P09 = bit 10 OR bit 15", because bit 15 is never set. Under
+the second model, a DATA word of `0x8000` would still drive P09 ≠ P14.
+
+**Consequences:**
+
+1. **The command-mode-DATA route to the pair test does not work as proposed.** Writing
+   red = v as `v << 10` in command mode would replicate exactly as frame mode does.
+2. **Flipping `lcd_frame_mode` to `LCD_MODE_P18` buys nothing** over that, since it is the
+   same D/C = 1 path. Not pursued.
+3. **Correction to FINDINGS §3:** the lane difference on pin 14 is a CMD-versus-DATA
+   difference, not a P16-versus-P18 one. The "command-mode map" is a map of **commands**;
+   it is not valid for data words in the top bits.
+4. **Positive side:** the SoC demonstrably *can* drive each pair to different levels — it
+   does so on command writes — so nothing on the board side ties them. Whether the *panel*
+   honours a differing pair on a pixel write is still the open question.
+
+**Next step:** a single-bit probe — DATA words `1 << n` for n = 0…15 written into GRAM in
+command mode, captured with all 18 lanes — gives the full DATA-write lane map, and settles
+whether any 16-bit word drives P09 ≠ P14. Planned, not yet run.
