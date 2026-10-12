@@ -43,6 +43,19 @@ def max_post_samples(n_channels: int) -> int:
     return 32767
 
 
+# Empirical pre-trigger ceiling, NOT a datasheet figure. Across the 41 captures
+# taken up to 2026-10-12, every capture with pre <= 1024 produced data (33/33)
+# and every capture with pre > 1024 silently failed to arm (0/6: pre=8000 x3,
+# 30000 x2, 65536 x1). An over-large config produces no error of any kind -- the
+# device never arms and TerminalCapture waits forever showing the same message it
+# shows while armed, so the failure looks like "no trigger yet". That cost five
+# cold-boot captures on 2026-08-02. See FINDINGS 14.
+#
+# To widen the pre-trigger window in TIME, lower --frequency rather than raising
+# this. Raise it only alongside a capture proving a larger value arms.
+MAX_PRE_SAMPLES = 1024
+
+
 PRESETS: dict[str, dict] = {
     # Phase 0 pipeline validation against a known signal.
     # Pico GP15 = 10 kHz 50% duty, GP14 = 10 kHz 25% duty (same PWM slice).
@@ -77,11 +90,60 @@ PRESETS: dict[str, dict] = {
         "channels": ["WR", "DC"] + [f"D{i:02d}" for i in range(18)],
         "trigger": {"type": "edge", "channel": 0, "inverted": True},
     },
+    # Phase 6 gap 1: rail order at cold boot, plus the reset lines and the start
+    # of init traffic in the same window.
+    #
+    # Keeps the documented 24-channel map and displaces only THREE leads, so the
+    # existing rig is barely disturbed: the rails take over CH2 (was P02), CH9
+    # (was P14) and CH19 (was P25). P02 and P14 are the blue/red MSB replicas and
+    # P25 one blue lane -- none load-bearing now the bus mapping is established.
+    #
+    # The pre-trigger must stay <= MAX_PRE_SAMPLES, so the window BEFORE the
+    # trigger is bought with sample RATE, not sample count. At 100 kS/s:
+    # 5.1 ms pre, 322.6 ms post, 10 us resolution.
+    #
+    # Deliberately wide and coarse -- the timescale of rail sequencing is entirely
+    # unknown and a first measurement should not risk missing the event.
+    # Consequence: /WR (30-80 ns) and per-write /CS framing (~650 ns) are both
+    # invisible at 10 us. This preset answers RAIL ORDER, and locates the first
+    # long /CS burst to tens of microseconds. Reset pulse width and first-write
+    # timing need a second, faster pass once this one fixes the timescale.
+    #
+    # If the first init traffic turns out to fall beyond 322 ms, repeat at 8
+    # channels for 4x the depth (1.31 s) -- verified working on 2026-10-12, when
+    # 20261012_161634 returned the full 131071 samples -- at the cost of moving
+    # eight leads onto CH1-CH8:
+    #   --channels V18_P26,V30_P33,VREF_P34,P30,P32,WR_P27,DC_P28,CS_P29 \
+    #   --post 130047 --trigger-channel 1
+    #
+    # Trigger is the 3.0 V rail rising: the largest swing, so the most margin over
+    # the shifter's ~1.1 V threshold at VREF=1.6 V. Any rail leading it by under
+    # 5.1 ms still lands in the pre-trigger window. Re-run with
+    # --trigger-channel 21 --trigger-inverted to trigger on /CS falling instead.
+    "power-seq": {
+        "description": "Phase 6 gap 1: rail sequencing at cold boot, 24 ch, 328 ms.",
+        "frequency": 100_000,
+        "pre": 512,
+        "post": 32_255,
+        "loops": 0,
+        # Positions match the documented 24ch map with CH2/CH9/CH19 reassigned.
+        "channels": [
+            "P01", "V18_P26", "TE_P07", "P09", "P10", "P11", "P12", "P13",
+            "V30_P33", "P15", "P16", "P18", "P19", "P20", "P21", "P22",
+            "P23", "P24", "VREF_P34", "WR_P27", "DC_P28", "CS_P29",
+            "P30", "P32",
+        ],
+        "trigger": {"type": "edge", "channel": 8, "inverted": False},
+    },
     # Phase 5: full-rate timing measurement, short window.
+    #
+    # pre was 4096 until 2026-10-12. That default was never actually run -- every
+    # Phase 5 capture overrode it -- and it is above MAX_PRE_SAMPLES, so it would
+    # not have armed. Lowered to 1024, the largest value proven to work.
     "blit-timing": {
         "description": "Phase 5 timing: max rate, single short window in a pixel burst.",
         "frequency": 100_000_000,
-        "pre": 4096,
+        "pre": 1024,
         "post": 28671,
         "loops": 0,
         "channels": ["WR", "DC"] + [f"D{i:02d}" for i in range(18)],
@@ -117,6 +179,13 @@ def build_session(preset: dict, overrides: dict) -> dict:
         trig["inverted"] = overrides["trigger_inverted"]
 
     n = len(names)
+    if pre > MAX_PRE_SAMPLES:
+        raise SystemExit(
+            f"pre({pre}) exceeds the empirical pre-trigger ceiling of {MAX_PRE_SAMPLES}.\n"
+            f"No capture in this project has ever armed with a larger pre-trigger; the\n"
+            f"device fails silently and the capture looks like it is simply waiting.\n"
+            f"See FINDINGS 14. To widen the pre-trigger in TIME, lower --frequency."
+        )
     total = post * (loops + 1) + pre
     cap = max_post_samples(n)
     if total > cap:

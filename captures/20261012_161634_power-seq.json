@@ -1,0 +1,73 @@
+{
+  "capture_id": "20261012_161634_power-seq",
+  "timestamp": "2026-10-12T16:17:23",
+  "preset": "power-seq",
+  "preset_description": "Phase 6 gap 1: rail sequencing at cold boot, 8 ch, +/-65 ms.",
+  "probe_map": "v1",
+  "note": "STAGE 0 RIG VALIDATION retry with pre=1024. iPod ON (battery), scrolling. Same rig as the three preceding no-fire attempts; ONLY pre-trigger size changed (65536 -> 1024). Tests the hypothesis that pre>1024 silently prevents the device arming, which would explain all 6 large-pre failures incl. the five 2026-08-02 cold-boot attempts.",
+  "port": "/dev/serial/by-id/usb-Dr._Gusman_LogicAnalyzer_5033592712586E1F-if00",
+  "session": {
+    "Frequency": 1000000,
+    "PreTriggerSamples": 1024,
+    "PostTriggerSamples": 130047,
+    "LoopCount": 0,
+    "MeasureBursts": false,
+    "CaptureChannels": [
+      {
+        "ChannelNumber": 0,
+        "ChannelName": "P01",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 1,
+        "ChannelName": "P02",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 2,
+        "ChannelName": "P07",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 3,
+        "ChannelName": "P09",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 4,
+        "ChannelName": "P10",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 5,
+        "ChannelName": "P11",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 6,
+        "ChannelName": "P12",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 7,
+        "ChannelName": "P13",
+        "Hidden": false
+      }
+    ],
+    "TriggerType": 0,
+    "TriggerChannel": 2,
+    "TriggerInverted": false,
+    "TriggerBitCount": 1,
+    "TriggerPattern": 0
+  },
+  "command": [
+    "/home/alex/Documents/Code/ipod-classic-reverse-engineering/vendor/TerminalCapture",
+    "capture",
+    "/dev/serial/by-id/usb-Dr._Gusman_LogicAnalyzer_5033592712586E1F-if00",
+    "/home/alex/Documents/Code/ipod-classic-reverse-engineering/captures/20261012_161634_power-seq.tcs",
+    "/home/alex/Documents/Code/ipod-classic-reverse-engineering/captures/20261012_161634_power-seq.csv"
+  ],
+  "returncode": 0,
+  "csv": "20261012_161634_power-seq.csv",
+  "csv_bytes": 2097168
+}

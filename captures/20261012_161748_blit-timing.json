@@ -1,0 +1,153 @@
+{
+  "capture_id": "20261012_161748_blit-timing",
+  "timestamp": "2026-10-12T16:18:07",
+  "preset": "blit-timing",
+  "preset_description": "Phase 5 timing: max rate, single short window in a pixel burst.",
+  "probe_map": "v1",
+  "note": "STAGE 0 RIG VALIDATION, exact replication of the proven 20260801_221938 config (20 MS/s, pre 512, post 32255, 24ch, trigger ch19=P27=/WR falling). Only difference from that successful capture is VRF source: 1k/1k divider off analyzer 3v3 (1.6V) instead of pin 26. If this fires the rig is healthy and the fault was my 8ch/131071-total config; if it does not, the fault is the divider reference or the probe wiring.",
+  "port": "/dev/serial/by-id/usb-Dr._Gusman_LogicAnalyzer_5033592712586E1F-if00",
+  "session": {
+    "Frequency": 20000000,
+    "PreTriggerSamples": 512,
+    "PostTriggerSamples": 32255,
+    "LoopCount": 0,
+    "MeasureBursts": false,
+    "CaptureChannels": [
+      {
+        "ChannelNumber": 0,
+        "ChannelName": "P01",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 1,
+        "ChannelName": "P02",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 2,
+        "ChannelName": "P07",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 3,
+        "ChannelName": "P09",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 4,
+        "ChannelName": "P10",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 5,
+        "ChannelName": "P11",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 6,
+        "ChannelName": "P12",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 7,
+        "ChannelName": "P13",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 8,
+        "ChannelName": "P14",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 9,
+        "ChannelName": "P15",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 10,
+        "ChannelName": "P16",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 11,
+        "ChannelName": "P18",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 12,
+        "ChannelName": "P19",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 13,
+        "ChannelName": "P20",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 14,
+        "ChannelName": "P21",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 15,
+        "ChannelName": "P22",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 16,
+        "ChannelName": "P23",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 17,
+        "ChannelName": "P24",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 18,
+        "ChannelName": "P25",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 19,
+        "ChannelName": "P27",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 20,
+        "ChannelName": "P28",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 21,
+        "ChannelName": "P29",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 22,
+        "ChannelName": "P30",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 23,
+        "ChannelName": "P32",
+        "Hidden": false
+      }
+    ],
+    "TriggerType": 0,
+    "TriggerChannel": 19,
+    "TriggerInverted": true,
+    "TriggerBitCount": 1,
+    "TriggerPattern": 0
+  },
+  "command": [
+    "/home/alex/Documents/Code/ipod-classic-reverse-engineering/vendor/TerminalCapture",
+    "capture",
+    "/dev/serial/by-id/usb-Dr._Gusman_LogicAnalyzer_5033592712586E1F-if00",
+    "/home/alex/Documents/Code/ipod-classic-reverse-engineering/captures/20261012_161748_blit-timing.tcs",
+    "/home/alex/Documents/Code/ipod-classic-reverse-engineering/captures/20261012_161748_blit-timing.csv"
+  ],
+  "returncode": 0,
+  "csv": "20261012_161748_blit-timing.csv",
+  "csv_bytes": 1572912
+}

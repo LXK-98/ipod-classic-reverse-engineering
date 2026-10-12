@@ -52,4 +52,8 @@ the capture is a throwaway. Read the note column.
 | `20260802_131144_dryrun` | 100 MS/s | 24 | 32576 | 64 | Post-restore validation (retry after the analyzer dropped off USB). VRF back on pin 26, P07 back on CH3, switch on EXT. |
 | `20260802_131348_dryrun` | 20 MS/s | 24 | 32766 | 2 | Final frame reconstruction. 2 bursts x 16127 @20MS/s: burst 1 absorbs the window setup and the memcpy gap, burst 2 lands mid-pixel-stream for ~1340… |
 | `20260803_203836_init-burst` | 20 MS/s | 24 | 32764 | 10 | Full 152-write wake init. 10 bursts @20MS/s: 6 NOPs, the 140-write register block, and the 3 trailing pairs after the 30/60/150ms sleeps. |
+| `20261012_154402_power-seq` *(failed, no data)* | 1 MS/s | 8 | 131071 | 1 | STAGE 0 pipeline validation, NOT real data. iPod OFF, VRF from 1k/1k divider off analyzer 3v3 (1.6V), switch EXT. Trigger ch0 driven by a manual ju… |
+| `20261012_161426_power-seq` *(failed, no data)* | 1 MS/s | 8 | 131071 | 1 | STAGE 0 RIG VALIDATION, not power-seq data despite the preset name. iPod ON (battery, charger out), live screen traffic. VRF from 1k/1k divider off… |
+| `20261012_161634_power-seq` | 1 MS/s | 8 | 131071 | 1 | STAGE 0 RIG VALIDATION retry with pre=1024. iPod ON (battery), scrolling. Same rig as the three preceding no-fire attempts; ONLY pre-trigger size c… |
+| `20261012_161748_blit-timing` | 20 MS/s | 24 | 32767 | 1 | STAGE 0 RIG VALIDATION, exact replication of the proven 20260801_221938 config (20 MS/s, pre 512, post 32255, 24ch, trigger ch19=P27=/WR falling). … |
 

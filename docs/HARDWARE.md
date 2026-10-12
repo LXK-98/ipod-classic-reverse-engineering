@@ -86,6 +86,37 @@ generates it. Output CSV is a header row of channel names then one row per sampl
 Sample depth: **131 071** (≤8 channels) / **65 535** (≤16) / **32 767** (≤24), and the
 channels used must be the first N of the device.
 
+⚠️ **Those depths are documented tiers, not validated limits.** No capture in this project
+has ever armed with a pre-trigger above **1024 samples** — confirmed by controlled test on
+2026-10-12, where two otherwise identical captures differed only in that parameter. The
+true ceiling is somewhere in (1024, 8000] and has not been bisected. An over-large
+configuration does not error: the device simply never arms, and `TerminalCapture` waits
+forever showing the same message it shows while armed. `tools/capture.py` now caps `--pre`
+accordingly; to widen the pre-trigger window in *time*, lower `--frequency`. The sample
+depth tiers themselves are sound — the 8-channel tier has returned its full 131 071
+samples. See
+[finding 14](FINDINGS.md#14-a-silent-no-arm-is-indistinguishable-from-no-trigger-yet).
+
+**Telling "armed" from "downloading":** there is no progress output, so read
+`/proc/<pid>/io` on the `TerminalCapture` process — `rchar` static means still waiting for
+a trigger, `rchar` climbing means the trigger fired and samples are transferring.
+
+### The TRG pin, and cascading
+
+`TRG` is a trigger **output**, not an input. The complex/fast trigger GPIOs are exposed
+through a diode so the signal can trigger an external instrument such as an oscilloscope,
+at 20 ns (`fast`) / 35 ns (`complex`) delay. It cannot start a capture: the driver's
+`TriggerType` enum holds only `Edge`, `Complex`, `Fast` and `blast`, with no external
+member and no external-trigger field in the session schema. Because it is driven from the
+complex/fast GPIOs it does **not** assert on `edge`, which is what every preset in
+`tools/capture.py` currently uses.
+
+Cascading analyzers uses the **separate 3-pin connector pair** — male header and female
+socket on opposite board edges, joined with two or three Dupont wires, central pin unused
+and reserved. Up to five boards can be chained. Chaining LA‑A and LA‑B would give 48
+channels, enough to capture all 18 data lanes together with the rails and every control
+line, which one board cannot do.
+
 ### Level shifting — the critical setting
 
 Panel logic is **1.8 V**. The shifter's reference switch has `3v3`, `5v0` and `EXT`

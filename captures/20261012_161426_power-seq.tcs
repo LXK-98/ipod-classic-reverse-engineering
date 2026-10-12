@@ -1,0 +1,54 @@
+{
+  "Frequency": 1000000,
+  "PreTriggerSamples": 65536,
+  "PostTriggerSamples": 65535,
+  "LoopCount": 0,
+  "MeasureBursts": false,
+  "CaptureChannels": [
+    {
+      "ChannelNumber": 0,
+      "ChannelName": "P01",
+      "Hidden": false
+    },
+    {
+      "ChannelNumber": 1,
+      "ChannelName": "P02",
+      "Hidden": false
+    },
+    {
+      "ChannelNumber": 2,
+      "ChannelName": "P07",
+      "Hidden": false
+    },
+    {
+      "ChannelNumber": 3,
+      "ChannelName": "P09",
+      "Hidden": false
+    },
+    {
+      "ChannelNumber": 4,
+      "ChannelName": "P10",
+      "Hidden": false
+    },
+    {
+      "ChannelNumber": 5,
+      "ChannelName": "P11",
+      "Hidden": false
+    },
+    {
+      "ChannelNumber": 6,
+      "ChannelName": "P12",
+      "Hidden": false
+    },
+    {
+      "ChannelNumber": 7,
+      "ChannelName": "P13",
+      "Hidden": false
+    }
+  ],
+  "TriggerType": 0,
+  "TriggerChannel": 2,
+  "TriggerInverted": false,
+  "TriggerBitCount": 1,
+  "TriggerPattern": 0
+}

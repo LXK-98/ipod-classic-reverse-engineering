@@ -1,0 +1,73 @@
+{
+  "capture_id": "20261012_161426_power-seq",
+  "timestamp": "2026-10-12T16:16:32",
+  "preset": "power-seq",
+  "preset_description": "Phase 6 gap 1: rail sequencing at cold boot, 8 ch, +/-65 ms.",
+  "probe_map": "v1",
+  "note": "STAGE 0 RIG VALIDATION, not power-seq data despite the preset name. iPod ON (battery, charger out), live screen traffic. VRF from 1k/1k divider off analyzer 3v3 (1.6V), switch EXT. 8ch = first 8 of the documented 24ch map; trigger ch2 = P07 = TE rising, which pulses at 67.9 Hz whenever the panel is awake. Purpose: confirm the divider-referenced rig can trigger and download at all, after a manual jumper edge on ch0 failed to fire twice, and measure the 131071-sample download duration.",
+  "port": "/dev/serial/by-id/usb-Dr._Gusman_LogicAnalyzer_5033592712586E1F-if00",
+  "session": {
+    "Frequency": 1000000,
+    "PreTriggerSamples": 65536,
+    "PostTriggerSamples": 65535,
+    "LoopCount": 0,
+    "MeasureBursts": false,
+    "CaptureChannels": [
+      {
+        "ChannelNumber": 0,
+        "ChannelName": "P01",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 1,
+        "ChannelName": "P02",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 2,
+        "ChannelName": "P07",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 3,
+        "ChannelName": "P09",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 4,
+        "ChannelName": "P10",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 5,
+        "ChannelName": "P11",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 6,
+        "ChannelName": "P12",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 7,
+        "ChannelName": "P13",
+        "Hidden": false
+      }
+    ],
+    "TriggerType": 0,
+    "TriggerChannel": 2,
+    "TriggerInverted": false,
+    "TriggerBitCount": 1,
+    "TriggerPattern": 0
+  },
+  "command": [
+    "/home/alex/Documents/Code/ipod-classic-reverse-engineering/vendor/TerminalCapture",
+    "capture",
+    "/dev/serial/by-id/usb-Dr._Gusman_LogicAnalyzer_5033592712586E1F-if00",
+    "/home/alex/Documents/Code/ipod-classic-reverse-engineering/captures/20261012_161426_power-seq.tcs",
+    "/home/alex/Documents/Code/ipod-classic-reverse-engineering/captures/20261012_161426_power-seq.csv"
+  ],
+  "returncode": 143,
+  "csv": null,
+  "csv_bytes": 0
+}

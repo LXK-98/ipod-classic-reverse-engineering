@@ -7,7 +7,8 @@ which block driving the panel.
 
 ## 1. Which of pins 30 and 32 is /RD, and which is /RESET?
 
-**Status:** unresolved after five cold-boot attempts. Parked deliberately — see impact.
+**Status:** unresolved, and **less tested than it looks** — see the correction below. The
+five "failed" attempts never armed.
 
 Both are confirmed active-low control lines, idle high, never exercised during normal
 operation. They were placed as a pair by elimination: every other function on the 34-pin
@@ -15,13 +16,22 @@ flex is accounted for.
 
 ### What was tried
 
-| attempt | trigger | result |
+| attempt | trigger | recorded result |
 |---|---|---|
-| warm reset (Menu+Select) | P30 falling, then P32 falling | neither fired |
-| cold boot | P30 falling, then P32 falling | neither fired |
-| cold boot | P30 **rising** | did not fire |
-| cold boot | **/CS falling** (P29), 30 ms pre-trigger | did not fire |
-| cold boot | /CS falling, after rig validation | did not fire |
+| warm reset (Menu+Select) | P30 falling, then P32 falling | aborted (SIGINT) |
+| cold boot | P30 falling, then P32 falling | aborted (SIGINT) |
+| cold boot | P30 **rising** | aborted (SIGINT) |
+| cold boot | **/CS falling** (P29), 30 ms pre-trigger | aborted (SIGINT) |
+| cold boot | /CS falling, after rig validation | aborted (SIGINT) |
+
+> ⚠️ **CORRECTED 2026-10-12 — none of these is a negative result.** All five sidecars
+> (`20260802_125222`, `_125453`, `_125835`, `_130138`, `_130459`) record
+> `returncode: -2`, SIGINT: the captures were killed from the keyboard while still armed,
+> and `TerminalCapture` shows the same message whether waiting or downloading. All five
+> also used a pre-trigger of 8000 or 30000 samples, and **no capture in this project has
+> ever armed with a pre-trigger above 1024**
+> ([finding 14](FINDINGS.md#14-a-silent-no-arm-is-indistinguishable-from-no-trigger-yet)).
+> Whether these lines move during a cold boot is simply **unmeasured**.
 
 ### What was established along the way
 
@@ -36,14 +46,16 @@ flex is accounted for.
   window-setup commands decode byte-exactly at VREF = 1.6 V.
 - **(F) VREF on the `3v3` switch position does NOT work** — see FINDINGS.
 
-### The unexplained part
+### ~~The unexplained part~~ — WITHDRAWN 2026-10-12
 
-**/CS demonstrably goes low** — it frames every write burst, and we watched it do so with
-the same wiring minutes before and after. Yet a /CS falling-edge trigger never fires
-during a cold boot, across two attempts including one after the rig was validated. No
-explanation has been established. Candidate causes not yet tested: VREF sagging during the
-target's power-up transient, or the analyzer's edge detection behaving differently when an
-input is in an indeterminate state at arm time.
+This section previously argued that /CS demonstrably goes low, yet a /CS falling-edge
+trigger never fires during a cold boot, and treated that as an unexplained anomaly.
+
+**There is nothing to explain.** Both /CS attempts were SIGINT aborts carrying a
+30 000-sample pre-trigger — a configuration that has never armed. The analyzer was most
+probably never listening. The two candidate causes previously floated, VREF sag during the
+power-up transient and indeterminate inputs at arm time, remain untested but are no longer
+motivated by any evidence.
 
 ### Impact: low, with a trivial workaround
 
@@ -53,7 +65,10 @@ capability lost is resetting the panel — and if that is ever needed, the ident
 a five-second experiment on live hardware: pull one pin low and observe whether the
 display re-initialises.
 
-Five boots is already disproportionate to what the distinction is worth.
+Five boots looked disproportionate — but none of them actually tested anything, so the
+question is cheaper than its history suggests. One correctly-configured cold-boot capture
+would answer it, and the Stage 2 rail-sequencing capture records P30 and P32 anyway, so it
+may fall out for free.
 
 ## 2. ~~What is pin 34?~~ — RESOLVED 2026-08-02
 

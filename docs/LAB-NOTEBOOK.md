@@ -1662,3 +1662,115 @@ in **one contiguous burst**, which is what makes the block-level timing measurab
 (97.5 µs end to end, spacing histogram, mean 701 ns). In `20260801_212943` the block is
 twenty fragments, so only per-fragment spacing survives. It is also a deliberate,
 reproducible plan whose burst structure self-validates, rather than a lucky accident.
+
+### 2026-10-12 — The five cold-boot "failures" were operator aborts. The rig is fine
+
+**Action:** Resumed Phase 6 at gap 1 (rail power-up sequencing). Swept the capture set by
+content for existing rail evidence first, then tried to establish what an armed capture
+actually looks like before spending any boots.
+
+**(F) No capture has ever recorded a rail.** All 41 captures taken before today use the
+bus/control channel set; pins **26, 33 and 34 have never been assigned to a channel**.
+Gap 1 is genuinely unmeasured, not merely unanalysed.
+
+**(F) The five 2026-08-02 cold-boot attempts were aborted, not negative results.** Every
+one of `20260802_125222`, `_125453`, `_125835`, `_130138` and `_130459` records
+`returncode: -2` — **SIGINT**. They were killed from the keyboard while still armed. The
+code is meaningful, not noise: `20260801_213713` records `rc=1`, a genuine tool-reported
+failure, and a deliberate SIGTERM today recorded `rc=143`.
+
+So **"the analyzer does not fire during a cold boot" was never established.** The
+"unexplained" /CS result in OPEN-QUESTIONS §1 rested entirely on it, and parking /RD vs
+/RESET was premature.
+
+**Why this was easy to get wrong.** `capture.py` runs `subprocess.run` with **no timeout**,
+and TerminalCapture's entire output while armed is `Capture started, press Ctrl+C to stop.`
+— the same line whether it is waiting for a trigger, downloading, or refusing the
+configuration outright. The tool invites the Ctrl+C that destroys the capture and shows no
+progress either way.
+
+**(F) `/proc/<pid>/io` distinguishes the states.** `rchar` static = still armed; `rchar`
+climbing = triggered and transferring. This is the progress signal the tool does not give.
+
+**Four attempts, and the pair that matters is a controlled comparison.**
+
+| # | capture | config | result |
+|---|---|---|---|
+| 1 | `154402` | 8 ch, pre **65536**, trigger ch0 rising, manual jumper edge | no fire |
+| 2 | — | same capture still armed, GND-then-VREF touch on ch0 | no fire |
+| 3 | `161426` | 8 ch, pre **65536**, trigger ch2 = TE, ~20 s scrolling, 128 s armed | no fire |
+| 4 | `161634` | 8 ch, pre **1024** / post 130047, trigger ch2 = TE | **fired, rc=0, 131071 rows** |
+| 5 | `161748` | 24 ch, pre 512 / post 32255 @ 20 MS/s, trigger ch19 = /WR falling | fired, 32767 rows |
+
+**(3) and (4) differ in exactly one parameter.** Same 8 channels, same total of 131071,
+same trigger channel, same 1 MS/s, same rig, same session — only the pre-trigger changed,
+65536 → 1024. (3) sat armed for 128 s with TE demonstrably pulsing and never fired.
+(4) completed. That is a single-variable result.
+
+**A caution about how (4) was nearly misread.** It was recorded as "no fire" during the
+session on the strength of a static `rchar` at +6 s and +9 s. The panel had gone back to
+sleep, so TE had stopped; it woke later and the capture completed before the kill landed.
+The sidecar — `rc=0`, 131071 rows — was only noticed when the index was regenerated.
+**A live `rchar` check is a snapshot, not a verdict; the sidecar is the record.**
+
+**(F) The rig is healthy and the 1k/1k divider reference works.** `20261012_161748` decodes
+coherently: **2 writes, both `CMD 0x0000`**, /WR low **50–100 ns**, /CS low **600–650 ns**
+framing each write, all 18 data lanes constant 0 — which is exactly correct for `0x0000`,
+not the dead-bus signature it superficially resembles. P30/P32 constant high, as documented.
+
+On its own that was only a **partial** validation — two isolated NOPs, well short of the
+window-setup gold standard. Capture (4)'s nine clean TE periods (below) supersede it.
+
+**An aside worth recording:** the two NOPs are **1.0004 ms** apart, not the 1.28 ms of the
+documented wake prefix. Suspiciously exactly 1 ms, so probably a periodic write rather than
+a standby release. Unexplained, not chased.
+
+**(F) An oversized pre-trigger prevents arming, silently. This is the cause.** Confirmed
+by the (3)–(4) comparison above, and consistent with the whole history. Across all 44
+sidecars: **every one of the 35 successes used pre ∈ {64, 512, 1024}**, and **no capture
+with pre > 1024 has ever produced data (0 of 7: 8000 ×3, 30000 ×2, 65536 ×2)**. The two
+remaining failures sit below the ceiling and are independently explained —
+`20260801_213713` (`rc=1`, a genuine tool error, the USB drop-out) and `20260801_222235`
+(aborted, with a degenerate pre=1). The true ceiling lies somewhere in **(1024, 8000]** and
+has not been bisected; 1024 is simply the largest value ever observed to work.
+
+**Two candidate explanations are now dead:**
+
+- **8-channel mode works.** Capture (4) is the first 8-channel capture in the project's
+  history and it returned the full 131071 samples cleanly.
+- **A 131071-sample total is legal.** (3) and (4) both requested it; only (4) armed.
+
+**(F) This explains the five 2026-08-02 cold-boot attempts outright.** They used pre = 8000
+(×3) and 30000 (×2), both above the ceiling. They would never have armed no matter how long
+anyone waited. The SIGINT in each sidecar records an operator correctly observing nothing
+happen — but the root cause was a tooling bug, not impatience and not the hardware. The
+"unexplained" /CS anomaly in OPEN-QUESTIONS §1 was an artefact of it.
+
+**(F) TE independently reconfirmed, and measured over a long window for the first time.**
+From capture (4)'s 131 ms: **9 pulses, mean period 14.7227 ms = 67.92 Hz, width 57–58 µs,
+duty 0.39 %**, with ±1 µs jitter across 8 consecutive periods. Documented values were
+67.9 Hz / 14.73 ms / ~60 µs from much shorter windows. This is also the strongest rig
+validation of the day — far better than capture (5)'s two isolated NOPs.
+
+`capture.py` validated only the *total* against the channel-count tier and never `pre` on
+its own, so it emitted configs the device refuses without complaint. Now capped at 1024.
+
+**(F) TRG is a trigger OUTPUT, not an input.** `SharedDriver.dll`'s TriggerType enum holds
+only `Edge`, `Complex`, `Fast`, `blast` — no external member, and no external-trigger field
+in the session schema. Upstream documents the complex/fast trigger GPIOs as "exposed
+through a diode, so that signal can be used to trigger other devices like an
+oscilloscope", at 20 ns (fast) / 35 ns (complex) delay. Cascading uses the **separate 3-pin
+connector pair**, not TRG. **This matters for Stage 3:** the VC-1008 is single-channel, so
+each rail must be measured on its own boot, and TRG gives those boots a common hardware
+trigger. It only asserts on `complex`/`fast`; every preset here uses `edge`.
+
+**Method note.** The pre-trigger correlation came from tabulating pre/post/channels against
+csv-present across all 41 sidecars — the same content sweep that found the init (finding
+13), and it cost one query.
+
+The detour afterwards is the instructive part. On seeing one more failure I abandoned the
+correlation, declared 8-channel mode the suspect, and went off to replicate a 24-channel
+config — while the capture that actually confirmed the original hypothesis had already
+succeeded on disk, unnoticed. Two lessons: **a single apparent counter-example is not
+grounds to abandon a hypothesis the entire capture history supports**, and **check the
+sidecar before concluding anything from a live process probe.**

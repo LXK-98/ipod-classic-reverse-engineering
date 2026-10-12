@@ -1,0 +1,54 @@
+{
+  "Frequency": 1000000,
+  "PreTriggerSamples": 65536,
+  "PostTriggerSamples": 65535,
+  "LoopCount": 0,
+  "MeasureBursts": false,
+  "CaptureChannels": [
+    {
+      "ChannelNumber": 0,
+      "ChannelName": "V18_P26",
+      "Hidden": false
+    },
+    {
+      "ChannelNumber": 1,
+      "ChannelName": "V30_P33",
+      "Hidden": false
+    },
+    {
+      "ChannelNumber": 2,
+      "ChannelName": "VREF_P34",
+      "Hidden": false
+    },
+    {
+      "ChannelNumber": 3,
+      "ChannelName": "P30",
+      "Hidden": false
+    },
+    {
+      "ChannelNumber": 4,
+      "ChannelName": "P32",
+      "Hidden": false
+    },
+    {
+      "ChannelNumber": 5,
+      "ChannelName": "CS",
+      "Hidden": false
+    },
+    {
+      "ChannelNumber": 6,
+      "ChannelName": "WR",
+      "Hidden": false
+    },
+    {
+      "ChannelNumber": 7,
+      "ChannelName": "DC",
+      "Hidden": false
+    }
+  ],
+  "TriggerType": 0,
+  "TriggerChannel": 0,
+  "TriggerInverted": false,
+  "TriggerBitCount": 1,
+  "TriggerPattern": 0
+}

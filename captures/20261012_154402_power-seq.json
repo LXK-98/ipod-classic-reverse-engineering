@@ -1,0 +1,73 @@
+{
+  "capture_id": "20261012_154402_power-seq",
+  "timestamp": "2026-10-12T15:49:31",
+  "preset": "power-seq",
+  "preset_description": "Phase 6 gap 1: rail sequencing at cold boot, 8 ch, +/-65 ms.",
+  "probe_map": "v1",
+  "note": "STAGE 0 pipeline validation, NOT real data. iPod OFF, VRF from 1k/1k divider off analyzer 3v3 (1.6V), switch EXT. Trigger ch0 driven by a manual jumper touch from VREF to a DETACHED analyzer input. Purpose: measure arm->trigger->download->write timing at full 8ch/131071 depth, because the five 2026-08-02 cold-boot attempts all recorded rc=-2 (SIGINT, operator abort) and nobody knows how long a real capture takes to complete.",
+  "port": "/dev/serial/by-id/usb-Dr._Gusman_LogicAnalyzer_5033592712586E1F-if00",
+  "session": {
+    "Frequency": 1000000,
+    "PreTriggerSamples": 65536,
+    "PostTriggerSamples": 65535,
+    "LoopCount": 0,
+    "MeasureBursts": false,
+    "CaptureChannels": [
+      {
+        "ChannelNumber": 0,
+        "ChannelName": "V18_P26",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 1,
+        "ChannelName": "V30_P33",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 2,
+        "ChannelName": "VREF_P34",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 3,
+        "ChannelName": "P30",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 4,
+        "ChannelName": "P32",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 5,
+        "ChannelName": "CS",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 6,
+        "ChannelName": "WR",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 7,
+        "ChannelName": "DC",
+        "Hidden": false
+      }
+    ],
+    "TriggerType": 0,
+    "TriggerChannel": 0,
+    "TriggerInverted": false,
+    "TriggerBitCount": 1,
+    "TriggerPattern": 0
+  },
+  "command": [
+    "/home/alex/Documents/Code/ipod-classic-reverse-engineering/vendor/TerminalCapture",
+    "capture",
+    "/dev/serial/by-id/usb-Dr._Gusman_LogicAnalyzer_5033592712586E1F-if00",
+    "/home/alex/Documents/Code/ipod-classic-reverse-engineering/captures/20261012_154402_power-seq.tcs",
+    "/home/alex/Documents/Code/ipod-classic-reverse-engineering/captures/20261012_154402_power-seq.csv"
+  ],
+  "returncode": 143,
+  "csv": null,
+  "csv_bytes": 0
+}

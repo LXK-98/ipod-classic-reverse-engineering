@@ -347,3 +347,56 @@ another, and only a content-based search will find it.
 A useful side effect: the two init captures lose *different* writes (#105 and #150), so
 their union covers **152/152**. Redundant captures of the same event are not waste — the
 losses are uncorrelated.
+
+---
+
+## 14. A silent no-arm is indistinguishable from "no trigger yet"
+
+An over-large capture configuration makes the device fail to arm, and nothing in the
+toolchain says so. `TerminalCapture` prints `Capture started, press Ctrl+C to stop.` and
+then waits — identical output whether it is armed and waiting, downloading samples, or
+refusing the configuration outright. `capture.py` runs it with **no timeout**, so it waits
+forever.
+
+The failure therefore presents as operator patience running out. Five cold-boot captures
+on 2026-08-02 were recorded in both the notebook and OPEN-QUESTIONS as "did not fire".
+All five sidecars record `returncode: -2` — SIGINT. They were killed from the keyboard.
+Nothing about the analyzer's cold-boot behaviour was ever established, and an open question
+was parked on the strength of it.
+
+**Two diagnostics close this hole, and both were already available.**
+
+- **`/proc/<pid>/io`** — `rchar` static means still armed; `rchar` climbing means the
+  trigger fired and samples are transferring. The only reliable progress signal there is.
+- **The returncode in the sidecar** — `0` success, `1` genuine tool-reported failure,
+  `-2` SIGINT (operator Ctrl+C), `143` SIGTERM (killed). `capture.py` has been writing
+  this into every sidecar all along. It had simply never been read.
+
+**The cause is an oversized pre-trigger, confirmed by controlled test.** `20261012_161426`
+and `20261012_161634` are identical — 8 channels, 131071 total samples, same trigger
+channel, 1 MS/s, same rig, same session — and differ only in pre-trigger, 65536 against
+1024. The first sat armed for 128 s with its trigger signal demonstrably present and never
+fired; the second completed with `rc=0` and a full 131071 rows.
+
+The whole record agrees. Across 44 sidecars, **every one of the 35 successes used
+`pre` ∈ {64, 512, 1024}**, and **no capture with `pre > 1024` has ever produced data** —
+0 of 7 (8000 ×3, 30000 ×2, 65536 ×2). Only two failures sit below the ceiling, both
+independently explained: `20260801_213713` (`rc=1`, a genuine tool error) and
+`20260801_222235` (aborted, degenerate `pre=1`).
+
+The true ceiling lies somewhere in **(1024, 8000]** and has not been bisected; 1024 is
+simply the largest value ever observed to work, and `capture.py` now refuses anything above
+it. To widen the pre-trigger window in *time*, lower the sample rate instead.
+
+Two things this is **not**: the 8-channel tier works — that controlled test was the first
+8-channel capture ever taken here and it returned full depth — and a 131071-sample total is
+legal, since both captures requested it.
+
+**This also fully explains the five cold-boot attempts.** They used `pre` of 8000 (×3) and
+30000 (×2), above the ceiling. They could never have armed however long anyone waited. The
+SIGINT in each sidecar records an operator correctly observing nothing happen; the root
+cause was this bug, not impatience and not the hardware.
+
+**The general point:** a tool that cannot distinguish "waiting" from "broken" converts
+every configuration error into a false negative about the hardware. Record the returncode,
+and never read "no data" as "the signal was absent".
