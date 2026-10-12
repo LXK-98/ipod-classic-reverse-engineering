@@ -2236,3 +2236,31 @@ one lookup or one question away. The rule that would have caught all four: **sta
 mechanism as a hypothesis until the specification, the sidecar, or the person at the bench
 confirms it.** Being right about the *measurement* three times today was not matched by
 being right about the *reason*.
+
+### 2026-10-13 — **P21 rides with the analog reference.** And a rail-timing tool
+
+**Action:** no bench work. Wrote `tools/railseq.py` so the driver's milestone-1 rail
+captures go through the same arithmetic as the iPod's, and validated it against the
+committed captures first.
+
+**(F) It reproduces the gap 1 table exactly** on `20261012_171537`: P32 +0.090, VREF +0.130,
+VDDIO / /WR / /CS +218.310, P30 +218.320 ms.
+
+**(F) Power-down times come out one sample (40 µs) later than the notebook's** on
+`20261012_210640` (VREF +32.92 vs +32.88, 3.0 V +46.52 vs +46.48, …), uniformly. The tool
+references the actual VDDIO edge at sample 511. *Inference:* the original analysis used the
+nominal trigger index (pre = 512). Either way it is within the method's resolution, and
+nothing in DRIVING.md changes.
+
+**(F) Data lane P21 crosses threshold with the analog domain, not VDDIO, which nobody had
+reported.** On all three cold starts it rises right after the reference: +0.140 ms (`170354`),
++0.140 ms (`171537`) and +0.160 ms (`172903`, 40 µs resolution, the same sample as VREF).
+That is 218 ms before VDDIO exists. On power-down it falls at +32.48 ms, 0.44 ms *before* the
+reference. So it is the same shape as P32's early rise. **No cause is assigned.** A threshold
+detector cannot tell a driven 1.8 V level from ~1.2 V of leakage, and P02 (its replica) was
+not on a channel in these captures.
+
+**Driver consequence:** the breadboard driver will not reproduce this. Its bus is Hi-Z
+(SN74LVC8T245 VCC isolation) until VDDIO rises, then low. This is recorded as a deviation
+from the original, and as a suspect alongside reset timing if init fails to take. It is not
+grounds to change the design beforehand.
