@@ -131,6 +131,22 @@ The 610 ns figure is nowhere near a ceiling — but 309 ns still does not reach 
 full-frame update at the panel's native 67.9 Hz. Whether ~192 ns works remains open (gap 5
 below); this only narrows the gap you have to close.
 
+**A pixel burst's total duration is now measured**, which the analyzer's depth previously
+made impossible. Four consecutive bursts during boot, from their /CS envelopes at 40 µs
+resolution: **23.48, 23.44, 23.44, 23.48 ms**, starting every 25.40 ms.
+
+⚠️ **That duration does not identify the write rate**, because it constrains only the
+*product* of write count and cycle time. Two readings fit equally well:
+
+| reading | writes | cycle | duration |
+|---|---|---|---|
+| half the panel at the measured pixel rate | 38 400 (= 76 800 / 2 exactly) | 610 ns | 23.42 ms |
+| the whole panel in the fast regime | 76 800 | ~305 ns | 23.46 ms |
+
+The first is more parsimonious — 610 ns is a *direct* measurement of pixel writes, and
+38 400 is exactly half the panel. Settling it needs a high-rate capture triggered on /CS
+falling, to count writes inside one burst rather than time its envelope.
+
 **/CS** is held **low for the duration of a transfer burst** — measured at 99.6 % low
 throughout a pixel burst. It is not toggled per write. Assert before the first write of a
 burst, release after the last.
@@ -209,6 +225,29 @@ for e in tx:
 
 It opens `CMD 0x008, DATA 0x0808`. Every value is a **16-bit** register index or datum —
 this panel uses the 16-bit register command set, not 8-bit DCS.
+
+### When the original board runs it — MEASURED 2026-10-12
+
+Times are from the 3.0 V rail coming up (see [§1](#power-up-sequencing--measured-2026-10-12)):
+
+| t | event |
+|---|---|
+| +218.3 ms | 1.8 V VDDIO up; /WR and /CS rise with it |
+| **+615.6 ms** | **first LCD transfer** — /CS asserted 80 µs, the init register block |
+| +628.1 ms | **TE starts**, at 67.91 Hz from its very first pulse |
+| +877.6 ms | /CS asserted 40 µs — the init's trailing writes after its sleeps |
+| +879.5 ms | first pixel burst begins |
+
+The 261.8 ms gap between the two init blocks matches the sequence's own **240 ms of
+embedded sleeps**, which corroborates that this is `lcd_init_seq_23` executing.
+
+**This imposes no requirement on a driver.** The first transfer landing 397 ms after VDDIO
+is simply when Rockbox's bootloader got round to it; nothing indicates the panel needs the
+wait. The delay a driver actually has to respect is the post-reset one, which is still
+unknown ([gap 2](#known-gaps)).
+
+**TE is available 12.5 ms after the init block** and is correct immediately, so a driver can
+synchronise on it as soon as initialisation completes.
 
 The *firmware* variant of the same array (152 writes) is prefixed with six `CMD 0x0000`
 NOPs spaced 1.28 ms apart; that prefix releases the panel from deep standby and is only

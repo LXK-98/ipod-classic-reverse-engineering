@@ -129,9 +129,17 @@ spotted yet.
 
 ---
 
-## 4. Full-frame capture is out of reach
+## 4. Full-frame capture is out of reach — for *content*. Timing is reachable.
 
-**Status:** a hardware limit, not a gap in knowledge.
+**Status:** a hardware limit on content, **lifted for timing** as of 2026-10-12.
+
+> **Amended 2026-10-12.** The limit below is real for frame *content*: you cannot sample
+> 70 ns strobes across a whole frame with 131 071 samples. But frame *timing* is reachable
+> by going the other way — at **25 kS/s** the 32 767-sample budget spans **1.31 s**, which
+> holds several complete pixel bursts. Individual writes are invisible at 40 µs, but the
+> **/CS envelope of an entire burst** is not. That gave the first measured burst duration,
+> 23.44–23.48 ms ([DRIVING.md §3](DRIVING.md#3-bus-protocol)). Resolution and span trade
+> against each other; pick the one the question needs.
 
 A full frame is 76 800 pixels × 610 ns = **46.9 ms**, and reliably catching the 70–80 ns
 /WR pulse needs ≥20 MS/s → ~940 000 samples. The analyzer's deepest mode holds **131 071**.

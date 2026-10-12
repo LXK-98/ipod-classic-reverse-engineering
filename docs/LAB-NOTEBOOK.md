@@ -1853,3 +1853,66 @@ earlier warning that "powered off is not unpowered" does not apply to these thre
 catch a wrong number — it caught an unreliable *method*. Had the first capture gone
 straight into the record as fact, the number would have been right and the procedure behind
 it would have been one that works roughly half the time.
+
+### 2026-10-12 (later still) — **GAP 2 ANSWERED.** First transfer 397 ms after VDDIO
+
+**Action:** Same wiring, slowed to **25 kS/s** for a 1.31 s window (20.5 ms pre, 1290 ms
+post) at 40 µs resolution. Cold start by Rockbox software shutdown plus a button press —
+no battery pull. `20261012_172903`.
+
+**(F) The rail sequence reproduced a THIRD time, via a third boot method.** −0.04 / +0.08 /
++0.12 / +218.28 / +218.28 ms, consistent with both earlier runs within the coarser
+sampling. Three for three across battery reconnect, hold-switch release and software
+restart. The 218.3 ms analog-to-logic gap is settled.
+
+**(F) A software shutdown reaches 0 V on all three rails, but only after a decay.** The
+collaborator measured pin 26 at ~150 mV and then pin 33 at ~500 mV — pin 33 read *later*
+and *higher*, so the analog rail holds up longer than VDDIO on the way down. All three
+reached 0 after a few more seconds. **Battery pulls are no longer needed**; just wait for
+the decay before arming. This is the first data of any kind on power-down, and the
+direction is the reverse of the power-up order, which is the conservative expectation.
+Sequential DMM readings cannot establish a sequence, so it is a hint, not a measurement.
+
+**(F) The boot display timeline**, from /CS envelopes:
+
+| t | /CS asserted | reading |
+|---|---|---|
+| +218.28 ms | — (rises with VDDIO) | logic domain up |
+| **+615.64 ms** | **0.08 ms** | **first LCD transfer**; the init register block (documented 97.5 µs) |
+| +628.12 ms | — | **TE starts**, 67.91 Hz from the first pulse |
+| +877.56 ms | 0.04 ms | init's trailing writes |
+| +879.52 ms | 23.48 ms | first pixel burst |
+| +909.04 / +934.44 / +959.84 ms | 23.44 / 23.44 / 23.48 ms | further bursts, every 25.40 ms |
+
+**Gap 2's answer: +615.64 ms from the 3.0 V rail, i.e. +397.36 ms after VDDIO.** It imposes
+no driver requirement — that is just when the bootloader got round to it.
+
+**(F) The 261.8 ms gap between the two init blocks matches the sequence's own 240 ms of
+embedded sleeps**, which corroborates that what we are watching is `lcd_init_seq_23`
+running, inferred from envelope structure rather than decoded content.
+
+**(F) TE is correct from its very first pulse** — 45 pulses, mean period 14.7264 ms =
+67.91 Hz, starting 12.48 ms after the init block and 264 ms *before* any pixel data. The
+panel self-refreshes from GRAM and frames correctly long before anything is drawn.
+
+**(F) A pixel burst's total duration is measured for the first time: 23.44–23.48 ms.**
+OPEN-QUESTIONS §4 said full-frame capture is out of reach; that is true of frame *content*
+but not of frame *timing*, which falls out of a deliberately slow capture. §4 is amended.
+
+> ⚠️ **I initially called these "full frames in the fast regime" and that was an overclaim**,
+> corrected before it reached the docs. The envelope constrains only the *product* of write
+> count and cycle time:
+>
+> | reading | writes | cycle | duration |
+> |---|---|---|---|
+> | half the panel at the measured pixel rate | 38 400 (exactly 76 800/2) | 610 ns | 23.42 ms |
+> | the whole panel in the fast regime | 76 800 | ~305 ns | 23.46 ms |
+>
+> The half-frame reading is the more parsimonious: 610 ns is a *direct* measurement of pixel
+> writes, and 38 400 is exactly half the panel. Settling it needs a high-rate capture
+> triggered on /CS falling, counting writes inside one burst instead of timing its envelope.
+
+**Method note.** Two findings today came from *lowering* the sample rate, which this project
+had only ever raised. 100 kS/s answered rail ordering; 25 kS/s answered the init delay and
+burst duration. The depth budget is fixed, so rate and span trade directly — and the
+habit of maximising rate had quietly put a class of question out of reach.

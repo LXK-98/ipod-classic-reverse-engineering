@@ -1,0 +1,153 @@
+{
+  "capture_id": "20261012_172903_power-seq",
+  "timestamp": "2026-10-12T17:29:13",
+  "preset": "power-seq",
+  "preset_description": "Phase 6 gap 1: rail sequencing at cold boot, 24 ch, 328 ms.",
+  "probe_map": "v1",
+  "note": "GAP 2: rail to first command. 25 kS/s x 32767 = 1.31 s window (20.5ms pre, 1290ms post) at 40us resolution, same wiring as gap 1, trigger = 3.0V rail rising. Looking for the first /CS burst after VDDIO at the known +218.3ms. Cold start by ROCKBOX SOFTWARE SHUTDOWN then a button press - no battery pull. NOTE: rails DECAY over seconds after shutdown rather than snapping off; collaborator measured pin 26 ~150mV then pin 33 ~500mV (read later, so the 3.0V rail holds up longer than VDDIO on the way down, reverse of the power-up order), settling to 0 before this capture was armed. CAVEAT: at 40us/sample the init's 97.5us register block spans ~2 samples, enough to locate but not read; /WR and per-write /CS framing alias.",
+  "port": "/dev/serial/by-id/usb-Dr._Gusman_LogicAnalyzer_5033592712586E1F-if00",
+  "session": {
+    "Frequency": 25000,
+    "PreTriggerSamples": 512,
+    "PostTriggerSamples": 32255,
+    "LoopCount": 0,
+    "MeasureBursts": false,
+    "CaptureChannels": [
+      {
+        "ChannelNumber": 0,
+        "ChannelName": "P01",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 1,
+        "ChannelName": "V18_P26",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 2,
+        "ChannelName": "TE_P07",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 3,
+        "ChannelName": "P09",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 4,
+        "ChannelName": "P10",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 5,
+        "ChannelName": "P11",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 6,
+        "ChannelName": "P12",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 7,
+        "ChannelName": "P13",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 8,
+        "ChannelName": "V30_P33",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 9,
+        "ChannelName": "P15",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 10,
+        "ChannelName": "P16",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 11,
+        "ChannelName": "P18",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 12,
+        "ChannelName": "P19",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 13,
+        "ChannelName": "P20",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 14,
+        "ChannelName": "P21",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 15,
+        "ChannelName": "P22",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 16,
+        "ChannelName": "P23",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 17,
+        "ChannelName": "P24",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 18,
+        "ChannelName": "VREF_P34",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 19,
+        "ChannelName": "WR_P27",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 20,
+        "ChannelName": "DC_P28",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 21,
+        "ChannelName": "CS_P29",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 22,
+        "ChannelName": "P30",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 23,
+        "ChannelName": "P32",
+        "Hidden": false
+      }
+    ],
+    "TriggerType": 0,
+    "TriggerChannel": 8,
+    "TriggerInverted": false,
+    "TriggerBitCount": 1,
+    "TriggerPattern": 0
+  },
+  "command": [
+    "/home/alex/Documents/Code/ipod-classic-reverse-engineering/vendor/TerminalCapture",
+    "capture",
+    "/dev/serial/by-id/usb-Dr._Gusman_LogicAnalyzer_5033592712586E1F-if00",
+    "/home/alex/Documents/Code/ipod-classic-reverse-engineering/captures/20261012_172903_power-seq.tcs",
+    "/home/alex/Documents/Code/ipod-classic-reverse-engineering/captures/20261012_172903_power-seq.csv"
+  ],
+  "returncode": 0,
+  "csv": "20261012_172903_power-seq.csv",
+  "csv_bytes": 1572937
+}
