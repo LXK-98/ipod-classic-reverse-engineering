@@ -208,11 +208,22 @@ and 21/2 carry identical data**, each being a replicated channel MSB.
 > interface is 18 lanes wide, and RGB666 is the natural interpretation of 6 lanes per
 > channel.
 >
-> **Test it early.** Write a value where a pair differs — e.g. red = `0b111110` — and see
-> whether the panel renders the expected shade. If the pairs turn out to be tied inside
-> the panel, fall back to driving each pair together, which reduces you to 5 effective
-> bits on red and blue and exactly reproduces Rockbox's behaviour. Either way the panel
-> works; only the achievable colour depth differs.
+> **The SoC cannot perform this test — established 2026-10-12.** On data writes (D/C = 1)
+> the SoC ties both pins of each pair to a *single* APB bit: **bit 10 drives pins 9 and 14,
+> bit 4 drives pins 21 and 2.** The tie is structural, not value-dependent, so no 16-bit
+> word splits a pair and no Rockbox change — including switching frame output to
+> `LCD_MODE_P18` — can produce one. Confirmed across **14 896 data writes** spanning every
+> colour ever observed: zero genuine splits.
+>
+> On *command* writes the same pins are independent, so the panel's input pins demonstrably
+> receive differing levels and are not shorted. What remains untested is only whether the
+> panel's **GRAM write path** treats 18 bits as 6-6-6.
+>
+> **Answering it therefore requires driving the panel externally** — an RP2040 or similar
+> putting a crafted 18-bit word on the bus. If the pairs turn out to be tied inside the
+> panel, fall back to driving each pair together, which reduces you to 5 effective bits on
+> red and blue and exactly reproduces Rockbox's behaviour. Either way the panel works; only
+> the achievable colour depth differs.
 >
 > **The original SoC cannot easily run this test (measured 2026-10-12).** It replicates
 > the pairs on every D/C = 1 write — in `LCD_MODE_P18` command mode as well as frame mode —
@@ -340,10 +351,23 @@ Be aware of these before committing hardware:
    panel accepts — not the panel's limits. 610 ns is definitely not a floor: **309 ns with
    a 30–40 ns /WR low is measured and accepted**. Whether it goes to ~192 ns, the rate a
    tear-free full-frame update at 67.9 Hz needs, is untested.
-6. **True 6-bit colour on red and blue is unverified** — see the warning in
-   [§4](#4-pixel-format). Worst case you get 5 effective bits per channel on red and blue,
-   matching Rockbox.
-7. **Our pin numbering has no known mapping to the SoC's `D0`–`D17`.** Everything here is
-   expressed in flex-pin numbers anchored to the interposer
-   ([HARDWARE.md](HARDWARE.md#pin-numbering-convention)). That is sufficient to drive the
-   panel, but do not try to correlate it with pin names in the Rockbox source.
+6. **True 6-bit colour on red and blue is unverified, and the SoC cannot settle it** — see
+   the warning in [§4](#4-pixel-format). The SoC ties each pair to one APB bit on data
+   writes, so only an external driver can present a split pair. Worst case you get 5
+   effective bits per channel on red and blue, matching Rockbox.
+7. **Our pin numbering has no known mapping to the SoC's `D0`–`D17`**, but the **APB bit →
+   flex pin** map for data writes is now derived (2026-10-12), which is the part that
+   matters in practice:
+
+   | APB bit | pin | APB bit | pin | APB bit | pin |
+   |---|---|---|---|---|---|
+   | 0 | P25 | 6 | P19 | 11 | P13 |
+   | 1 | P24 | 7 | P18 | 12 | P12 |
+   | 2 | P23 | 8 | P16 | 13 | P11 |
+   | 3 | P22 | 9 | P15 | 14–15 | undetermined (P01/P10) |
+   | 4 | **P21 + P02** | 10 | **P09 + P14** | | |
+
+   Bits 14–15 are constant across the init data set, so they cannot be separated from each
+   other or from P01/P10 by it. Everything else is expressed in flex-pin numbers anchored to
+   the interposer ([HARDWARE.md](HARDWARE.md#pin-numbering-convention)). The map above is
+   for **data** writes; command writes use a different arrangement (finding 3).

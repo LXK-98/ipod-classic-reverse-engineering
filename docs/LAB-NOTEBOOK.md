@@ -2104,3 +2104,50 @@ RGB565-expanded values. **The single-bit probe is still the right next step**, b
 has a 14 896-write baseline behind it instead of 76, and a sharper target: red MSB-set
 values are already well covered, so the probe's value lies in the words RGB565 cannot
 express.
+
+### 2026-10-12 (night) — **The probe is unnecessary.** The pairs are tied in the lane map
+
+**Action:** Rather than run the planned single-bit probe, derived the data-write lane map
+from existing evidence. The init matched 152/152 byte-exactly, so every captured data
+write's intended value is known from `refs/sequences.json` — correlating each APB bit
+against each flex pin across the 73 data writes determines the mapping directly.
+
+**(F) The APB bit → flex pin map for DATA writes:**
+
+| APB bit | pin | APB bit | pin | APB bit | pin |
+|---|---|---|---|---|---|
+| 0 | P25 | 6 | P19 | 11 | P13 |
+| 1 | P24 | 7 | P18 | 12 | P12 |
+| 2 | P23 | 8 | P16 | 13 | P11 |
+| 3 | P22 | 9 | P15 | 14–15 | undetermined (P01/P10) |
+| 4 | **P21 + P02** | 10 | **P09 + P14** | | |
+
+73 captured data writes against 73 expected, no gap, 14 of 16 bits resolved unambiguously.
+Bits 14–15 are constant across the init data set and so cannot be separated from each other
+or from P01/P10 by it.
+
+**(F) One APB bit drives both pins of each pair.** Bit 10 → pins 9 *and* 14; bit 4 → pins
+21 *and* 2. **The tie is wiring, not a value-dependent expansion.** So no 16-bit word can
+split a pair, and the `0x8000` hypothesis is dead: bit 15 never reaches P14, which is
+provable rather than merely unobserved, since P14 tracks bit 10 across writes where bit 10
+varies while bit 15 stays constant.
+
+**This closes the question the probe was designed to answer, and the probe is cancelled.**
+No Rockbox change can settle the pair test — not a plugin, not switching frame output to
+`LCD_MODE_P18`. The ARM toolchain and plugin work planned for it are not needed. Answering
+whether the *panel* honours a split pair requires driving the bus externally.
+
+**(F) Command writes use a different arrangement**, confirming finding 3 from the other
+direction: P14 tracks bit 10 alone, and both pairs differ. Caveat: this capture is missing
+expected write #150, which shifts the later command alignment and is why several command
+bits resolve to no pin. The data-write side is unaffected.
+
+**Also closes most of gap 7.** `DRIVING.md` said "our pin numbering has no known mapping to
+the SoC's D0–D17". The APB-bit map above is the practically useful half of that, and it came
+from data already on disk.
+
+**Method note.** The third finding in two days obtained by re-reading committed captures
+instead of collecting new ones — after the init (finding 13) and the pair replication at
+scale. In this case it also *cancelled* a planned bench session involving a toolchain build,
+a firmware plugin and a rewiring. Worth asking "what do the existing captures already
+determine?" before any experiment that needs new tooling.

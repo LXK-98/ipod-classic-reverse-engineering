@@ -97,8 +97,39 @@ in colours where the two interpretations diverge.
 > Marginal sampling on one pin.
 >
 > So across every colour the SoC has ever been observed to emit, **it never drives either
-> pair apart on a data write.** This bounds what the hardware *does*, not what it *could* do
-> with a crafted APB word — only a deliberate single-bit sweep can close that.
+> pair apart on a data write.**
+>
+> **MECHANISM FOUND the same day — it is structural, and no sweep is needed.** Correlating
+> the 73 init data writes against their known values from `refs/sequences.json` gives the
+> APB-bit → flex-pin map for data writes:
+>
+> | APB bit | pin | APB bit | pin | APB bit | pin |
+> |---|---|---|---|---|---|
+> | 0 | P25 | 6 | P19 | 11 | P13 |
+> | 1 | P24 | 7 | P18 | 12 | P12 |
+> | 2 | P23 | 8 | P16 | 13 | P11 |
+> | 3 | P22 | 9 | P15 | 14–15 | undetermined (P01/P10) |
+> | 4 | **P21 + P02** | 10 | **P09 + P14** | | |
+>
+> **One APB bit drives both pins of each pair.** Bit 10 → pins 9 *and* 14; bit 4 → pins 21
+> *and* 2. So the tie is wiring, not a value-dependent expansion: **no 16-bit word can split
+> a pair**, and the `0x8000` hypothesis is dead because bit 15 never reaches P14. P14 already
+> tracks bit 10 across writes where bit 10 varies and bit 15 does not, which rules out bit
+> 15 driving it.
+>
+> Consequently **no Rockbox change can settle the pair question** — not a plugin, not
+> switching frame output to `LCD_MODE_P18`. Only an external driver putting a crafted 18-bit
+> word on the bus can.
+>
+> On *command* writes the same pins are independent (P14 tracks bit 10 alone, and both pairs
+> differ), so the panel's inputs do receive differing levels and are not shorted. The
+> command-side correlation carries an alignment caveat: `20260803_203836` is missing expected
+> write #150, which is why several command bits resolve to no pin. The data side had 73
+> captured against 73 expected with no gap.
+>
+> The map is derived from command-mode data writes (`LCD_MODE_P18`, D/C = 1). Frame-mode
+> pixel writes were not correlated against known values, but the pairs never split across
+> ~14 900 of them either, so the same tie evidently applies there.
 
 ---
 
