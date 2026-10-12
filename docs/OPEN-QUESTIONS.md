@@ -7,8 +7,8 @@ which block driving the panel.
 
 ## 1. Which of pins 30 and 32 is /RD, and which is /RESET?
 
-**Status:** unresolved, and **less tested than it looks** — see the correction below. The
-five "failed" attempts never armed.
+**Status:** unresolved, but **no longer untested** — the two pins are now known to behave
+differently at power-up (see below). The five "failed" 2026-08-02 attempts never armed.
 
 Both are confirmed active-low control lines, idle high, never exercised during normal
 operation. They were placed as a pair by elimination: every other function on the 34-pin
@@ -56,6 +56,27 @@ trigger never fires during a cold boot, and treated that as an unexplained anoma
 probably never listening. The two candidate causes previously floated, VREF sag during the
 power-up transient and indeterminate inputs at arm time, remain untested but are no longer
 motivated by any evidence.
+
+### NEW 2026-10-12: the two pins behave differently at power-up
+
+The gap 1 rail-sequencing captures separate them for the first time, across two cold starts:
+
+| pin | crosses threshold | relative to |
+|---|---|---|
+| **P32** | +0.09–0.10 ms | with the **analog** rails |
+| **P30** | +218.31–218.32 ms | 10 µs **after VDDIO** |
+
+This does not yet say which is which, but it is the first measured asymmetry. P30 rising
+just after the logic rail settles is the more reset-like behaviour of the two.
+
+⚠️ **P32's early crossing needs confirming before it is believed.** The method is a ~1.1 V
+threshold detector, which cannot distinguish 1.8 V logic from 3.0 V from leakage. A pin
+reading high 218 ms before VDDIO exists is odd for a VDDIO-referenced line — measure the
+actual voltage on pin 32 during that window with a DMM or the scope.
+
+**Also (F): neither pin pulses.** Both show exactly one 0→1 edge and never return low
+across 322 ms, which supports reset being asserted by the rail being down and released by
+the line rising rather than by the SoC driving it low.
 
 ### Impact: low, with a trivial workaround
 

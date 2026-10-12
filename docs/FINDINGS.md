@@ -400,3 +400,33 @@ cause was this bug, not impatience and not the hardware.
 **The general point:** a tool that cannot distinguish "waiting" from "broken" converts
 every configuration error into a false negative about the hardware. Record the returncode,
 and never read "no data" as "the signal was absent".
+
+---
+
+## 15. The panel's analog domain is powered 218 ms before its logic domain
+
+The original board does not bring the panel's three supplies up together. It runs two
+phases, measured on two cold starts and reproduced to within one 10 µs sample:
+
+- **Analog first** — 3.0 V (pin 33), then the 1.54 V reference (pin 34) **130 µs** later.
+- **Logic 218.3 ms later** — 1.8 V VDDIO (pin 26), with /WR and /CS rising alongside it
+  because they are referenced to it and cannot lead it.
+
+The 218.3 ms interval reproduced to **0.005 %** across boots started by *different*
+mechanisms (battery reconnect and hold-switch release), which rules out software jitter.
+It is a deterministic programmed delay in the SoC's boot path, not a race.
+
+**The consequence that constrains hardware:** the 1.54 V reference leads VDDIO by 218 ms,
+so whatever buffers that reference **cannot be powered from VDDIO**. On the planned driver
+board that means the TLV9061 must run from the 3.0 V domain or its own earlier rail. A
+design that powers the reference buffer from the logic rail cannot reproduce the original
+ordering at all.
+
+**What this does not settle.** The method is a ~1.1 V threshold detector, so it yields
+*order*, not ramp shapes, rates or settling. It establishes what the original board does —
+enough to copy safely — but not that other orderings fail, and it says nothing whatever
+about power-down, which remains uncaptured. There is also no reason to think the 218 ms
+delay itself is required; preserve the order, not the duration.
+
+Full sequence table and driver guidance in
+[DRIVING.md §1](DRIVING.md#power-up-sequencing--measured-2026-10-12).

@@ -1774,3 +1774,82 @@ config — while the capture that actually confirmed the original hypothesis had
 succeeded on disk, unnoticed. Two lessons: **a single apparent counter-example is not
 grounds to abandon a hypothesis the entire capture history supports**, and **check the
 sidecar before concluding anything from a live process probe.**
+
+### 2026-10-12 (later) — **GAP 1 ANSWERED.** The analog domain leads the logic domain by 218 ms
+
+**Action:** Rewired the rails onto silkscreen CH2/CH9/CH19 (pins 26/33/34), displacing P02,
+P14 and P25 — the two MSB replicas and one blue lane, none load-bearing. Validated, then
+captured two cold starts. **First capture of these three pins in the project's history.**
+
+**(F) Pre-flight passed on every channel** (`20261012_165816`, iPod running): all three rail
+channels constant 1 — including `VREF_P34`, whose 1.54 V against a ~1.1 V threshold is the
+thinnest margin of the three and the main open risk — TE 22 pulses at **67.89 Hz**, width
+50–60 µs, all 15 remaining data lanes active, P30/P32 idle high.
+
+**(F) The rail sequence, reproduced to one sample.** Threshold crossings at ~1.1 V relative
+to the 3.0 V rail:
+
+| signal | `170354` (battery reconnect) | `171537` (hold switch) | delta |
+|---|---|---|---|
+| 3.0 V `V30_P33` | 0.000 ms | 0.000 ms | — (trigger) |
+| `P32` | +0.100 ms | +0.090 ms | −10 µs |
+| 1.54 V `VREF_P34` | +0.130 ms | +0.130 ms | **0** |
+| 1.8 V `V18_P26` | +218.300 ms | +218.310 ms | +10 µs |
+| `P30` | +218.310 ms | +218.320 ms | +10 µs |
+| `WR_P27`, `CS_P29` | +218.300 ms | +218.310 ms | +10 µs |
+
+±10 µs is exactly one sample at 100 kS/s, so the runs agree to the limit of the method.
+All transitions are **single and monotonic** — no glitching, no brown-out, no rail that
+rises and falls.
+
+**(F) The 218.3 ms gap is deterministic.** It reproduced to 0.005 % across two boots
+started by *different mechanisms* — battery reconnect and hold-switch release. That rules
+out software jitter: it is a programmed delay in the SoC's boot path, measured from the
+3.0 V rail. Phase 1 is the analog domain (3.0 V, then the reference 130 µs later); phase 2,
+218 ms on, is the logic domain. /WR and /CS rise *with* VDDIO because they are referenced
+to it and cannot lead it.
+
+**Driver consequence that bites hardest:** the 1.54 V reference leads VDDIO by 218 ms, so
+the **TLV9061 buffering it cannot be powered from VDDIO** — it must run from the 3.0 V
+domain or its own earlier rail. That was a hypothesis raised at the start of the day and is
+now a hardware constraint. Written into `DRIVING.md` §1.
+
+**(F) P30 and P32 behave differently at power-up — the first measurement that separates
+them.** P32 crosses with the analog rails (+0.09 ms); P30 crosses 10 µs *after* VDDIO.
+Five cold boots in August never distinguished these two pins. It does not yet say which is
+/RD and which is /RESET.
+
+> ⚠️ **Do not over-read P32.** A threshold detector cannot tell 1.8 V logic from 3.0 V from
+> ~1.2 V of leakage. P32 reading high 218 ms *before* VDDIO exists is odd for a
+> VDDIO-referenced line, so that early crossing needs a DMM or scope confirmation of the
+> actual voltage before anyone concludes anything from it.
+
+**(F) No reset pulse exists in the window.** Both P30 and P32 show exactly one 0→1 edge and
+never return low across 322 ms. Direct support for the August hypothesis that reset is
+asserted by the rail being down and released by the line rising, not by the SoC pulling the
+line low.
+
+**(F) No init traffic within 322 ms of the 3.0 V rail.** /WR has exactly one edge — its
+rise with VDDIO — and zero aliasing hits, against 488 aliased edges when the bus was
+active in the pre-flight. The bus was genuinely idle. Gap 2 (rail to first command) lies
+beyond this window.
+
+**(F) A cold start can abort, leaving the 3.0 V rail high for 3.700 ms before collapsing**
+with nothing else following (`20261012_171110`). The panel tolerates it. Recorded in
+`DRIVING.md` as a condition a driver should survive.
+
+**Method: the hold switch beats battery reconnect.** Battery out → **hold switch locked**
+→ battery in (firmly seated) → iPod stays off with all three rails confirmed at 0 V by DMM
+→ arm → unlock hold to boot. Reconnecting the battery by hand bounces, and a bounce burns
+the capture: `171110` triggered on a false start and spent its whole window on it. The hold
+switch is a clean mechanical action that touches nothing electrical. **The collaborator's
+method, and it is the one to use.**
+
+It also answers a standing question: with the battery seated and hold locked, pins 26, 33
+and 34 all read **0 V**, so the panel rails are *not* part of the PMU standby domain. The
+earlier warning that "powered off is not unpowered" does not apply to these three.
+
+**Method note.** The reproducibility check earned its keep in an unexpected way. It did not
+catch a wrong number — it caught an unreliable *method*. Had the first capture gone
+straight into the record as fact, the number would have been right and the procedure behind
+it would have been one that works roughly half the time.

@@ -56,4 +56,8 @@ the capture is a throwaway. Read the note column.
 | `20261012_161426_power-seq` *(failed, no data)* | 1 MS/s | 8 | 131071 | 1 | STAGE 0 RIG VALIDATION, not power-seq data despite the preset name. iPod ON (battery, charger out), live screen traffic. VRF from 1k/1k divider off… |
 | `20261012_161634_power-seq` | 1 MS/s | 8 | 131071 | 1 | STAGE 0 RIG VALIDATION retry with pre=1024. iPod ON (battery), scrolling. Same rig as the three preceding no-fire attempts; ONLY pre-trigger size c… |
 | `20261012_161748_blit-timing` | 20 MS/s | 24 | 32767 | 1 | STAGE 0 RIG VALIDATION, exact replication of the proven 20260801_221938 config (20 MS/s, pre 512, post 32255, 24ch, trigger ch19=P27=/WR falling). … |
+| `20261012_165816_power-seq` | 0.1 MS/s | 24 | 32767 | 1 | PRE-FLIGHT after rewiring rails onto silkscreen CH2/CH9/CH19 (pins 26/33/34), retry after the analyzer dropped off USB and was reseated. iPod ON, b… |
+| `20261012_170354_power-seq` | 0.1 MS/s | 24 | 32767 | 1 | GAP 1: RAIL POWER-UP SEQUENCING, first ever capture of pins 26/33/34. Cold start by BATTERY RECONNECT with the iPod previously off and the battery … |
+| `20261012_171110_power-seq` | 0.1 MS/s | 24 | 32767 | 1 | GAP 1 REPRODUCIBILITY CHECK, identical method to 20261012_170354: iPod powered off then battery removed, capture armed with all rails at 0, cold st… |
+| `20261012_171537_power-seq` | 0.1 MS/s | 24 | 32767 | 1 | GAP 1 REPEAT via HOLD-SWITCH cold start, a better method than battery reconnect. Sequence: battery out -> hold switch LOCKED -> battery in (firmly … |
 

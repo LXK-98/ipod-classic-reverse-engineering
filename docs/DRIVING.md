@@ -22,6 +22,42 @@ Companion documents: [PINOUT.md](../PINOUT.md) for the pin table,
 Pin 34 is easy to overlook. It is not a rail the panel generates — the logic board drives
 it, confirmed by it still reading 1.54 V with the display flex disconnected.
 
+### Power-up sequencing — MEASURED 2026-10-12
+
+The original board brings the **analog domain up first and the logic domain ~218 ms later**.
+Times are threshold crossings relative to the 3.0 V rail, reproduced across two cold starts
+to within one 10 µs sample:
+
+| t | event |
+|---|---|
+| **0** | **3.0 V** panel supply (pin 33) |
+| +0.09–0.10 ms | pin 32 (one of /RD, /RESET — see [§2](#2-reset)) |
+| **+0.13 ms** | **1.54 V** analog reference (pin 34) |
+| **+218.3 ms** | **1.8 V** VDDIO (pin 26), and /WR and /CS with it |
+| +218.31 ms | pin 30 (the other of /RD, /RESET) |
+
+**What a driver should copy:**
+
+1. **3.0 V first, then the 1.54 V reference, then 1.8 V VDDIO last.** This order is what
+   the panel has been powered with for its whole service life, so it is known-safe.
+2. **Never drive VDDIO, or any bus signal, before the 3.0 V rail is up.** /WR and /CS do
+   not rise until VDDIO does — they are referenced to it and cannot lead it.
+3. **The buffer generating the 1.54 V reference must not be powered from VDDIO.** The
+   reference leads VDDIO by 218 ms, so it has to run from the 3.0 V domain or its own
+   earlier rail. This is a hard constraint on the driver board, not a preference.
+4. **The 218 ms gap is almost certainly not required.** It reproduced to 0.005 %, so it is
+   a deterministic programmed delay in the SoC's boot path rather than a panel requirement.
+   Preserve the *order*; there is no evidence the panel needs the *delay*.
+
+⚠️ **What this does NOT establish.** The measurement is threshold-based at ~1.1 V, so it
+gives ordering, not ramp shapes, ramp rates or settling behaviour. It shows what the
+original board does — which is sufficient to copy — but **not** that other orderings are
+unsafe, and **nothing at all about power-down sequencing**, which was never captured. The
+conservative reading is: bring rails up in this order, and take them down in reverse.
+
+**Incidentally measured:** a cold start that aborts can leave the 3.0 V rail high for
+**3.7 ms and then collapse** with nothing else following, and the panel tolerates it.
+
 **Logic levels.** All bus signals are **1.8 V CMOS**. If you drive from a 3.3 V part you
 need level shifting; note that a TXU0104 referenced to 3.3 V will **not** read 1.8 V
 reliably (its V<sub>T+</sub> max is 1.92 V, above a 1.8 V logic high).
@@ -210,9 +246,13 @@ Whatever drives it needs **1.8 V I/O** or level shifting in the drive direction.
 
 Be aware of these before committing hardware:
 
-1. **Power-up sequencing is not characterised.** The order and timing of 1.8 V, 3.0 V and
-   the 1.54 V reference were never captured. Panels in this family are usually tolerant,
-   but if the panel fails to initialise this is the first thing to investigate.
+1. ~~**Power-up sequencing is not characterised.**~~ **MEASURED 2026-10-12** — 3.0 V, then
+   the 1.54 V reference at +0.13 ms, then 1.8 V VDDIO at +218.3 ms. Reproduced across two
+   cold starts to within one sample. See
+   [§1 Power-up sequencing](#power-up-sequencing--measured-2026-10-12).
+   **Still open from this:** ramp shapes and rates (the method is threshold-based, so it
+   gives order only), whether other orderings would also work, and **power-down
+   sequencing**, which remains entirely uncaptured.
 2. **Reset pulse width and post-reset delay are unknown** — never observed.
 3. **Which of pins 30/32 is /RESET is unresolved.**
 4. **The tolerance on pin 34's 1.54 V reference is untested.**
