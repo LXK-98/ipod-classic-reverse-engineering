@@ -33,6 +33,8 @@ def main() -> int:
             "bursts": s.get("LoopCount", 0) + 1,
             "note": (d.get("note") or "").strip(),
             "probe_map": d.get("probe_map", ""),
+            "invalid": bool(d.get("invalid")),
+            "invalid_reason": (d.get("invalid_reason") or "").strip(),
         })
 
     out = ["# Capture index", "",
@@ -51,12 +53,28 @@ def main() -> int:
         if len(note) > 150:
             note = note[:147] + "…"
         mark = "" if r["ok"] else " *(failed, no data)*"
+        if r["invalid"]:
+            mark = " ⛔ **INVALID — EXCLUDE FROM SWEEPS**"
+            note = f"**{r['invalid_reason'].replace('|', '/')}**"
         out.append(f"| `{r['id']}`{mark} | {rate} | {r['ch']} | {r['samples']} | "
                    f"{r['bursts']} | {note} |")
     out.append("")
+
+    bad = [r for r in rows if r["invalid"]]
+    if bad:
+        out += ["## ⛔ Captures that must be excluded from analysis", "",
+                "These completed successfully and contain plausible-looking data that is",
+                "nonetheless wrong. Nothing about the capture itself signals this, so any",
+                "content sweep must skip them — use `capio.invalid_reason()`.", ""]
+        for r in bad:
+            out.append(f"- **`{r['id']}`** — {r['invalid_reason']}")
+        out.append("")
+
     (CAP / "INDEX.md").write_text("\n".join(out) + "\n")
     ok = sum(1 for r in rows if r["ok"])
-    print(f"wrote captures/INDEX.md — {len(rows)} sidecars, {ok} with data")
+    n_bad = len(bad)
+    extra = f", {n_bad} INVALID (exclude from sweeps)" if n_bad else ""
+    print(f"wrote captures/INDEX.md — {len(rows)} sidecars, {ok} with data{extra}")
     return 0
 
 

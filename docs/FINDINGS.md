@@ -225,6 +225,22 @@ The complementary failure is loud and therefore safe: with `VREF` absent the TXU
 `Ioff-float` feature forces every output high-Z, producing an unmistakable field of zeros
 rather than subtly bad data.
 
+**The bad capture is still in the evidence set, and that is now a trap.** Finding 13 moved
+this project from searching captures by *intent* to searching them by *content* — but a
+sweep over `captures/*.csv.gz` has no way to know a file is poisoned, because the capture
+reported success and its data looks plausible. `20260802_124256_dryrun` is exactly such a
+file.
+
+Demonstrated on 2026-10-12: a sweep checking whether the SoC ever drives the replicated
+colour-lane pairs apart returned **36 blue-pair splits, 29 of them from that one capture**.
+The real figure once it is excluded is 7 in 14 896 writes, all one-directional on a single
+pin — a different conclusion entirely.
+
+**Mechanism now in place:** such captures carry `"invalid": true` plus an `invalid_reason`
+in their sidecar, `capio.invalid_reason()` exposes it to every tool, and
+`tools/index_captures.py` renders them as ⛔ **INVALID** with a dedicated section in
+`captures/INDEX.md`. **Any content sweep must call it.**
+
 ### VREF cannot come from the device under test
 
 Referencing the shifter to the iPod's own 1.8 V rail works while the iPod is running, but

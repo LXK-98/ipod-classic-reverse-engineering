@@ -4,6 +4,8 @@
   "preset": "dryrun",
   "preset_description": "Pipeline validation against a Pico PWM of known freq and duty.",
   "probe_map": "v2-vref-3v3",
+  "invalid": true,
+  "invalid_reason": "VREF on the 3v3 switch position put the TXU0104 threshold (V(T+) max 1.92 V) above a 1.8 V logic high. 18 of 24 channels read constant 0 with zero edges; the data bus is unreadable. The capture reports success and returns plausible-looking values, so it must be EXCLUDED from any content sweep. See FINDINGS 'A level shifter referenced too high fails silently'. Demonstrated 2026-10-12: including this file in a pair-replication sweep produced 29 spurious blue-pair splits.",
   "note": "Threshold check with VREF switch on 3v3 (independent of the iPod). If 1.8V logic still decodes byte-exactly, the worst-case VT+ of 1.92V is not being hit in practice and we can use 3v3 for the cold-boot capture.",
   "port": "/dev/serial/by-id/usb-Dr._Gusman_LogicAnalyzer_5033592712586E1F-if00",
   "session": {

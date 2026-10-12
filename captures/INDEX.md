@@ -42,7 +42,7 @@ the capture is a throwaway. Read the note column.
 | `20260801_223723_dryrun` | 100 MS/s | 24 | 32576 | 64 | ORANGE fill (255,165,0): R5=31->63, G6=41=101001 (positions 5,3,0), B5=0. Resolves which of P01/P18 sits at green position 3 and which of P16/P19/P… |
 | `20260801_224147_dryrun` | 100 MS/s | 24 | 32576 | 64 | Custom background R=0 G=16 B=0 (RGB565 units). G6=16=010000 -> exactly one green lane high = the position-4 pin. Resolves P16 vs P19. |
 | `20260801_224807_dryrun` | 100 MS/s | 24 | 32576 | 64 | Green status bar at row 0. If it is the R=0 G=16 B=0 setting, exactly one green lane should be high = the position-4 pin, resolving P16 vs P19. |
-| `20260802_124256_dryrun` | 100 MS/s | 24 | 32576 | 64 | Threshold check with VREF switch on 3v3 (independent of the iPod). If 1.8V logic still decodes byte-exactly, the worst-case VT+ of 1.92V is not bei… |
+| `20260802_124256_dryrun` ⛔ **INVALID — EXCLUDE FROM SWEEPS** | 100 MS/s | 24 | 32576 | 64 | **VREF on the 3v3 switch position put the TXU0104 threshold (V(T+) max 1.92 V) above a 1.8 V logic high. 18 of 24 channels read constant 0 with zero edges; the data bus is unreadable. The capture reports success and returns plausible-looking values, so it must be EXCLUDED from any content sweep. See FINDINGS 'A level shifter referenced too high fails silently'. Demonstrated 2026-10-12: including this file in a pair-replication sweep produced 29 spurious blue-pair splits.** |
 | `20260802_125222_dryrun` *(failed, no data)* | 1 MS/s | 24 | 32766 | 1 | COLD BOOT /RESET hunt. VREF from a 1k/1k divider off the analyzer 3v3 (1.6V, independent of the target). Armed with the iPod OFF; trigger on P30 fa… |
 | `20260802_125453_dryrun` *(failed, no data)* | 1 MS/s | 24 | 32766 | 1 | COLD BOOT /RESET hunt, attempt 2: trigger on P32 falling. P30 did not pulse on a cold boot. VREF from 1k/1k divider off analyzer 3v3 (1.6V). |
 | `20260802_125835_dryrun` *(failed, no data)* | 1 MS/s | 24 | 32766 | 1 | COLD BOOT rising-edge timing. Both P30 and P32 sit at 0V while the iPod is off and rise at power-on; a falling-edge trigger could never fire (desig… |
@@ -63,4 +63,12 @@ the capture is a throwaway. Read the note column.
 | `20261012_172903_power-seq` | 0.025 MS/s | 24 | 32767 | 1 | GAP 2: rail to first command. 25 kS/s x 32767 = 1.31 s window (20.5ms pre, 1290ms post) at 40us resolution, same wiring as gap 1, trigger = 3.0V ra… |
 | `20261012_210039_power-seq` *(failed, no data)* | 0.005 MS/s | 24 | 32767 | 1 | POWER-DOWN SEQUENCING, first ever capture of this. 5 kS/s x 32767 = 6.55 s window (102ms pre, 6451ms post) at 200us resolution. Trigger = VDDIO (V1… |
 | `20261012_210640_power-seq` | 0.025 MS/s | 24 | 32767 | 1 | POWER-DOWN SEQUENCING, first ever capture of this. 25 kS/s (the slowest rate this project has actually got data from; 5 kS/s silently failed to arm… |
+
+## ⛔ Captures that must be excluded from analysis
+
+These completed successfully and contain plausible-looking data that is
+nonetheless wrong. Nothing about the capture itself signals this, so any
+content sweep must skip them — use `capio.invalid_reason()`.
+
+- **`20260802_124256_dryrun`** — VREF on the 3v3 switch position put the TXU0104 threshold (V(T+) max 1.92 V) above a 1.8 V logic high. 18 of 24 channels read constant 0 with zero edges; the data bus is unreadable. The capture reports success and returns plausible-looking values, so it must be EXCLUDED from any content sweep. See FINDINGS 'A level shifter referenced too high fails silently'. Demonstrated 2026-10-12: including this file in a pair-replication sweep produced 29 spurious blue-pair splits.
 

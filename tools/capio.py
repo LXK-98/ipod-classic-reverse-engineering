@@ -59,3 +59,19 @@ def sample_rate(path: Path) -> int | None:
     if sc:
         return sc.get("session", {}).get("Frequency")
     return None
+
+
+def invalid_reason(path: Path) -> str | None:
+    """Why this capture must not be analysed, or None if it is sound.
+
+    Some captures completed successfully and contain plausible-looking data that
+    is nonetheless wrong -- the known case is VREF on the 3v3 switch position,
+    which silently puts the shifter threshold above a 1.8 V logic high. Such a
+    capture reports success, so nothing stops a content sweep from including it.
+
+    ANY sweep over captures/*.csv.gz must skip captures where this returns a
+    reason. Omitting the check is not hypothetical: on 2026-10-12 a sweep for
+    replicated colour-lane pairs picked up 29 spurious splits from one such file.
+    """
+    sc = sidecar(path)
+    return sc.get("invalid_reason") if sc.get("invalid") else None
