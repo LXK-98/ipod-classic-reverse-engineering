@@ -7,9 +7,12 @@ Samsung S5L8702 — the revision Rockbox calls `ipod6g`).
 Everything here was **measured**, not inferred from documentation. Where the results
 disagree with the Rockbox source they are marked as such, with the evidence.
 
-**Status:** all six original goals complete, and the panel's initialisation sequence is
-now verified write-by-write on the bus (152/152). Remaining loose ends — none of which block
-building a driver — are in [docs/OPEN-QUESTIONS.md](docs/OPEN-QUESTIONS.md).
+**Status:** all six original goals complete, the panel's initialisation sequence is verified
+write-by-write on the bus (152/152), and **power sequencing is measured in both directions**
+— the analog domain leads the logic domain by 218 ms coming up, and the order reverses
+exactly going down. Remaining loose ends are in
+[docs/OPEN-QUESTIONS.md](docs/OPEN-QUESTIONS.md); the one that still blocks a driver *board*
+is the RGB666 pair test ([DRIVING.md §4](docs/DRIVING.md#4-pixel-format)).
 
 ---
 
@@ -23,9 +26,13 @@ building a driver — are in [docs/OPEN-QUESTIONS.md](docs/OPEN-QUESTIONS.md).
 | Bus | 8080-series parallel, **18-bit RGB666**, data latched on **rising edge of /WR** |
 | Write cycle | **610 ns** (1.64 MHz) — 70–80 ns low, 530–540 ns high |
 | Command writes | two regimes: **818 ns** (60–80 ns low) and **309 ns** (30–40 ns low) — both accepted by the panel |
-| Full frame | 76 800 writes ≈ **46.9 ms**, **one transfer per pixel** |
+| Full frame | 76 800 writes ≈ **46.9 ms** at 610 ns, **one transfer per pixel** |
+| Measured pixel burst | **23.44–23.48 ms** — either half the panel at 610 ns or all of it at ~305 ns; the envelope cannot tell them apart |
 | Init sequence | **146 writes**, 240 ms of sleeps — **all 152 wake writes verified byte-exact on the bus** |
-| Refresh (TE) | **67.9 Hz** |
+| **Power-up order** | **3.0 V → 1.54 V reference (+0.13 ms) → 1.8 V VDDIO (+218.3 ms)** — reproduced 3× across 3 boot methods |
+| **Power-down order** | **the exact mirror** — VDDIO → reference (+32.9 ms) → 3.0 V (+46.5 ms) |
+| First LCD write | **+397.4 ms after VDDIO**; TE starts 12.5 ms after the init block |
+| Refresh (TE) | **67.9 Hz** — measured 67.89–67.92 Hz, period 14.7227 ms, pulse 57–58 µs |
 | Backlight | **4 white LEDs**, **19.5 mA**, **12.76 V** at full brightness, low-side PWM |
 
 **[→ Full pinout: PINOUT.md](PINOUT.md)** (generated from [`pinout.json`](pinout.json))
