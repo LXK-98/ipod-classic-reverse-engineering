@@ -459,11 +459,25 @@ board that means the TLV9061 must run from the 3.0 V domain or its own earlier r
 design that powers the reference buffer from the logic rail cannot reproduce the original
 ordering at all.
 
+**Power-down mirrors it exactly** (measured the same day): VDDIO falls first, with every bus
+signal collapsing in the same sample because they are referenced to it; then the reference
+at +32.88 ms; then 3.0 V at +46.48 ms. Up is analog-first, down is logic-first, over 46.5 ms
+against 218 ms rising. So the conservative rule a designer would have guessed — up in one
+order, down in reverse — is what the hardware actually does.
+
+TE had already stopped more than 20.5 ms before VDDIO fell, so **the panel is quiesced by
+command before power is cut.** That command has not been captured; it is inferred from TE's
+absence.
+
 **What this does not settle.** The method is a ~1.1 V threshold detector, so it yields
 *order*, not ramp shapes, rates or settling. It establishes what the original board does —
-enough to copy safely — but not that other orderings fail, and it says nothing whatever
-about power-down, which remains uncaptured. There is also no reason to think the 218 ms
-delay itself is required; preserve the order, not the duration.
+enough to copy safely — but not that other orderings fail. There is also no reason to think
+the 218 ms rising delay is required; preserve the order, not the duration.
+
+On power-down specifically the rails **decay** rather than switch hard, so a threshold
+crossing conflates the PMU's switch-off order with each rail's RC constant — a rail with
+more bulk capacitance crosses later even if cut first. It is a faithful record of what the
+panel *experiences*, not of the PMU's switching order.
 
 Full sequence table and driver guidance in
 [DRIVING.md §1](DRIVING.md#power-up-sequencing--measured-2026-10-12).

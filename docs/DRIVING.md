@@ -52,8 +52,40 @@ to within one 10 µs sample:
 ⚠️ **What this does NOT establish.** The measurement is threshold-based at ~1.1 V, so it
 gives ordering, not ramp shapes, ramp rates or settling behaviour. It shows what the
 original board does — which is sufficient to copy — but **not** that other orderings are
-unsafe, and **nothing at all about power-down sequencing**, which was never captured. The
-conservative reading is: bring rails up in this order, and take them down in reverse.
+unsafe.
+
+### Power-down sequencing — MEASURED 2026-10-12
+
+**It is the exact mirror of power-up.** Times relative to VDDIO falling, on a Rockbox
+software shutdown:
+
+| t | event |
+|---|---|
+| **0** | **1.8 V VDDIO falls** — /WR, /CS and D/C fall in the same 40 µs sample |
+| **+32.88 ms** | **1.54 V** analog reference |
+| +34.04 ms | pin 32 |
+| **+46.48 ms** | **3.0 V** panel supply |
+| +47.08 ms | pin 30 |
+
+Up is 3.0 V → reference → VDDIO; down is VDDIO → reference → 3.0 V. The whole descent takes
+**46.5 ms**, against 218 ms on the way up.
+
+**What a driver should copy:**
+
+1. **Take the rails down in reverse: VDDIO first, then the reference, then 3.0 V.** Never
+   leave VDDIO (or any driven bus signal) alive after the 3.0 V rail has gone.
+2. **Stop driving the bus before VDDIO goes.** On the original every bus line collapses in
+   the same sample as VDDIO, because they are referenced to it.
+3. **Quiesce the panel before cutting power.** TE had already stopped more than 20.5 ms
+   before VDDIO fell, so the panel was put to sleep by command first. The command itself
+   has not been captured, but a driver should assume standby-then-power-off is expected.
+
+⚠️ **Caveat specific to power-down.** These rails are not switched hard — they **decay**,
+over seconds, through load and bulk capacitance. A ~1.1 V threshold crossing therefore
+conflates the PMU's switch-off order with each rail's RC time constant: a rail with more
+bulk capacitance crosses later even if it was cut first. So this is a faithful record of
+**what the panel experiences**, which is what matters for safety, but not necessarily of the
+PMU's switching order.
 
 **Incidentally measured:** a cold start that aborts can leave the 3.0 V rail high for
 **3.7 ms and then collapse** with nothing else following, and the panel tolerates it.
@@ -289,9 +321,13 @@ Be aware of these before committing hardware:
    the 1.54 V reference at +0.13 ms, then 1.8 V VDDIO at +218.3 ms. Reproduced across two
    cold starts to within one sample. See
    [§1 Power-up sequencing](#power-up-sequencing--measured-2026-10-12).
+   **Power-down measured too, and it mirrors power-up exactly** — VDDIO, then the
+   reference, then 3.0 V, over 46.5 ms. See
+   [§1 Power-down sequencing](#power-down-sequencing--measured-2026-10-12).
    **Still open from this:** ramp shapes and rates (the method is threshold-based, so it
-   gives order only), whether other orderings would also work, and **power-down
-   sequencing**, which remains entirely uncaptured.
+   gives order only), whether other orderings would also work, and the standby command the
+   original presumably issues before cutting power — inferred from TE having stopped, but
+   not itself captured.
 2. **Reset pulse width and post-reset delay are unknown** — never observed.
 3. **Which of pins 30/32 is /RESET is unresolved.**
 4. **The tolerance on pin 34's 1.54 V reference is untested.**

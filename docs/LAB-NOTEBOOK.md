@@ -1958,3 +1958,55 @@ actual specification was one web fetch away the whole time. **Look up the docume
 before theorising about a device's behaviour.** The bisection that would settle this is cheap
 now: TE gives an on-demand trigger, so vary pre alone at fixed rate, then rate alone at fixed
 pre.
+
+### 2026-10-12 (evening) — **POWER-DOWN MEASURED.** It is the exact mirror of power-up
+
+**Action:** `power-seq` at **25 kS/s** — the slowest rate this project has actually got data
+from — trigger VDDIO falling, armed with the iPod running and the screen awake, charger
+disconnected. Stop by Rockbox software shutdown. `20261012_210640`.
+
+**(F) The rails go down in exactly the reverse of the order they come up.** Times relative
+to VDDIO falling:
+
+| t | event |
+|---|---|
+| **0** | **VDDIO falls**; /WR, /CS and D/C fall in the *same 40 µs sample* |
+| **+32.88 ms** | 1.54 V reference |
+| +34.04 ms | P32 |
+| **+46.48 ms** | 3.0 V panel supply |
+| +47.08 ms | P30 |
+
+Up: 3.0 V → reference → VDDIO. Down: VDDIO → reference → 3.0 V. The whole descent takes
+**46.5 ms** against 218 ms rising. All transitions single and monotonic. Verified a real
+shutdown rather than a screen-sleep: all three rails reach 0 and stay there, and no traffic
+resumes — the check was written into the capture note before arming.
+
+**(F) The bus dies with the logic rail.** /WR, /CS and D/C cross in the same sample as
+VDDIO, which is what being referenced to it predicts, and a useful sanity check on the
+channels.
+
+**(F) P30 and P32 do NOT behave like bus lines at power-down.** They outlive VDDIO by 34 ms
+and 47 ms. P32 falls 1.2 ms after the reference; P30 falls 0.6 ms after the 3.0 V rail, last
+of everything. This is awkward for the "one of them is /RD" assumption — /RD belongs to the
+8080 bus and ought to die with VDDIO like the other three strobes. Both outliving it
+suggests both are weakly driven or high-impedance, with crossings set by decay rather than
+active drive. **No /RD-versus-/RESET assignment should be read out of this.**
+
+**(F) The panel is quiesced before power is cut.** TE shows **zero edges across the whole
+1.31 s window** despite the screen being awake when the capture was armed, so TE had already
+stopped more than 20.5 ms before VDDIO fell. Rockbox puts the panel to sleep by command
+first. The command itself was not captured — there is no /CS activity in the 20.5 ms
+pre-trigger window, so it happened earlier. Catching it needs a wider pre-trigger or a
+/CS-triggered capture during shutdown.
+
+> ⚠️ **Caveat that applies to power-down and not to power-up.** These rails **decay** rather
+> than being switched hard — the collaborator's DMM saw them still falling seconds after a
+> shutdown. A ~1.1 V threshold crossing therefore conflates the PMU's switch-off order with
+> each rail's RC time constant: a rail with more bulk capacitance crosses later even if it
+> was cut first. This is a faithful record of **what the panel experiences**, which is what
+> matters for not damaging it, but not necessarily of the PMU's switching order. On power-up
+> the rails are actively driven, so the ambiguity does not arise there.
+
+**Another data point on the silent no-arm.** 25 kS/s worked here; 5 kS/s failed minutes
+earlier with the same pre, post and channel count, and both are above the documented 3.1 kHz
+floor. Whatever the real constraint is, sample rate is implicated — see the entry above.

@@ -78,6 +78,21 @@ actual voltage on pin 32 during that window with a DMM or the scope.
 across 322 ms, which supports reset being asserted by the rail being down and released by
 the line rising rather than by the SoC driving it low.
 
+**(F) At power-down, neither pin behaves like a bus line.** /WR, /CS and D/C all collapse in
+the *same 40 µs sample* as VDDIO, being referenced to it. P30 and P32 do not — they outlive
+VDDIO by 34 ms and 47 ms respectively:
+
+| pin | falls, relative to VDDIO | lands just after |
+|---|---|---|
+| **P32** | +34.04 ms | the 1.54 V reference (+32.88 ms) |
+| **P30** | +47.08 ms | the 3.0 V rail (+46.48 ms) — last of everything |
+
+This is awkward for the "one of them is /RD" assumption, since /RD belongs to the 8080 bus
+and ought to die with VDDIO like the other three strobes. Both outliving it suggests both
+are weakly driven or high-impedance, with their crossings set by decay rather than active
+drive — so **no assignment of /RD versus /RESET should be read out of this.** It is further
+asymmetry, not an answer.
+
 ### Impact: low, with a trivial workaround
 
 Nothing here blocks Phase 6. A driver can hold **both** pins high permanently and operate

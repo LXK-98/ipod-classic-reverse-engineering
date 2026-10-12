@@ -1,0 +1,153 @@
+{
+  "capture_id": "20261012_210640_power-seq",
+  "timestamp": "2026-10-12T21:06:55",
+  "preset": "power-seq",
+  "preset_description": "Phase 6 gap 1: rail sequencing at cold boot, 24 ch, 328 ms.",
+  "probe_map": "v1",
+  "note": "POWER-DOWN SEQUENCING, first ever capture of this. 25 kS/s (the slowest rate this project has actually got data from; 5 kS/s silently failed to arm despite being above the documented 3.1kHz floor) x 32767 = 1.31 s window (20.5ms pre, 1290ms post) at 40us resolution. Trigger = VDDIO (V18_P26, ch1) FALLING, chosen because the DMM hint says the 3.0V rail holds up longer than VDDIO on the way down. Armed with the iPod RUNNING and SCREEN AWAKE so VDDIO is high and a falling edge is possible. Charger DISCONNECTED (finding 11; also a charging iPod will not power down cleanly). Intended stop: Rockbox software shutdown via Play/Pause. KNOWN LIMIT: if the 3.0V rail holds longer than 1.29 s after VDDIO falls, its crossing is outside the window - that is itself a result, not a failure. CHECK BEFORE LABELLING: if the panel slept rather than shut down, the 3.0V rail and reference will NOT fall and traffic will resume; label it a screen-sleep VDDIO drop instead. CAVEAT: rails DECAY rather than switch hard, so a ~1.1V crossing conflates switch-off order with RC decay constants - this is what the PANEL EXPERIENCES, not necessarily the PMU's switching order.",
+  "port": "/dev/serial/by-id/usb-Dr._Gusman_LogicAnalyzer_5033592712586E1F-if00",
+  "session": {
+    "Frequency": 25000,
+    "PreTriggerSamples": 512,
+    "PostTriggerSamples": 32255,
+    "LoopCount": 0,
+    "MeasureBursts": false,
+    "CaptureChannels": [
+      {
+        "ChannelNumber": 0,
+        "ChannelName": "P01",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 1,
+        "ChannelName": "V18_P26",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 2,
+        "ChannelName": "TE_P07",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 3,
+        "ChannelName": "P09",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 4,
+        "ChannelName": "P10",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 5,
+        "ChannelName": "P11",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 6,
+        "ChannelName": "P12",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 7,
+        "ChannelName": "P13",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 8,
+        "ChannelName": "V30_P33",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 9,
+        "ChannelName": "P15",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 10,
+        "ChannelName": "P16",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 11,
+        "ChannelName": "P18",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 12,
+        "ChannelName": "P19",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 13,
+        "ChannelName": "P20",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 14,
+        "ChannelName": "P21",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 15,
+        "ChannelName": "P22",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 16,
+        "ChannelName": "P23",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 17,
+        "ChannelName": "P24",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 18,
+        "ChannelName": "VREF_P34",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 19,
+        "ChannelName": "WR_P27",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 20,
+        "ChannelName": "DC_P28",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 21,
+        "ChannelName": "CS_P29",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 22,
+        "ChannelName": "P30",
+        "Hidden": false
+      },
+      {
+        "ChannelNumber": 23,
+        "ChannelName": "P32",
+        "Hidden": false
+      }
+    ],
+    "TriggerType": 0,
+    "TriggerChannel": 1,
+    "TriggerInverted": true,
+    "TriggerBitCount": 1,
+    "TriggerPattern": 0
+  },
+  "command": [
+    "/home/alex/Documents/Code/ipod-classic-reverse-engineering/vendor/TerminalCapture",
+    "capture",
+    "/dev/serial/by-id/usb-Dr._Gusman_LogicAnalyzer_5033592712586E1F-if00",
+    "/home/alex/Documents/Code/ipod-classic-reverse-engineering/captures/20261012_210640_power-seq.tcs",
+    "/home/alex/Documents/Code/ipod-classic-reverse-engineering/captures/20261012_210640_power-seq.csv"
+  ],
+  "returncode": 0,
+  "csv": "20261012_210640_power-seq.csv",
+  "csv_bytes": 1572937
+}

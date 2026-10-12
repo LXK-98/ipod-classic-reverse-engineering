@@ -62,4 +62,5 @@ the capture is a throwaway. Read the note column.
 | `20261012_171537_power-seq` | 0.1 MS/s | 24 | 32767 | 1 | GAP 1 REPEAT via HOLD-SWITCH cold start, a better method than battery reconnect. Sequence: battery out -> hold switch LOCKED -> battery in (firmly … |
 | `20261012_172903_power-seq` | 0.025 MS/s | 24 | 32767 | 1 | GAP 2: rail to first command. 25 kS/s x 32767 = 1.31 s window (20.5ms pre, 1290ms post) at 40us resolution, same wiring as gap 1, trigger = 3.0V ra… |
 | `20261012_210039_power-seq` *(failed, no data)* | 0.005 MS/s | 24 | 32767 | 1 | POWER-DOWN SEQUENCING, first ever capture of this. 5 kS/s x 32767 = 6.55 s window (102ms pre, 6451ms post) at 200us resolution. Trigger = VDDIO (V1… |
+| `20261012_210640_power-seq` | 0.025 MS/s | 24 | 32767 | 1 | POWER-DOWN SEQUENCING, first ever capture of this. 25 kS/s (the slowest rate this project has actually got data from; 5 kS/s silently failed to arm… |
 
