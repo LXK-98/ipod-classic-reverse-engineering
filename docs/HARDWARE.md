@@ -86,15 +86,25 @@ generates it. Output CSV is a header row of channel names then one row per sampl
 Sample depth: **131 071** (≤8 channels) / **65 535** (≤16) / **32 767** (≤24), and the
 channels used must be the first N of the device.
 
-⚠️ **Those depths are documented tiers, not validated limits.** No capture in this project
-has ever armed with a pre-trigger above **1024 samples** — confirmed by controlled test on
-2026-10-12, where two otherwise identical captures differed only in that parameter. The
-true ceiling is somewhere in (1024, 8000] and has not been bisected. An over-large
-configuration does not error: the device simply never arms, and `TerminalCapture` waits
-forever showing the same message it shows while armed. `tools/capture.py` now caps `--pre`
-accordingly; to widen the pre-trigger window in *time*, lower `--frequency`. The sample
-depth tiers themselves are sound — the 8-channel tier has returned its full 131 071
-samples. See
+The full documented limits (upstream, 04/02/2023). Minimum pre is 2, minimum post 512, and
+**frequency must be between 3.1 kHz and 100 MHz**:
+
+| mode | max pre | max post | max total |
+|---|---|---|---|
+| 8 channels | 98 303 | 131 069 | 131 071 |
+| 16 channels | 49 151 | 65 533 | 65 535 |
+| 24 channels | 24 576 | 32 765 | 32 767 |
+
+⚠️ **The device silently fails to arm on some configurations it documents as legal, and the
+cause is not understood.** It does not error: it simply never arms, and `TerminalCapture`
+waits forever showing the same message it shows while armed. Observed no-arms include
+`pre=65536` at 8 channels and `pre=8000` at 24 channels (both legal), and a capture at
+**5 kS/s** (legal) whose pre/post/channel shape worked minutes earlier at 25 kS/s. Every
+capture that *has* produced data used `pre` in {64, 512, 1024} and a rate of 20 kS/s or
+above. `tools/capture.py` enforces the documented limits and additionally guards `pre` at
+1024 — not a device limit, just proximity to what is known to work. Prefer lowering
+`--frequency` to widen the pre-trigger window in *time*, but note that 5 kS/s has failed.
+See
 [finding 14](FINDINGS.md#14-a-silent-no-arm-is-indistinguishable-from-no-trigger-yet).
 
 **Telling "armed" from "downloading":** there is no progress output, so read

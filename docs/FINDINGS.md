@@ -372,11 +372,16 @@ was parked on the strength of it.
   `-2` SIGINT (operator Ctrl+C), `143` SIGTERM (killed). `capture.py` has been writing
   this into every sidecar all along. It had simply never been read.
 
-**The cause is an oversized pre-trigger, confirmed by controlled test.** `20261012_161426`
-and `20261012_161634` are identical — 8 channels, 131071 total samples, same trigger
-channel, 1 MS/s, same rig, same session — and differ only in pre-trigger, 65536 against
-1024. The first sat armed for 128 s with its trigger signal demonstrably present and never
-fired; the second completed with `rc=0` and a full 131071 rows.
+> ⚠️ **CORRECTED LATER THE SAME DAY.** This finding originally said the cause was an
+> oversized pre-trigger. The upstream documented limits say otherwise, and the corrected
+> position is at the end of this section. The controlled observation below stands; the
+> explanation drawn from it did not.
+
+**A controlled pair.** `20261012_161426` and `20261012_161634` are identical — 8 channels,
+131071 total samples, same trigger channel, 1 MS/s, same rig, same session — and differ
+only in pre-trigger, 65536 against 1024. The first sat armed for 128 s with its trigger
+signal demonstrably present and never fired; the second completed with `rc=0` and a full
+131071 rows.
 
 The whole record agrees. Across 44 sidecars, **every one of the 35 successes used
 `pre` ∈ {64, 512, 1024}**, and **no capture with `pre > 1024` has ever produced data** —
@@ -392,10 +397,42 @@ Two things this is **not**: the 8-channel tier works — that controlled test wa
 8-channel capture ever taken here and it returned full depth — and a 131071-sample total is
 legal, since both captures requested it.
 
-**This also fully explains the five cold-boot attempts.** They used `pre` of 8000 (×3) and
-30000 (×2), above the ceiling. They could never have armed however long anyone waited. The
-SIGINT in each sidecar records an operator correctly observing nothing happen; the root
-cause was this bug, not impatience and not the hardware.
+### The documented limits, and why the explanation fails
+
+Upstream publishes exact limits (04/02/2023 update). Minimum pre is 2, minimum post 512,
+and **frequency must be between 3.1 kHz and 100 MHz**:
+
+| mode | max pre | max post | max total |
+|---|---|---|---|
+| 8 channels | **98 303** | 131 069 | 131 071 |
+| 16 channels | 49 151 | 65 533 | 65 535 |
+| 24 channels | **24 576** | 32 765 | 32 767 |
+
+Against those numbers the pre-trigger story collapses:
+
+- `pre=65536` at 8 channels is **legal** — well under 98 303 — yet failed twice.
+- `pre=8000` at 24 channels (three of the cold-boot attempts) is **legal** under 24 576.
+- Only `pre=30000` at 24 channels (the other two) genuinely exceeds a documented ceiling.
+- And on 2026-10-12 a capture at **5 kS/s** — above the documented 3.1 kHz floor, with a
+  pre/post/channel shape proven minutes earlier at 25 kS/s and 100 kS/s — **also failed to
+  arm**. Nothing about the pre-trigger changed; only the sample rate did.
+
+**So the cause is not understood.** What is solid: the device silently fails to arm on some
+configurations it documents as legal, every capture that has produced data used `pre` in
+{64, 512, 1024}, and the controlled 65536-vs-1024 pair is real. What is *not* solid is any
+causal account, including the one this finding first asserted. The five cold-boot attempts
+are explained as *silent no-arms* — which is the finding that matters — but not reliably by
+pre-trigger size.
+
+`capture.py` now checks the documented frequency range and per-mode pre ceilings, and keeps
+a separate, clearly-labelled conservative guard at 1024 whose only justification is
+proximity to configurations known to work. A proper bisection — varying pre alone at fixed
+rate, then rate alone at fixed pre — would settle it, and is cheap now that TE gives an
+on-demand trigger.
+
+**What this does not change:** the five 2026-08-02 attempts recorded `returncode: -2`,
+SIGINT. They were aborted, and were written up as "did not fire". Nothing about the
+analyzer's cold-boot behaviour was established by them either way.
 
 **The general point:** a tool that cannot distinguish "waiting" from "broken" converts
 every configuration error into a false negative about the hardware. Record the returncode,

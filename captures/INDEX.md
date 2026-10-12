@@ -61,4 +61,5 @@ the capture is a throwaway. Read the note column.
 | `20261012_171110_power-seq` | 0.1 MS/s | 24 | 32767 | 1 | GAP 1 REPRODUCIBILITY CHECK, identical method to 20261012_170354: iPod powered off then battery removed, capture armed with all rails at 0, cold st… |
 | `20261012_171537_power-seq` | 0.1 MS/s | 24 | 32767 | 1 | GAP 1 REPEAT via HOLD-SWITCH cold start, a better method than battery reconnect. Sequence: battery out -> hold switch LOCKED -> battery in (firmly … |
 | `20261012_172903_power-seq` | 0.025 MS/s | 24 | 32767 | 1 | GAP 2: rail to first command. 25 kS/s x 32767 = 1.31 s window (20.5ms pre, 1290ms post) at 40us resolution, same wiring as gap 1, trigger = 3.0V ra… |
+| `20261012_210039_power-seq` *(failed, no data)* | 0.005 MS/s | 24 | 32767 | 1 | POWER-DOWN SEQUENCING, first ever capture of this. 5 kS/s x 32767 = 6.55 s window (102ms pre, 6451ms post) at 200us resolution. Trigger = VDDIO (V1… |
 

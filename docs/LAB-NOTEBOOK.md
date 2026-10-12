@@ -1916,3 +1916,45 @@ but not of frame *timing*, which falls out of a deliberately slow capture. §4 i
 had only ever raised. 100 kS/s answered rail ordering; 25 kS/s answered the init delay and
 burst duration. The depth budget is fixed, so rate and span trade directly — and the
 habit of maximising rate had quietly put a class of question out of reach.
+
+### 2026-10-12 (evening) — **My pre-trigger explanation was wrong.** The cause is still unknown
+
+**Action:** Attempted the power-down capture at **5 kS/s**, trigger VDDIO falling. It never
+armed. Suspecting the rate was below the device's range, I looked up the actual limits
+instead of guessing a second time.
+
+**(F) Upstream documents the limits exactly** (04/02/2023 update). Min pre 2, min post 512,
+**frequency 3.1 kHz to 100 MHz**:
+
+| mode | max pre | max post | max total |
+|---|---|---|---|
+| 8 channels | 98 303 | 131 069 | 131 071 |
+| 16 channels | 49 151 | 65 533 | 65 535 |
+| 24 channels | 24 576 | 32 765 | 32 767 |
+
+**(F) Against those numbers, the explanation committed in `b7c0054` fails.**
+
+- `pre=65536` at 8 channels is **legal** (ceiling 98 303) and failed twice.
+- `pre=8000` at 24 channels — three of the five cold-boot attempts — is **legal** (24 576).
+- Only `pre=30000` ×2 genuinely exceeded a documented ceiling.
+- **5 kS/s is legal too** (floor 3.1 kHz) and failed with a pre/post/channel shape proven
+  minutes earlier at 25 kS/s and 100 kS/s. Nothing about the pre-trigger changed there.
+
+That last point is the decisive one: it is a controlled comparison implicating **rate**,
+while the 65536-vs-1024 pair is a controlled comparison implicating **pre**. Both cannot be
+the single cause, so at least one of them is a coincidence of some third constraint.
+
+**What survives:** the device silently fails to arm on configurations it documents as legal;
+the failure is indistinguishable from "no trigger yet"; every capture that has produced data
+used pre ∈ {64, 512, 1024} at ≥ 20 kS/s; and the five 2026-08-02 attempts were SIGINT
+aborts written up as "did not fire". **What does not survive: any causal account**, including
+mine. FINDINGS 14 and HARDWARE.md are amended, and `capture.py` now enforces the documented
+limits with the 1024 guard relabelled honestly as proximity-to-known-good, not a device
+limit.
+
+**Lesson, and it is the second time today in the same shape.** I inferred a mechanism from a
+strong correlation, got a controlled test that appeared to confirm it, committed it — and the
+actual specification was one web fetch away the whole time. **Look up the documented limits
+before theorising about a device's behaviour.** The bisection that would settle this is cheap
+now: TE gives an on-demand trigger, so vary pre alone at fixed rate, then rate alone at fixed
+pre.

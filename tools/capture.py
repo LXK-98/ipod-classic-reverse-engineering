@@ -43,16 +43,41 @@ def max_post_samples(n_channels: int) -> int:
     return 32767
 
 
-# Empirical pre-trigger ceiling, NOT a datasheet figure. Across the 41 captures
-# taken up to 2026-10-12, every capture with pre <= 1024 produced data (33/33)
-# and every capture with pre > 1024 silently failed to arm (0/6: pre=8000 x3,
-# 30000 x2, 65536 x1). An over-large config produces no error of any kind -- the
-# device never arms and TerminalCapture waits forever showing the same message it
-# shows while armed, so the failure looks like "no trigger yet". That cost five
-# cold-boot captures on 2026-08-02. See FINDINGS 14.
+# Documented device limits (gusmanb logicanalyzer, 04/02/2023 update upstream).
+MIN_FREQUENCY = 3_100
+MAX_FREQUENCY = 100_000_000
+
+
+def max_pre_samples(n_channels: int) -> int:
+    """Documented pre-trigger ceiling per channel-count mode (min is 2)."""
+    if n_channels <= 8:
+        return 98_303
+    if n_channels <= 16:
+        return 49_151
+    return 24_576
+
+
+# Conservative EMPIRICAL guard, well below the documented ceilings above, and
+# deliberately so. The device silently fails to arm on some configurations that
+# the documentation permits: it reports nothing, and TerminalCapture waits forever
+# showing the same message it shows while armed, so the failure is
+# indistinguishable from "no trigger yet". That cost five cold-boot captures on
+# 2026-08-02.
 #
-# To widen the pre-trigger window in TIME, lower --frequency rather than raising
-# this. Raise it only alongside a capture proving a larger value arms.
+# What is actually established (see FINDINGS 14):
+#  - Every capture that has ever produced data used pre in {64, 512, 1024}.
+#  - A controlled pair differing ONLY in pre (65536 vs 1024, 8 ch, 131071 total,
+#    same trigger channel, 1 MS/s, same session) failed and succeeded resp.
+#  - But 65536 is BELOW the documented 8-channel ceiling of 98303, and the
+#    pre=8000 cold-boot attempts were below the 24-channel ceiling of 24576, so
+#    "pre too large" cannot be the whole explanation.
+#  - 5 kS/s is above the documented 3.1 kHz floor yet also failed to arm with an
+#    otherwise-proven config, which points away from pre-trigger size entirely.
+#
+# So the cause is NOT understood. This cap just keeps new captures close to
+# configurations known to work. Raise it only alongside a capture proving a
+# larger value arms, and prefer lowering --frequency to widen the pre-trigger
+# window in time.
 MAX_PRE_SAMPLES = 1024
 
 
@@ -179,12 +204,24 @@ def build_session(preset: dict, overrides: dict) -> dict:
         trig["inverted"] = overrides["trigger_inverted"]
 
     n = len(names)
+    if not MIN_FREQUENCY <= freq <= MAX_FREQUENCY:
+        raise SystemExit(
+            f"frequency {freq} is outside the device's documented range "
+            f"{MIN_FREQUENCY}-{MAX_FREQUENCY} Hz."
+        )
+    if pre > max_pre_samples(n):
+        raise SystemExit(
+            f"pre({pre}) exceeds the documented {n}-channel pre-trigger ceiling of "
+            f"{max_pre_samples(n)}."
+        )
     if pre > MAX_PRE_SAMPLES:
         raise SystemExit(
-            f"pre({pre}) exceeds the empirical pre-trigger ceiling of {MAX_PRE_SAMPLES}.\n"
-            f"No capture in this project has ever armed with a larger pre-trigger; the\n"
-            f"device fails silently and the capture looks like it is simply waiting.\n"
-            f"See FINDINGS 14. To widen the pre-trigger in TIME, lower --frequency."
+            f"pre({pre}) exceeds this project's conservative guard of {MAX_PRE_SAMPLES}\n"
+            f"(the documented {n}-channel ceiling is {max_pre_samples(n)}, so this is NOT\n"
+            f"a device limit). The device silently fails to arm on some configurations it\n"
+            f"documents as legal, and the cause is not understood -- see FINDINGS 14.\n"
+            f"Every capture that has produced data used pre in {{64, 512, 1024}}.\n"
+            f"To widen the pre-trigger in TIME, lower --frequency instead."
         )
     total = post * (loops + 1) + pre
     cap = max_post_samples(n)
