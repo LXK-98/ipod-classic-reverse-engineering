@@ -81,6 +81,24 @@ in colours where the two interpretations diverge.
 > all 82 command writes but identical on all 76 data writes, including 24 where the 16-bit
 > map predicts they differ. The init-derived map is valid for **commands** only. See the
 > [lab notebook](LAB-NOTEBOOK.md), 2026-10-12 (night).
+>
+> **CONFIRMED AT SCALE the same day**, by sweeping all 28 valid captures carrying the full
+> 18-lane set — **14 896 data writes**, 196× the original sample:
+>
+> | | distinct values seen | pair splits |
+> |---|---|---|
+> | **RED** pins 9/14 | 21, including every MSB-set value to 63 | **0** |
+> | **BLUE** pins 21/2 | 34, including every MSB-set value to 63 | 7 (0.047 %) |
+> | command writes | — | 139 of 448 split, as expected |
+>
+> The 7 blue anomalies are **not** independent drive. Each is the expected value *plus one*
+> — B=3 where 2 is expected, B=7 where 6 is, B=15 where 14 is — i.e. pin P02 reading high
+> when it should read low, one-directional, clustered in five near-duplicate early captures.
+> Marginal sampling on one pin.
+>
+> So across every colour the SoC has ever been observed to emit, **it never drives either
+> pair apart on a data write.** This bounds what the hardware *does*, not what it *could* do
+> with a crafted APB word — only a deliberate single-bit sweep can close that.
 
 ---
 

@@ -2061,3 +2061,46 @@ the second model, a DATA word of `0x8000` would still drive P09 ≠ P14.
 **Next step:** a single-bit probe — DATA words `1 << n` for n = 0…15 written into GRAM in
 command mode, captured with all 18 lanes — gives the full DATA-write lane map, and settles
 whether any 16-bit word drives P09 ≠ P14. Planned, not yet run.
+
+### 2026-10-12 (night, later) — Pair replication confirmed at 196× the sample size
+
+**Action:** The conclusion above rested on 76 data writes from one init capture, with an
+acknowledged gap about whether some word like `0x8000` might split the red pair. The frame
+captures hold thousands of pixel writes across many colours, so swept the whole evidence
+set by content rather than collecting anything new.
+
+**(F) Across all 28 valid captures carrying the full 18-lane set — 14 896 data writes:**
+
+| | distinct values | pair splits |
+|---|---|---|
+| **RED** P09/P14 | 21, incl. every MSB-set value up to 63 | **0** |
+| **BLUE** P21/P02 | 34, incl. every MSB-set value up to 63 | 7 (0.047 %) |
+| command writes | — | 139 of 448, as expected |
+
+So the earlier finding holds, on 196× the sample. Red never splits across 21 distinct
+values including the full MSB range — which is the specific case the `0x8000` worry was
+about, since red values 33–63 all have the MSB set and all still replicate.
+
+**(F) The 7 blue anomalies are sampling, not drive.** Each is the expected value **plus
+one**: B=3 where 2 is expected, B=7 where 6 is, B=15 where 14 is. That is pin P02 reading
+high when it should read low — one-directional, and clustered in five near-duplicate early
+captures. Independent drive would not be biased in a single direction on a single pin.
+
+**The first pass got this wrong, and the reason matters.** It reported **36** blue splits.
+**29 came from `20260802_124256_dryrun`** — the capture documented since August as the
+quiet-failure case, where VREF on the 3v3 switch position left 18 of 24 channels reading
+constant zero. It reports `rc=0` and its data looks plausible, so a glob over
+`captures/*.csv.gz` includes it without complaint.
+
+Finding 13 moved this project to searching captures by content; nothing had yet been done
+to stop a *poisoned* capture joining those searches. Now fixed: `"invalid": true` plus an
+`invalid_reason` in the sidecar, `capio.invalid_reason()` for tools, and an ⛔ **INVALID**
+section in `captures/INDEX.md`. Committed separately as `333c252`.
+
+**What this does and does not settle.** It bounds what the hardware *does* — across every
+colour ever observed, neither pair is ever driven apart on a data write. It cannot bound
+what the hardware *could* do with a crafted APB word, because Rockbox only ever emits
+RGB565-expanded values. **The single-bit probe is still the right next step**, but it now
+has a 14 896-write baseline behind it instead of 76, and a sharper target: red MSB-set
+values are already well covered, so the probe's value lies in the words RGB565 cannot
+express.
