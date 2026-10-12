@@ -4,7 +4,7 @@
   "preset": "power-seq",
   "preset_description": "Phase 6 gap 1: rail sequencing at cold boot, 24 ch, 328 ms.",
   "probe_map": "v1",
-  "note": "PRE-FLIGHT after rewiring rails onto silkscreen CH2/CH9/CH19 (pins 26/33/34), retry after the analyzer dropped off USB and was reseated. iPod ON, battery, panel awake. VRF from 1k/1k divider off analyzer 3v3 (1.6V), switch EXT. Trigger ch2 = TE_P07 rising. Expect: all three rail channels constant 1, ~22 TE pulses at 67.92 Hz, bus lanes active. Validates the three new channels, especially the 1.54V reference on CH19 whose ~0.4V threshold margin is the thinnest.",
+  "note": "PRE-FLIGHT after rewiring rails onto silkscreen CH2/CH9/CH19 (pins 26/33/34), retry after the analyzer was unplugged by the operator during rewiring and reconnected (NOT a spontaneous drop-out). iPod ON, battery, panel awake. VRF from 1k/1k divider off analyzer 3v3 (1.6V), switch EXT. Trigger ch2 = TE_P07 rising. Expect: all three rail channels constant 1, ~22 TE pulses at 67.92 Hz, bus lanes active. Validates the three new channels, especially the 1.54V reference on CH19 whose ~0.4V threshold margin is the thinnest.",
   "port": "/dev/serial/by-id/usb-Dr._Gusman_LogicAnalyzer_5033592712586E1F-if00",
   "session": {
     "Frequency": 100000,

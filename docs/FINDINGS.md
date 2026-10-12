@@ -189,13 +189,25 @@ Observed twice in one session: the LogicAnalyzer disappears from the USB bus ent
 `/dev/serial/by-id` entry, nothing in `lsusb` — and returns after a reseat or on its own.
 
 This matters because of how it presents during a long armed wait: a capture that is armed
-when the device drops looks identical to **"the trigger never fired."** Several
-inconclusive cold-boot captures in this project may have been affected; it was never
-established either way.
+when the device drops looks identical to **"the trigger never fired."**
+
+**Narrowed 2026-10-12.** This finding originally speculated that several inconclusive
+cold-boot captures might have been affected. They were not: all five record
+`returncode: -2`, SIGINT, so they were aborted from the keyboard
+([finding 14](#14-a-silent-no-arm-is-indistinguishable-from-no-trigger-yet)). No drop-out
+needs invoking for them. The finding rests on the two genuine occurrences in the original
+session.
+
+**Also 2026-10-12:** the analyzer vanished from USB twice during that day's work, but both
+times the operator had physically unplugged it while changing probe wiring. **Those were
+not instances of this fault** — worth stating, because an unplug and a spontaneous drop-out
+are indistinguishable after the fact, and counting unplugs as drop-outs would inflate how
+often this is believed to happen.
 
 **Practical rule:** before interpreting a non-triggering capture as a fact about the
 target, confirm the analyzer is still enumerated. `tools/capture.py --list-ports` is the
-one-line check.
+one-line check — and it does not distinguish a drop-out from an unplug, so record which
+one you know it to be.
 
 ### A level shifter referenced too high fails silently
 
