@@ -2177,7 +2177,19 @@ pins 4/5.
 > charger explanation looked immediately plausible and I did not check the condition before
 > committing it. See the method note below.
 
-**(F) The 0.10 V spread is unexplained.** Both in-operation readings were on battery, and
+**(F) The 0.10 V spread is measurement repeatability — resolved.** The collaborator confirms
+**nothing changed between the two readings but re-probing**. So it is our uncertainty, not
+variation the panel experiences: undisturbed, the panel presumably sees a stable value, and
+a megohm-class node cannot be read to better than ~±50 mV by touching it with a 10 MΩ meter.
+
+**(F) There is positive evidence the tolerance is loose.** The board drives this pin through
+a **1–2 MΩ source**, and no design feeds a tolerance-critical reference that softly. The
+weak drive is itself evidence the panel does not care about the exact level. With the
+failure mode being a visibly wrong image correctable by a trimmer turn, and no damage path,
+this gap should not hold up a build — it only matters if the panel refuses to work with
+everything else correct, when it becomes the first suspect.
+
+**(superseded) The 0.10 V spread is unexplained.** Both in-operation readings were on battery, and
 both were identical with the screen on and off, so neither the charger nor the backlight
 accounts for it. Candidates not yet separated: settling of a high-impedance node under DMM
 load, panel internal state, or probe contact. **That the node will not give a repeatable

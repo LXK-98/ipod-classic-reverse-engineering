@@ -31,9 +31,10 @@ pin, all with a 10 MΩ DMM:
 | flex connected, panel running, **on battery** | **1.26 V**, then **1.36 V** |
 
 Both in-operation readings were taken on battery with no charger attached, and both with
-the screen on and off — so neither the charger nor the backlight explains the 0.10 V spread
-between them. **It is unexplained, and that is itself the useful result:** this node does
-not give a repeatable number under a DMM.
+the screen on and off, with **nothing changed between them but re-probing**. So the 0.10 V
+spread is measurement repeatability on a soft node — **our uncertainty, not variation the
+panel experiences.** Undisturbed, the panel presumably sees a stable value; we simply
+cannot read a megohm-class node to better than roughly ±50 mV by touching it with a meter.
 
 A source losing 0.18 V to a 10 MΩ meter implies 1–2 MΩ of source impedance, which fits a
 reading that wanders. **So no DMM measurement gives the panel's true operating voltage**,
@@ -48,6 +49,14 @@ and a scope at 1 MΩ would load it harder still.
 3. **To measure it properly**, buffer it: a CMOS-input op-amp (the `TLV9061` in the parts
    list draws picoamps) as a unity-gain follower reads the node without loading it. That
    also pre-tests the board's own reference buffer.
+
+**On the unknown tolerance — there is reason for optimism, not just hope.** The original
+board drives this pin through a **1–2 MΩ source**, and nobody feeds a tolerance-critical
+reference that softly. The weak drive is itself evidence the panel is not fussy about the
+exact level. Combined with the failure mode — a wrong reference shows up as a visibly wrong
+image, correctable by turning the trimmer, with no damage path — this gap should not hold up
+a build. It only matters if the panel refuses to work with everything else correct, in which
+case it is the first suspect and the trimmer is the sweep.
 
 ### Power-up sequencing — MEASURED 2026-10-12
 
