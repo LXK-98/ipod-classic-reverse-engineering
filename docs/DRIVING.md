@@ -402,6 +402,13 @@ Be aware of these before committing hardware:
    | 2 | P23 | 8 | P16 | 13 | P11 |
    | 3 | P22 | 9 | P15 | 14–15 | undetermined (P01/P10) |
    | 4 | **P21 + P02** | 10 | **P09 + P14** | | |
+   | 5 | P20 | | | | |
+
+   *Bit 5 → P20 added 2026-10-13:* the table as first committed omitted it. Confirmed by the
+   encoder that reproduces all 151 aligned init writes pin-exactly on all 18 lanes
+   (`tools/encoder_check.py`; [lab notebook](LAB-NOTEBOOK.md), 2026-10-13). That encoder is
+   what a driver should use: value bits 15..8 → D17..D10, bits 7..0 → D8..D1 in the §4 lane
+   order, plus the pair copy above on DATA writes.
 
    Bits 14–15 are constant across the init data set, so they cannot be separated from each
    other or from P01/P10 by it. Everything else is expressed in flex-pin numbers anchored to

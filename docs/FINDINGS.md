@@ -110,6 +110,11 @@ in colours where the two interpretations diverge.
 > | 2 | P23 | 8 | P16 | 13 | P11 |
 > | 3 | P22 | 9 | P15 | 14–15 | undetermined (P01/P10) |
 > | 4 | **P21 + P02** | 10 | **P09 + P14** | | |
+> | 5 | P20 | | | | |
+>
+> *(Bit 5 → P20 added 2026-10-13; it was omitted from this table as first written. See the
+> [lab notebook](LAB-NOTEBOOK.md), 2026-10-13, where an encoder built on this map
+> reproduces all 151 aligned init writes pin-exactly on all 18 lanes.)*
 >
 > **One APB bit drives both pins of each pair.** Bit 10 → pins 9 *and* 14; bit 4 → pins 21
 > *and* 2. So the tie is wiring, not a value-dependent expansion: **no 16-bit word can split
