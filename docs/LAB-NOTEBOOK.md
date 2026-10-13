@@ -2292,3 +2292,58 @@ byte-identical to the 146-write `bootloader.init` (checked). At cold boot the or
 the 146-write version (no NOP envelopes before the +615 ms block). Its runs are
 [140, 2, 2, 2], so a driver capture of it needs **4 bursts (`loops=3`)**. The 10-burst config
 of `203836` would wait forever for six NOPs that never come.
+
+### 2026-10-13 — **Breadboard driver written.** Not yet run on hardware
+
+**Action:** wrote the Phase 6 breadboard driver: build guide `docs/BREADBOARD.md`,
+MicroPython firmware `firmware/bus.py` + `firmware/lcddrv.py`, host tool `tools/drv.py`, and
+the milestone-2 capture preset `init-verify`. No bench work; nothing has run on a Pico.
+
+**Datasheet lookups that changed the design** (looked up, not recalled):
+
+- **The TLV9061IDBVR has no shutdown pin.** Only the 6-pin TLV9061S does, so "the
+  reference under GPIO enable control" cannot be done with the part we bought. Instead the
+  op-amp runs from the 3.0 V rail and GP22 holds its input low until released. The
+  reference therefore *cannot* exist without the 3.0 V rail, whatever the firmware does. The
+  firmware also gives GP22 no way to drive high, because the inputs are diode-clamped
+  (abs. max ±10 mA) and a high would back-power the 3.0 V rail.
+- **The AP2112 discharges VOUT through ~60 Ω when disabled** and has a 3 MΩ EN pull-down. So
+  VDDIO falls first on any loss of control (Pico reset, USB unplug), which is the right
+  order by construction.
+- **The ME6211 datasheet documents no discharge, no CE pull-down and no start-up time.** So
+  there is an external 10 kΩ pull-down, and a 1 ms wait (not 0.13 ms) before the reference.
+- **SN74LVC8T245: all I/O go Hi-Z if either supply is < 100 mV**, and power sequencing is
+  specified glitch-free. /OE can be tied low. The bus is Hi-Z until VDDIO exists, and /WR and
+  /CS rise with VDDIO as on the original.
+- **RP2040: V<sub>IH</sub> min is 2.0 V at IOVDD = 3.3 V**, so TE needs the 1T45 up-shift.
+  Side-set "still takes effect immediately" on a stalled instruction, so /WR idles high
+  while the PIO waits on an empty FIFO.
+
+**Design choices, each a default rather than a measurement:**
+
+- MicroPython, because there is no C toolchain on this machine. Bus timing comes from PIO
+  either way: 800 ns/write, /WR low 120 ns, data and D/C stable 520 ns before the latch,
+  held 280 ns after.
+- The 146-write cold-boot init, not the 152-write variant.
+- Order-preserving delays defaulted to the original's: 218 ms reference → VDDIO and
+  ≥ 400 ms to the first command, both as knobs.
+- P30/P32 pulled up to VDDIO, with GP28 reserved for a driven /RESET candidate.
+
+**What is verified, and how:**
+
+- **(F)** `firmware/test_host.py` runs `lcddrv.py` against mock `machine`/`rp2`/`time`
+  modules and passes 26 checks. Among them: rail order up and down, the bus idling before
+  any rail, the ≥ 400 ms wait, init framed as `[140, 2, 2, 2]`, the sleep sequence before an
+  initialised power-down, an interrupted power-up still powering down in order, and GP22
+  never driven high.
+- **The test is shown to fail when it should:** a mutant with VDDIO before the reference, and
+  one with no wait, are both caught.
+- **(F)** `tools/encoder_check.py` now imports `firmware/bus.py`, the code the Pico runs, and
+  still gets 151/151 pin-exact against the iPod's init.
+- **(F)** The `init-verify` preset differs from the iPod's init capture `203836` in exactly
+  one setting, LoopCount 3 vs 9. Driver and iPod are judged under identical conditions.
+
+**Not verified, and only hardware can do it:** anything electrical, the PIO timing on the
+wire, MicroPython API behaviour on the actual build, and the host↔Pico raw-REPL client in
+`drv.py`. Milestone 1 and the panel-less bus check in BREADBOARD §5 are designed to catch
+all of these before the panel is connected.

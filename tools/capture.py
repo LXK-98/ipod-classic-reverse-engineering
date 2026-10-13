@@ -115,6 +115,33 @@ PRESETS: dict[str, dict] = {
         "channels": ["WR", "DC"] + [f"D{i:02d}" for i in range(18)],
         "trigger": {"type": "edge", "channel": 0, "inverted": True},
     },
+    # Breadboard milestone 2: the DRIVER's init, captured exactly as the iPod's
+    # was in 20260803_203836 (documented 24-ch map with all 18 lanes, 20 MS/s,
+    # pre 64, post 3270, trigger /WR falling), so seqmatch.py and
+    # encoder_check.py judge driver and iPod identically.
+    #
+    # Only the burst count differs. The 146-write bootloader init runs as
+    # [140, 2, 2, 2] = 4 bursts. For the 152-write 'awake' variant pass
+    # --loops 9 (six single-NOP runs come first). A loop count above the number
+    # of runs never completes -- the analyzer waits for a burst that is not
+    # coming, indistinguishable from a no-arm. Judge it by the sidecar.
+    #
+    # At the driver's 800 ns/write the 140-write run lasts 112 us; 3270 samples
+    # at 20 MS/s cover 163.5 us. Needs CH2/CH9/CH19 back on pins 2/14/25 (the
+    # power-seq wiring displaces them).
+    "init-verify": {
+        "description": "Breadboard M2: driver init on the documented 24-ch map, 4 bursts.",
+        "frequency": 20_000_000,
+        "pre": 64,
+        "post": 3270,
+        "loops": 3,
+        "channels": [
+            "P01", "P02", "P07", "P09", "P10", "P11", "P12", "P13",
+            "P14", "P15", "P16", "P18", "P19", "P20", "P21", "P22",
+            "P23", "P24", "P25", "P27", "P28", "P29", "P30", "P32",
+        ],
+        "trigger": {"type": "edge", "channel": 19, "inverted": True},
+    },
     # Phase 6 gap 1: rail order at cold boot, plus the reset lines and the start
     # of init traffic in the same window.
     #

@@ -1,67 +1,89 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: MIT
-"""Check a candidate (kind, 16-bit value) -> 18-pin encoder against the iPod's own
-init capture, pin for pin on all 18 lanes. Alignment reuses seqmatch's own decode
-(14 confirmed lanes) and difflib, exactly as seqmatch does."""
-import difflib, json, sys
+"""Check firmware/bus.py's encoder against a capture, pin for pin on all 18 lanes.
+
+seqmatch.py verifies a sequence over the 14 lanes in pinout.json's lane map;
+the pair pins P09/P10/P01/P02 are never compared. This aligns writes exactly as
+seqmatch does, then compares EVERY lane against bus.reg() -- the function the
+Pico firmware runs.
+
+  * Against the iPod's own init capture (the default) it shows the encoder
+    reproduces what the SoC put on the bus: 151/151 on 2026-10-13.
+  * Against the driver's milestone-2 capture it shows the driver put exactly
+    that on the bus.
+
+    tools/encoder_check.py
+    tools/encoder_check.py captures/<driver-init>.csv.gz --config bootloader --sequence init
+"""
+from __future__ import annotations
+
+import argparse
+import difflib
+import sys
 from pathlib import Path
+
 REPO = Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(REPO / 'tools'))
-import capio, seqmatch
-import numpy as np
+sys.path.insert(0, str(REPO / "tools"))
+sys.path.insert(0, str(REPO / "firmware"))
+import bus  # noqa: E402
+import capio  # noqa: E402
+import seqmatch  # noqa: E402
 
-cap = REPO / 'captures/20260803_203836_init-burst.csv.gz'
-print('invalid?', capio.invalid_reason(cap))
-lanes = seqmatch.load_lane_map(REPO / 'pinout.json')
-got, rise, _ = seqmatch.decode(cap, lanes, 'P27', 'P28')
-exp, _ = seqmatch.expected(REPO / 'refs/sequences.json', 'firmware', '2', 'awake')
-names, data = capio.load(cap)
-idx = {n: i for i, n in enumerate(names)}
+IPOD_INIT = REPO / "captures" / "20260803_203836_init-burst.csv.gz"
 
-# GPn = D_n, D17..D0 = R5..R0 G5..G0 B5..B0 (DRIVING.md section 4 pixel order)
-GP_PIN = [2, 25, 24, 23, 22, 21, 20, 19, 18, 1, 16, 15, 14, 13, 12, 11, 10, 9]
 
-def std(v):  # bits 7..0 -> GP8..GP1, bits 15..8 -> GP17..GP10, GP0 = GP9 = 0
-    return ((v & 0xFF00) << 2) | ((v & 0x00FF) << 1)
+def std(v: int) -> int:
+    """The encoder WITHOUT the SoC's DATA-write pair copy, for contrast."""
+    return bus.reg(bus.CMD, v)
 
-def soc(kind, v):  # what the SoC does: DATA writes copy bit 10 to GP17 (P09), bit 4 to GP0 (P02)
-    w = std(v)
-    if kind == 1:
-        w = (w & ~((1 << 17) | 1)) | (((v >> 10) & 1) << 17) | ((v >> 4) & 1)
-    return w
 
-sm = difflib.SequenceMatcher(a=exp, b=got, autojunk=False)
-matched = bad_soc = bad_std = 0
-first_bad = []
-for op, a0, a1, b0, b1 in sm.get_opcodes():
-    if op != 'equal':
-        print('non-equal opcode', op, a0, a1, b0, b1)
-        continue
-    for k in range(a1 - a0):
-        kind, v = exp[a0 + k]
-        s = rise[b0 + k]
-        pins = 0
-        for g, p in enumerate(GP_PIN):
-            pins |= int(data[s, idx[f'P{p:02d}']]) << g
-        matched += 1
-        if pins != soc(kind, v):
-            bad_soc += 1
-            if len(first_bad) < 5:
-                first_bad.append((a0 + k, kind, hex(v), bin(pins), bin(soc(kind, v))))
-        if pins != std(v):
-            bad_std += 1
-print(f'matched writes: {matched} of {len(exp)} expected, {len(got)} decoded')
-print(f'pin-exact vs SoC encoder : {matched - bad_soc}/{matched}')
-print(f'pin-exact vs std encoder : {matched - bad_std}/{matched}  (differs only on replicated pairs)')
-for b in first_bad:
-    print('  mismatch', b)
+def main() -> int:
+    ap = argparse.ArgumentParser(description=__doc__,
+                                 formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("csv", nargs="?", type=Path, default=IPOD_INIT)
+    ap.add_argument("--config", default="firmware", choices=("firmware", "bootloader"))
+    ap.add_argument("--sequence", default="awake")
+    args = ap.parse_args()
 
-# Facts the encoder relies on, from the source sequence itself
-init = json.load(open(REPO / 'refs/sequences.json'))['configs']['bootloader']['types']['2']['sequences']['init']['transactions']
-vals = [(e['kind'], e['value']) for e in init if e['kind'] != 'sleep']
-print('bootloader init writes:', len(vals),
-      '| max cmd', hex(max(v for k, v in vals if k == 'cmd')),
-      '| data with bit14/15:', sum(1 for k, v in vals if k != 'cmd' and v & 0xC000),
-      '| data with bit10:', sum(1 for k, v in vals if k != 'cmd' and v & 0x400),
-      '| data with bit4:', sum(1 for k, v in vals if k != 'cmd' and v & 0x10))
-print('firmware awake minus 6 NOPs == bootloader init:', exp[6:] == [(0 if k == 'cmd' else 1, v) for k, v in vals])
+    reason = capio.invalid_reason(args.csv)
+    if reason:
+        raise SystemExit(f"{args.csv.name} is marked INVALID: {reason}")
+    lanes = seqmatch.load_lane_map(REPO / "pinout.json")
+    got, rise, _ = seqmatch.decode(args.csv, lanes, "P27", "P28")
+    exp, _ = seqmatch.expected(REPO / "refs" / "sequences.json", args.config, "2", args.sequence)
+    names, data = capio.load(args.csv)
+    idx = {n: i for i, n in enumerate(names)}
+    missing = [p for p in bus.FLEX if f"P{p:02d}" not in idx]
+    if missing:
+        raise SystemExit(f"capture lacks flex pins {missing}; all 18 lanes are needed")
+
+    matched = exact = exact_std = 0
+    per_pin = {p: 0 for p in bus.FLEX}
+    for op, a0, a1, b0, b1 in difflib.SequenceMatcher(a=exp, b=got, autojunk=False).get_opcodes():
+        if op != "equal":
+            print(f"  not aligned: {op} expected[{a0}:{a1}] decoded[{b0}:{b1}]")
+            continue
+        for k in range(a1 - a0):
+            kind, v = exp[a0 + k]
+            s = rise[b0 + k]
+            pins = sum(int(data[s, idx[f"P{p:02d}"]]) << n for n, p in enumerate(bus.FLEX))
+            want = bus.reg(kind, v) & ~bus.DC        # D/C is checked by the alignment
+            matched += 1
+            exact += pins == want
+            exact_std += pins == (std(v) & ~bus.DC)
+            for n, p in enumerate(bus.FLEX):
+                per_pin[p] += ((pins ^ want) >> n) & 1
+
+    print(f"capture  : {capio.resolve(args.csv).name}")
+    print(f"expected : configs.{args.config}.types.2.sequences.{args.sequence} ({len(exp)} writes)")
+    print(f"aligned  : {matched} writes ({len(got)} decoded)")
+    print(f"pin-exact, firmware/bus.py encoder : {exact}/{matched}")
+    print(f"pin-exact, without the pair copy   : {exact_std}/{matched}")
+    bad = {f"P{p:02d}": n for p, n in per_pin.items() if n}
+    if bad:
+        print(f"mismatches by pin: {bad}")
+    return 0 if matched and exact == matched else 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())

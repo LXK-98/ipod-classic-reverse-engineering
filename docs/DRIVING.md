@@ -365,6 +365,10 @@ on Pi 5) is the alternative.
 
 Whatever drives it needs **1.8 V I/O** or level shifting in the drive direction.
 
+**A concrete build of this exists:** [BREADBOARD.md](BREADBOARD.md) gives the wiring, the
+MicroPython/PIO firmware in [`firmware/`](../firmware), and the gated bring-up that ends in
+the RGB666 pair test.
+
 ## Known gaps
 
 Be aware of these before committing hardware:

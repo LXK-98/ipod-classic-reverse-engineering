@@ -66,6 +66,7 @@ capture — blue icon, text glyphs, and the battery outline with its red low-cha
 |---|---|
 | [PINOUT.md](PINOUT.md) | the pinout table, generated from `pinout.json` |
 | **[docs/DRIVING.md](docs/DRIVING.md)** | **how to build a driver — start here for Phase 6** |
+| [docs/BREADBOARD.md](docs/BREADBOARD.md) | the RP2040 breadboard driver: wiring, firmware, bring-up milestones, pair test |
 | [docs/HARDWARE.md](docs/HARDWARE.md) | target device, interposer, instrumentation, safety rules |
 | [docs/PROTOCOL.md](docs/PROTOCOL.md) | bus protocol, init sequences, timing, pixel format |
 | [docs/METHODOLOGY.md](docs/METHODOLOGY.md) | how each result was obtained and how to reproduce it |
@@ -82,6 +83,7 @@ PINOUT.md              generated pinout reference
 pinout.json            single source of truth — everything else derives from this
 docs/                  documentation (above) + the ModemManager udev rule
 tools/                 capture, decode and reporting tools (Python, re-runnable)
+firmware/              MicroPython breadboard driver for an RP2040 Pico (docs/BREADBOARD.md)
 refs/                  Rockbox sources used as ground truth (GPL v2, see refs/README.md)
 captures/              every logic-analyzer capture, gzipped, with JSON sidecars
 measurements/          DMM sweeps as TSV
